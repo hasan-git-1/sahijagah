@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Star, Download, Globe, Phone, MapPin, Shield, Users, Building, Search, Map, CalendarCheck, MessageSquare, FileText, Briefcase, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.jpeg";
