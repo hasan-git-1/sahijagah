@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Send, ArrowLeft, User, ImageIcon } from "lucide-react";
+import { MessageSquare, Send, ArrowLeft, User, ImageIcon, Play, Pause } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
+import VoiceRecorder from "@/components/VoiceRecorder";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -219,6 +220,9 @@ const ChatScreen = () => {
             >
               <ImageIcon className="h-4 w-4 text-muted-foreground" />
             </button>
+            <VoiceRecorder onRecorded={(url, dur) => {
+              sendMutation.mutate(`🎤 Voice message (${dur}s)`);
+            }} />
             <input
               type="text"
               placeholder="Type a message..."

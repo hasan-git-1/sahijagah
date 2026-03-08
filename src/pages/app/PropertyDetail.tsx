@@ -19,6 +19,7 @@ import ImageGallery from "@/components/ImageGallery";
 import SimilarProperties from "@/components/SimilarProperties";
 import ReportPropertyModal from "@/components/ReportPropertyModal";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import ConstructionTimeline from "@/components/ConstructionTimeline";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -227,6 +228,13 @@ const PropertyDetail = () => {
               propertyAddress={property.address || property.city}
               rent={property.price}
             />
+          </div>
+        )}
+
+        {/* Construction Timeline for sale/under-construction */}
+        {(property.type === "sale" || property.category === "under-construction") && (
+          <div className="mt-4">
+            <ConstructionTimeline />
           </div>
         )}
 
