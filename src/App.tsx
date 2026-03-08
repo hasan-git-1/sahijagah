@@ -27,6 +27,7 @@ const App = () => (
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/app/*" element={<AppShell />} />
                 <Route path="/install" element={<AppShell />} />
+                <Route path="/property/:id" element={<PropertyRedirect />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
