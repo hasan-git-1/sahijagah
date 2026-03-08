@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, FileText, Settings, LogOut, ChevronRight, Shield, Download } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,6 +32,7 @@ const ProfileScreen = () => {
   const menuItems = [
     { icon: Heart, label: "Wishlist", path: "/app/wishlist" },
     { icon: Calendar, label: "My Bookings", path: "/app/bookings" },
+    { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },
   ];
@@ -51,14 +52,21 @@ const ProfileScreen = () => {
       {/* Profile Card */}
       <div className="px-4 pt-6">
         <div className="bg-card rounded-2xl p-5 shadow-card flex items-center gap-4">
-          <div className="h-16 w-16 rounded-full gradient-blue flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-xl">
-              {user ? (profile?.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || "U") : "G"}
-            </span>
+          <div className="h-16 w-16 rounded-full overflow-hidden border-4 border-primary/20">
+            {profile?.profile_photo ? (
+              <img src={profile.profile_photo} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full gradient-blue flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xl">
+                  {user ? (profile?.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || "U") : "G"}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-foreground">{user ? (profile?.name || "User") : "Guest User"}</h3>
             <p className="text-xs text-muted-foreground">{user ? user.email : "Sign in to access all features"}</p>
+            {profile?.phone && <p className="text-xs text-muted-foreground">{profile.phone}</p>}
             <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full capitalize">
               <Shield className="h-3 w-3" /> {profile?.role || "client"}
             </span>
@@ -66,7 +74,6 @@ const ProfileScreen = () => {
         </div>
       </div>
 
-      {/* Sign In CTA or Admin */}
       <div className="px-4 mt-4 space-y-2">
         {!user ? (
           <Button onClick={() => navigate("/auth")} className="w-full gradient-blue text-primary-foreground border-0 font-semibold">
@@ -96,9 +103,8 @@ const ProfileScreen = () => {
         </div>
       </div>
 
-      {/* Logout */}
       {user && (
-        <div className="px-4 mt-4">
+        <div className="px-4 mt-4 mb-6">
           <button
             onClick={handleSignOut}
             className="w-full flex items-center gap-3 bg-card rounded-2xl shadow-card px-4 py-3.5 hover:bg-destructive/5 transition-colors"

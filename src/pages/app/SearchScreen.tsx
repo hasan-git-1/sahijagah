@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useSearchProperties, Property } from "@/hooks/useProperties";
+import { useAuth } from "@/contexts/AuthContext";
+import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
+import { useFilteredProperties, Property } from "@/hooks/useProperties";
+import { toast } from "sonner";
+import FilterPanel, { SearchFilters, defaultFilters } from "@/components/FilterPanel";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
-const PropertyCard = ({ property }: { property: Property }) => {
+const PropertyCard = ({ property, isWishlisted, onWishlist }: { property: Property; isWishlisted: boolean; onWishlist: (e: React.MouseEvent) => void }) => {
   const navigate = useNavigate();
   const typeLabel: Record<string, string> = { rent: "Rent", sale: "Buy", pg: "PG", commercial: "Commercial" };
   const formatPrice = (p: number) => {
@@ -30,9 +34,9 @@ const PropertyCard = ({ property }: { property: Property }) => {
         </span>
         <button
           className="absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
-          onClick={(e) => e.stopPropagation()}
+          onClick={onWishlist}
         >
-          <Heart className="h-4 w-4 text-muted-foreground" />
+          <Heart className={`h-4 w-4 ${isWishlisted ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
         </button>
       </div>
       <div className="p-3">
@@ -59,7 +63,22 @@ const PropertyCard = ({ property }: { property: Property }) => {
 const SearchScreen = () => {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
-  const { data: results, isLoading } = useSearchProperties(query, activeFilter);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: wishlistIds } = useWishlist();
+  const toggleWishlist = useToggleWishlist();
+
+  const { data: results, isLoading } = useFilteredProperties(query, activeFilter, filters);
+
+  const activeFilterCount = [filters.minPrice, filters.maxPrice, filters.bedrooms, filters.bathrooms].filter(Boolean).length + filters.amenities.length;
+
+  const handleWishlist = (e: React.MouseEvent, propId: string) => {
+    e.stopPropagation();
+    if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
+    toggleWishlist.mutate(propId);
+  };
 
   return (
     <div className="bg-background min-h-screen">
@@ -77,8 +96,16 @@ const SearchScreen = () => {
               autoFocus
             />
           </div>
-          <button className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <button
+            onClick={() => setShowFilters(true)}
+            className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center relative"
+          >
             <SlidersHorizontal className="h-4 w-4 text-primary" />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
         </div>
         <div className="flex gap-2 mt-3 overflow-x-auto hide-scrollbar">
@@ -87,9 +114,7 @@ const SearchScreen = () => {
               key={f}
               onClick={() => setActiveFilter(f)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-                activeFilter === f
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-foreground"
+                activeFilter === f ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
               }`}
             >
               {f}
@@ -107,7 +132,12 @@ const SearchScreen = () => {
         <div className="px-4 py-4 space-y-3">
           <p className="text-sm text-muted-foreground">{results.length} properties found</p>
           {results.map((p) => (
-            <PropertyCard key={p.id} property={p} />
+            <PropertyCard
+              key={p.id}
+              property={p}
+              isWishlisted={wishlistIds?.includes(p.id) ?? false}
+              onWishlist={(e) => handleWishlist(e, p.id)}
+            />
           ))}
         </div>
       ) : (
@@ -121,6 +151,8 @@ const SearchScreen = () => {
           </p>
         </div>
       )}
+
+      <FilterPanel open={showFilters} onOpenChange={setShowFilters} filters={filters} onApply={setFilters} />
     </div>
   );
 };
