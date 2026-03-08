@@ -47,8 +47,15 @@ const HomeScreen = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: featuredProperties, isLoading } = useFeaturedProperties();
+  const { data: wishlistIds } = useWishlist();
+  const toggleWishlist = useToggleWishlist();
 
-  return (
+  const handleWishlist = (e: React.MouseEvent, propId: string) => {
+    e.stopPropagation();
+    if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
+    toggleWishlist.mutate(propId);
+  };
+
     <div className="bg-background">
       {/* Top Bar */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 pt-3 pb-2 shadow-card">
