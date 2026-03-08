@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Send, ArrowLeft, User, ImageIcon } from "lucide-react";
+import { MessageSquare, Send, ArrowLeft, User, ImageIcon, Play, Pause } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
+import VoiceRecorder from "@/components/VoiceRecorder";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
