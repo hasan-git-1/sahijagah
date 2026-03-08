@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3 } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -53,6 +53,7 @@ const ProfileScreen = () => {
     { icon: Bell, label: "Notifications", path: "/app/notifications", badge: notifCount },
     { icon: Clock, label: "Recently Viewed", path: "/app/recently-viewed" },
     { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
+    { icon: Search, label: "Saved Searches", path: "/app/saved-searches" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },

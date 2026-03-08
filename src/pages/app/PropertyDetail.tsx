@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
+import EMICalculator from "@/components/EMICalculator";
+import PropertyReviews from "@/components/PropertyReviews";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -196,6 +198,18 @@ const PropertyDetail = () => {
             <PropertyMapWithNearby lat={property.lat} lng={property.lng} title={property.title} className="h-56 w-full rounded-xl overflow-hidden" showNearby={true} />
           </div>
         )}
+
+        {/* EMI Calculator for sale properties */}
+        {(property.type === "sale" || property.type === "commercial") && (
+          <div className="mt-4">
+            <EMICalculator propertyPrice={property.price} />
+          </div>
+        )}
+
+        {/* Reviews */}
+        <div className="mt-4">
+          <PropertyReviews propertyId={property.id} />
+        </div>
 
         {/* Compare CTA */}
         <div className="mt-4">

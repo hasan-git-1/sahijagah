@@ -154,8 +154,8 @@ const AdminDashboard = () => {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate">{p.title}</p>
                     <p className="text-xs text-muted-foreground">{p.city} · ₹{Number(p.price).toLocaleString("en-IN")}</p>
-                    <span className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
-                      p.status === "active" ? "bg-green-100 text-green-800" : p.status === "pending" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"
+                    <span className={`inline-flex items-center mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
+                      p.status === "active" ? "bg-accent/20 text-accent" : p.status === "pending" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" : "bg-destructive/20 text-destructive"
                     }`}>{p.status}</span>
                   </div>
                 </div>

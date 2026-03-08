@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath } from "lucide-react";
+import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
 import { useFilteredProperties, Property } from "@/hooks/useProperties";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import FilterPanel, { SearchFilters, defaultFilters } from "@/components/FilterPanel";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
@@ -74,6 +75,17 @@ const SearchScreen = () => {
 
   const activeFilterCount = [filters.minPrice, filters.maxPrice, filters.bedrooms, filters.bathrooms].filter(Boolean).length + filters.amenities.length;
 
+  const handleSaveSearch = async () => {
+    if (!user) { toast.error("Sign in to save searches"); navigate("/auth"); return; }
+    const name = query || `${activeFilter} in all cities`;
+    const filterData = { query, type: activeFilter, ...filters };
+    const { error } = await supabase.from("saved_searches").insert({
+      user_id: user.id, name, filters: filterData,
+    });
+    if (error) { toast.error("Failed to save search"); return; }
+    toast.success("Search saved! You'll be notified of new matches.");
+  };
+
   const handleWishlist = (e: React.MouseEvent, propId: string) => {
     e.stopPropagation();
     if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
@@ -130,7 +142,12 @@ const SearchScreen = () => {
         </div>
       ) : results && results.length > 0 ? (
         <div className="px-4 py-4 space-y-3">
-          <p className="text-sm text-muted-foreground">{results.length} properties found</p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">{results.length} properties found</p>
+            <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
+              <Bookmark className="h-3.5 w-3.5" /> Save Search
+            </button>
+          </div>
           {results.map((p) => (
             <PropertyCard
               key={p.id}

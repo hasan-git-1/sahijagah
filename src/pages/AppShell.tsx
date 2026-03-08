@@ -19,6 +19,7 @@ import SettingsScreen from "./app/SettingsScreen";
 import NotificationsScreen from "./app/NotificationsScreen";
 import CompareScreen from "./app/CompareScreen";
 import RecentlyViewedScreen from "./app/RecentlyViewedScreen";
+import SavedSearchesScreen from "./app/SavedSearchesScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
@@ -70,7 +71,7 @@ const AppShell = () => {
 
   const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
     "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
-    "/app/notifications", "/app/compare", "/app/recently-viewed"].some((p) => location.pathname.includes(p));
+    "/app/notifications", "/app/compare", "/app/recently-viewed", "/app/saved-searches"].some((p) => location.pathname.includes(p));
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
@@ -92,6 +93,7 @@ const AppShell = () => {
           <Route path="notifications" element={<NotificationsScreen />} />
           <Route path="compare" element={<CompareScreen />} />
           <Route path="recently-viewed" element={<RecentlyViewedScreen />} />
+          <Route path="saved-searches" element={<SavedSearchesScreen />} />
         </Routes>
       </div>
 

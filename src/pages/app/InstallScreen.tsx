@@ -56,6 +56,20 @@ const InstallScreen = () => {
         Install our app for a faster, offline-capable experience. Works just like a native app!
       </p>
 
+      <div className="w-full max-w-sm space-y-3 mb-8">
+        {[
+          { icon: "⚡", text: "Loads instantly, even offline" },
+          { icon: "🔔", text: "Get push notifications for new properties" },
+          { icon: "📱", text: "Full-screen native app feel" },
+          { icon: "💾", text: "Takes less than 1MB of storage" },
+        ].map((f) => (
+          <div key={f.text} className="flex items-center gap-3 bg-card rounded-xl px-4 py-3 shadow-card text-left">
+            <span className="text-lg">{f.icon}</span>
+            <p className="text-sm text-foreground">{f.text}</p>
+          </div>
+        ))}
+      </div>
+
       {isIOS ? (
         <div className="bg-card rounded-2xl p-5 shadow-card w-full max-w-sm text-left space-y-3">
           <p className="font-semibold text-foreground text-sm">To install on iPhone/iPad:</p>
