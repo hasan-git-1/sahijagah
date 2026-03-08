@@ -219,9 +219,6 @@ const PropertyDetail = () => {
         )}
         {property.lat && property.lng && <div className="mt-4"><NeighborhoodInsights lat={property.lat} lng={property.lng} city={property.city} /></div>}
 
-        <div className="mt-4"><PriceHistoryChart currentPrice={property.price} city={property.city} type={property.type} /></div>
-        <div className="mt-4"><MarketInsights city={property.city} price={property.price} type={property.type} /></div>
-        <div className="mt-4"><PropertyInsightsWidget viewCount={property.view_count || 0} propertyId={property.id} /></div>
         <div className="mt-4"><OwnerContactHours /></div>
 
         {property.images && property.images.length > 1 && <div className="mt-4"><FloorPlanViewer images={property.images} title={property.title} /></div>}
