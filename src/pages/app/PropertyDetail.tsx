@@ -134,9 +134,7 @@ const PropertyDetail = () => {
           <button onClick={handleWishlist} className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
             <Heart className={`h-5 w-5 ${isWishlisted ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
           </button>
-          <button onClick={handleShare} className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
-            <Share2 className="h-5 w-5 text-muted-foreground" />
-          </button>
+          <PropertyShareMenu propertyId={property.id} title={property.title} price={priceLabel} city={property.city} />
         </div>
         <div className="absolute bottom-3 left-3 flex items-center gap-2">
           <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
