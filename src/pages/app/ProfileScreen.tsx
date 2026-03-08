@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp, ShieldCheck, Wrench, MapPin, Building2, Calculator, MessageSquarePlus, AlertTriangle, FileCheck, FileSignature, UserPlus } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, TrendingUp, ShieldCheck, Building2, Calculator, MessageSquarePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
