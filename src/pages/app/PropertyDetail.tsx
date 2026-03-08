@@ -204,9 +204,6 @@ const PropertyDetail = () => {
         {/* Safety Score */}
         <div className="mt-4"><SafetyScoreWidget city={property.city} /></div>
 
-        {/* Locality Score */}
-        <div className="mt-4"><LocalityScoreCard city={property.city} locality={property.address} /></div>
-
         {/* Nearby Transport */}
         <div className="mt-4"><NearbyTransport city={property.city} /></div>
 
