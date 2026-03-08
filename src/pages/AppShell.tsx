@@ -27,6 +27,9 @@ import DocumentVaultScreen from "./app/DocumentVaultScreen";
 import OwnerAnalyticsScreen from "./app/OwnerAnalyticsScreen";
 import TenantVerificationScreen from "./app/TenantVerificationScreen";
 import AdminUserManagement from "./app/AdminUserManagement";
+import MaintenanceScreen from "./app/MaintenanceScreen";
+import AgentMatchingScreen from "./app/AgentMatchingScreen";
+import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
@@ -79,7 +82,8 @@ const AppShell = () => {
   const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
     "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
     "/app/notifications", "/app/compare", "/app/recently-viewed", "/app/saved-searches",
-    "/app/agent", "/app/documents", "/app/owner-analytics", "/app/verify"].some((p) => location.pathname.includes(p));
+    "/app/agent", "/app/documents", "/app/owner-analytics", "/app/verify",
+    "/app/maintenance", "/app/find-agent", "/app/city-analytics"].some((p) => location.pathname.includes(p));
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
@@ -108,6 +112,9 @@ const AppShell = () => {
           <Route path="owner-analytics" element={<OwnerAnalyticsScreen />} />
           <Route path="verify" element={<TenantVerificationScreen />} />
           <Route path="admin/users" element={<AdminUserManagement />} />
+          <Route path="maintenance" element={<MaintenanceScreen />} />
+          <Route path="find-agent" element={<AgentMatchingScreen />} />
+          <Route path="city-analytics" element={<CityAnalyticsScreen />} />
         </Routes>
       </div>
 
