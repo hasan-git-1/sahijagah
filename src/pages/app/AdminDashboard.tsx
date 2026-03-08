@@ -271,21 +271,6 @@ const AdminDashboard = () => {
             )}
           </div>
         )}
-              <div key={f.id} className="bg-card rounded-xl p-3 shadow-card">
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-sm text-foreground">{f.name}</p>
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-3 w-3 ${i < f.rating ? "text-yellow-500 fill-yellow-500" : "text-muted"}`} />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">{f.message}</p>
-                <p className="text-[10px] text-muted-foreground mt-1">{f.city} · {new Date(f.created_at).toLocaleDateString()}</p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
