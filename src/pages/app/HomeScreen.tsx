@@ -82,6 +82,11 @@ const HomeScreen = () => {
         </div>
       </div>
 
+      {/* Geolocation */}
+      <div className="px-4 mt-2 flex justify-end">
+        <GeolocationDetect onLocationDetected={(lat, lng, city) => navigate("/app/search")} />
+      </div>
+
       {/* Hero Banner */}
       <div className="mx-4 mt-3 rounded-2xl overflow-hidden relative">
         <img src={heroBanner} alt="" className="w-full h-36 object-cover" />
