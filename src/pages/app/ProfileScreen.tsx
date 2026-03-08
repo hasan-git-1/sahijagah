@@ -58,6 +58,7 @@ const ProfileScreen = () => {
     { icon: ShieldCheck, label: "Verify Identity", path: "/app/verify" },
     { icon: Building2, label: "City Analytics", path: "/app/city-analytics" },
     { icon: Calculator, label: "Property Tools", path: "/app/tools" },
+    { icon: LayoutDashboard, label: "Landlord Dashboard", path: "/app/landlord-dashboard" },
     { icon: MessageSquarePlus, label: "Share Feedback", path: "/app/feedback" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
