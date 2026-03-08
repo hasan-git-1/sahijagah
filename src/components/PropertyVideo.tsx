@@ -13,6 +13,7 @@ interface PropertyVideoProps {
 
 const PropertyVideo = ({ propertyId, videoUrl, isOwner }: PropertyVideoProps) => {
   const [playing, setPlaying] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [url, setUrl] = useState(videoUrl || "");
   const fileRef = useRef<HTMLInputElement>(null);
