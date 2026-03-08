@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X } from "lucide-react";
+import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import SEOHead from "@/components/SEOHead";
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
