@@ -1,4 +1,5 @@
 import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "lucide-react";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFeaturedProperties, Property } from "@/hooks/useProperties";
