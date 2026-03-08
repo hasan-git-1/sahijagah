@@ -238,12 +238,6 @@ const PropertyDetail = () => {
           <AvailabilityCalendar readOnly />
         </div>
 
-        {/* Construction Timeline for sale/under-construction */}
-        {(property.type === "sale" || property.category === "under-construction") && (
-          <div className="mt-4">
-            <ConstructionTimeline />
-          </div>
-        )}
 
         {/* Reviews */}
         <div className="mt-4">
