@@ -73,6 +73,7 @@ const SearchScreen = () => {
   const [showMap, setShowMap] = useState(false);
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
+  const [advFilters, setAdvFilters] = useState<AdvancedFilters>(defaultAdvancedFilters);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: wishlistIds } = useWishlist();
