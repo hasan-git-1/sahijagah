@@ -1,23 +1,25 @@
 import { useState } from "react";
-import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X } from "lucide-react";
+import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import SEOHead from "@/components/SEOHead";
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  active: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
+  pending: "bg-primary/10 text-primary",
+  active: "bg-accent/10 text-accent",
+  rejected: "bg-destructive/10 text-destructive",
 };
 
 const bookingStatusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  confirmed: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
-  completed: "bg-blue-100 text-blue-800",
+  pending: "bg-primary/10 text-primary",
+  confirmed: "bg-accent/10 text-accent",
+  cancelled: "bg-destructive/10 text-destructive",
+  completed: "bg-secondary text-foreground",
 };
 
 type Tab = "listings" | "bookings" | "stats";
@@ -95,8 +97,29 @@ const OwnerDashboard = () => {
     { key: "stats", label: "Stats" },
   ];
 
+  const COLORS = ["hsl(217,91%,50%)", "hsl(142,64%,36%)", "hsl(0,84%,60%)", "hsl(45,93%,47%)"];
+
+  const viewsData = properties?.map((p) => ({
+    name: p.title.length > 12 ? p.title.slice(0, 12) + "…" : p.title,
+    views: p.view_count || 0,
+  })) || [];
+
+  const statusData = [
+    { name: "Active", value: properties?.filter((p) => p.status === "active").length || 0 },
+    { name: "Pending", value: properties?.filter((p) => p.status === "pending").length || 0 },
+    { name: "Rejected", value: properties?.filter((p) => p.status === "rejected").length || 0 },
+  ].filter((d) => d.value > 0);
+
+  const bookingStatusData = [
+    { name: "Pending", value: bookings?.filter((b) => b.status === "pending").length || 0 },
+    { name: "Confirmed", value: bookings?.filter((b) => b.status === "confirmed").length || 0 },
+    { name: "Cancelled", value: bookings?.filter((b) => b.status === "cancelled").length || 0 },
+    { name: "Completed", value: bookings?.filter((b) => b.status === "completed").length || 0 },
+  ].filter((d) => d.value > 0);
+
   return (
     <div className="bg-background min-h-screen">
+      <SEOHead title="Owner Dashboard" />
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5 text-foreground" /></button>
@@ -127,20 +150,69 @@ const OwnerDashboard = () => {
       </div>
 
       <div className="px-4 py-4">
-        {/* Stats */}
+        {/* Stats with Charts */}
         {tab === "stats" && (
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: "Total Listings", value: properties?.length || 0, color: "text-primary" },
-              { label: "Active Listings", value: activeCount, color: "text-accent" },
-              { label: "Total Views", value: totalViews, color: "text-blue-500" },
-              { label: "Pending Bookings", value: pendingBookings, color: "text-yellow-600" },
-            ].map((s) => (
-              <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
-                <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Total Listings", value: properties?.length || 0, color: "text-primary" },
+                { label: "Active Listings", value: activeCount, color: "text-accent" },
+                { label: "Total Views", value: totalViews, color: "text-primary" },
+                { label: "Pending Bookings", value: pendingBookings, color: "text-destructive" },
+              ].map((s) => (
+                <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
+                  <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Views per listing chart */}
+            {viewsData.length > 0 && (
+              <div className="bg-card rounded-xl p-4 shadow-card">
+                <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" /> Views per Listing
+                </h4>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={viewsData}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215,16%,47%)" }} />
+                    <YAxis tick={{ fontSize: 10, fill: "hsl(215,16%,47%)" }} />
+                    <Tooltip />
+                    <Bar dataKey="views" fill="hsl(217,91%,50%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-            ))}
+            )}
+
+            {/* Status breakdown */}
+            <div className="grid grid-cols-2 gap-3">
+              {statusData.length > 0 && (
+                <div className="bg-card rounded-xl p-4 shadow-card">
+                  <h4 className="text-xs font-bold text-foreground mb-2">Listing Status</h4>
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart>
+                      <Pie data={statusData} dataKey="value" cx="50%" cy="50%" outerRadius={45} label={({ name }) => name}>
+                        {statusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+              {bookingStatusData.length > 0 && (
+                <div className="bg-card rounded-xl p-4 shadow-card">
+                  <h4 className="text-xs font-bold text-foreground mb-2">Booking Status</h4>
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart>
+                      <Pie data={bookingStatusData} dataKey="value" cx="50%" cy="50%" outerRadius={45} label={({ name }) => name}>
+                        {bookingStatusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

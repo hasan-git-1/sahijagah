@@ -13,6 +13,7 @@ import EMICalculator from "@/components/EMICalculator";
 import PropertyReviews from "@/components/PropertyReviews";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import RentAgreementGenerator from "@/components/RentAgreementGenerator";
+import SEOHead from "@/components/SEOHead";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -112,8 +113,17 @@ const PropertyDetail = () => {
     setShowBooking(true);
   };
 
+  const seoTitle = `${property.title} - ${formatPrice(property.price, property.type)} in ${property.city}`;
+  const seoDesc = property.description?.slice(0, 155) || `${property.bedrooms} BHK property for ${property.type} in ${property.city}`;
+
   return (
     <div className="bg-background min-h-screen pb-24">
+      <SEOHead
+        title={seoTitle}
+        description={seoDesc}
+        image={property.images?.[0]}
+        url={`${window.location.origin}/app/property/${id}`}
+      />
       <div className="relative">
         <img
           src={property.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"}

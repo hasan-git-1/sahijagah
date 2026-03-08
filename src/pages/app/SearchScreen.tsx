@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark } from "lucide-react";
+import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark, Map } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
@@ -7,6 +7,8 @@ import { useFilteredProperties, Property } from "@/hooks/useProperties";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import FilterPanel, { SearchFilters, defaultFilters } from "@/components/FilterPanel";
+import MapSearchView from "@/components/MapSearchView";
+import SEOHead from "@/components/SEOHead";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
@@ -65,6 +67,7 @@ const SearchScreen = () => {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [showFilters, setShowFilters] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -94,6 +97,8 @@ const SearchScreen = () => {
 
   return (
     <div className="bg-background min-h-screen">
+      <SEOHead title="Search Properties" description="Search verified rental, sale, PG & commercial properties across India." />
+      {showMap && results && <MapSearchView properties={results} onClose={() => setShowMap(false)} />}
       {/* Search Bar */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 pt-3 pb-2 shadow-card">
         <div className="flex items-center gap-2">
@@ -144,9 +149,14 @@ const SearchScreen = () => {
         <div className="px-4 py-4 space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">{results.length} properties found</p>
-            <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
-              <Bookmark className="h-3.5 w-3.5" /> Save Search
-            </button>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setShowMap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
+                <Map className="h-3.5 w-3.5" /> Map
+              </button>
+              <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
+                <Bookmark className="h-3.5 w-3.5" /> Save
+              </button>
+            </div>
           </div>
           {results.map((p) => (
             <PropertyCard
