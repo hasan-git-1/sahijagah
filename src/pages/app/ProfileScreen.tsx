@@ -53,6 +53,7 @@ const ProfileScreen = () => {
     { icon: Bell, label: "Notifications", path: "/app/notifications", badge: notifCount },
     { icon: Clock, label: "Recently Viewed", path: "/app/recently-viewed" },
     { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
+    { icon: Search, label: "Saved Searches", path: "/app/saved-searches" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },

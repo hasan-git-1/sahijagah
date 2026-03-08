@@ -142,7 +142,12 @@ const SearchScreen = () => {
         </div>
       ) : results && results.length > 0 ? (
         <div className="px-4 py-4 space-y-3">
-          <p className="text-sm text-muted-foreground">{results.length} properties found</p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">{results.length} properties found</p>
+            <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
+              <Bookmark className="h-3.5 w-3.5" /> Save Search
+            </button>
+          </div>
           {results.map((p) => (
             <PropertyCard
               key={p.id}
