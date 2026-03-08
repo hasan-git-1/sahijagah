@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,23 +29,20 @@ const ProfileScreen = () => {
     enabled: !!user,
   });
 
-  const { data: isOwner } = useQuery({
-    queryKey: ["isOwner", user?.id],
+  const { data: hasListings } = useQuery({
+    queryKey: ["hasListings", user?.id],
     queryFn: async () => {
-      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "owner" });
-      return !!data;
+      const { count } = await supabase.from("properties").select("*", { count: "exact", head: true }).eq("owner_id", user!.id);
+      return (count || 0) > 0;
     },
     enabled: !!user,
   });
 
-  const { data: hasListings } = useQuery({
-    queryKey: ["hasListings", user?.id],
+  const { data: notifCount } = useQuery({
+    queryKey: ["notif-count", user?.id],
     queryFn: async () => {
-      const { count } = await supabase
-        .from("properties")
-        .select("*", { count: "exact", head: true })
-        .eq("owner_id", user!.id);
-      return (count || 0) > 0;
+      const { count } = await supabase.from("notifications").select("*", { count: "exact", head: true }).eq("user_id", user!.id).eq("is_read", false);
+      return count || 0;
     },
     enabled: !!user,
   });
@@ -53,6 +50,9 @@ const ProfileScreen = () => {
   const menuItems = [
     { icon: Heart, label: "Wishlist", path: "/app/wishlist" },
     { icon: Calendar, label: "My Bookings", path: "/app/bookings" },
+    { icon: Bell, label: "Notifications", path: "/app/notifications", badge: notifCount },
+    { icon: Clock, label: "Recently Viewed", path: "/app/recently-viewed" },
+    { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },
@@ -70,7 +70,6 @@ const ProfileScreen = () => {
         <h2 className="text-lg font-bold text-foreground">Profile</h2>
       </div>
 
-      {/* Profile Card */}
       <div className="px-4 pt-6">
         <div className="bg-card rounded-2xl p-5 shadow-card flex items-center gap-4">
           <div className="h-16 w-16 rounded-full overflow-hidden border-4 border-primary/20">
@@ -107,7 +106,7 @@ const ProfileScreen = () => {
                 <Shield className="h-4 w-4 text-primary" /> Admin Dashboard
               </Button>
             )}
-            {(isOwner || hasListings) && (
+            {hasListings && (
               <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
                 <Home className="h-4 w-4 text-primary" /> Owner Dashboard
               </Button>
@@ -116,7 +115,6 @@ const ProfileScreen = () => {
         )}
       </div>
 
-      {/* Menu */}
       <div className="px-4 mt-6">
         <div className="bg-card rounded-2xl shadow-card overflow-hidden divide-y divide-border">
           {menuItems.map((item) => (
@@ -127,7 +125,13 @@ const ProfileScreen = () => {
             >
               <item.icon className="h-5 w-5 text-primary" />
               <span className="flex-1 text-sm font-medium text-foreground text-left">{item.label}</span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              {item.badge && item.badge > 0 ? (
+                <span className="h-5 min-w-[20px] rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center px-1.5">
+                  {item.badge}
+                </span>
+              ) : (
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              )}
             </button>
           ))}
         </div>

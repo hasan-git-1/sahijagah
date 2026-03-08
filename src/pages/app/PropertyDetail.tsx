@@ -1,4 +1,4 @@
-import { ArrowLeft, Heart, Share2, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind } from "lucide-react";
+import { ArrowLeft, Heart, Share2, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -6,8 +6,8 @@ import { useProperty } from "@/hooks/useProperties";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
-import PropertyMap from "@/components/PropertyMap";
+import { useState, useEffect } from "react";
+import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
 
 const amenityIcons: Record<string, React.ElementType> = {
@@ -30,6 +30,24 @@ const PropertyDetail = () => {
   const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
   const [showBooking, setShowBooking] = useState(false);
+  const [viewTracked, setViewTracked] = useState(false);
+
+  // Track view count and recently viewed
+  useEffect(() => {
+    if (!id || viewTracked) return;
+    setViewTracked(true);
+
+    // Increment view count (works for all users)
+    supabase.rpc("increment_view_count", { property_id: id }).then();
+
+    // Track recently viewed (authenticated only)
+    if (user) {
+      supabase.from("recently_viewed").upsert(
+        { user_id: user.id, property_id: id, viewed_at: new Date().toISOString() },
+        { onConflict: "user_id,property_id" }
+      ).then();
+    }
+  }, [id, user, viewTracked]);
 
   const isWishlisted = wishlistIds?.includes(id || "") ?? false;
 
@@ -109,10 +127,24 @@ const PropertyDetail = () => {
             <Share2 className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
-        <span className="absolute bottom-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-          {typeLabel[property.type] || property.type}
-        </span>
+        <div className="absolute bottom-3 left-3 flex items-center gap-2">
+          <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+            {typeLabel[property.type] || property.type}
+          </span>
+          <span className="bg-card/80 backdrop-blur text-foreground text-[10px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
+            <Eye className="h-3 w-3" /> {property.view_count || 0} views
+          </span>
+        </div>
       </div>
+
+      {/* Image gallery */}
+      {property.images && property.images.length > 1 && (
+        <div className="flex gap-1.5 px-4 mt-3 overflow-x-auto hide-scrollbar">
+          {property.images.map((img, i) => (
+            <img key={i} src={img} alt="" className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border-2 border-transparent hover:border-primary transition-colors" />
+          ))}
+        </div>
+      )}
 
       <div className="px-4 pt-4">
         <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
@@ -157,13 +189,20 @@ const PropertyDetail = () => {
           </div>
         )}
 
-        {/* Map */}
+        {/* Map with nearby amenities */}
         {property.lat && property.lng && (
           <div className="mt-4">
-            <h3 className="font-bold text-foreground mb-2">Location</h3>
-            <PropertyMap lat={property.lat} lng={property.lng} title={property.title} className="h-48 w-full rounded-xl overflow-hidden" />
+            <h3 className="font-bold text-foreground mb-2">Location & Nearby</h3>
+            <PropertyMapWithNearby lat={property.lat} lng={property.lng} title={property.title} className="h-56 w-full rounded-xl overflow-hidden" showNearby={true} />
           </div>
         )}
+
+        {/* Compare CTA */}
+        <div className="mt-4">
+          <Button variant="outline" className="w-full gap-2" onClick={() => navigate("/app/compare")}>
+            📊 Compare with other properties
+          </Button>
+        </div>
       </div>
 
       {/* Bottom CTA */}
@@ -179,7 +218,6 @@ const PropertyDetail = () => {
         </Button>
       </div>
 
-      {/* Booking Modal */}
       {property.owner_id && user && (
         <BookingModal
           open={showBooking}

@@ -1,4 +1,4 @@
-import { Home, Search, PlusCircle, MessageCircle, User } from "lucide-react";
+import { Home, Search, PlusCircle, MessageCircle, User, Bell } from "lucide-react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +16,9 @@ import InstallScreen from "./app/InstallScreen";
 import EditProfileScreen from "./app/EditProfileScreen";
 import OwnerDashboard from "./app/OwnerDashboard";
 import SettingsScreen from "./app/SettingsScreen";
+import NotificationsScreen from "./app/NotificationsScreen";
+import CompareScreen from "./app/CompareScreen";
+import RecentlyViewedScreen from "./app/RecentlyViewedScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
@@ -51,14 +54,23 @@ const AppShell = () => {
     refetchInterval: 5000,
   });
 
-  const hideNav = location.pathname.includes("/app/property/") ||
-    location.pathname.includes("/app/wishlist") ||
-    location.pathname.includes("/app/bookings") ||
-    location.pathname.includes("/app/admin") ||
-    location.pathname.includes("/app/install") ||
-    location.pathname.includes("/app/edit-profile") ||
-    location.pathname.includes("/app/owner") ||
-    location.pathname.includes("/app/settings");
+  const { data: notifCount } = useQuery({
+    queryKey: ["notif-count", user?.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user!.id)
+        .eq("is_read", false);
+      return count || 0;
+    },
+    enabled: !!user,
+    refetchInterval: 10000,
+  });
+
+  const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
+    "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
+    "/app/notifications", "/app/compare", "/app/recently-viewed"].some((p) => location.pathname.includes(p));
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
@@ -77,6 +89,9 @@ const AppShell = () => {
           <Route path="edit-profile" element={<EditProfileScreen />} />
           <Route path="owner" element={<OwnerDashboard />} />
           <Route path="settings" element={<SettingsScreen />} />
+          <Route path="notifications" element={<NotificationsScreen />} />
+          <Route path="compare" element={<CompareScreen />} />
+          <Route path="recently-viewed" element={<RecentlyViewedScreen />} />
         </Routes>
       </div>
 
