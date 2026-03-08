@@ -22,6 +22,7 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/app/*" element={<AppShell />} />
+            <Route path="/install" element={<AppShell />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
