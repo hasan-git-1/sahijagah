@@ -157,6 +157,9 @@ const HomeScreen = () => {
         </div>
       </div>
 
+      {/* AI Recommendations */}
+      <AIRecommendations />
+
       {/* Featured Properties from DB */}
       <div className="px-4 mb-6">
         <h3 className="font-bold text-foreground mb-3">Featured Properties</h3>

@@ -220,6 +220,9 @@ const ChatScreen = () => {
             >
               <ImageIcon className="h-4 w-4 text-muted-foreground" />
             </button>
+            <VoiceRecorder onRecorded={(url, dur) => {
+              sendMutation.mutate(`🎤 Voice message (${dur}s)`);
+            }} />
             <input
               type="text"
               placeholder="Type a message..."

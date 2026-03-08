@@ -71,7 +71,8 @@ const CompareScreen = () => {
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card flex items-center gap-3">
         <button onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5 text-foreground" /></button>
-        <h2 className="text-lg font-bold text-foreground">Compare Properties</h2>
+        <h2 className="text-lg font-bold text-foreground flex-1">Compare Properties</h2>
+        {selected && selected.length >= 2 && <ComparisonPDFExport properties={selected} />}
       </div>
 
       {/* Selected properties header */}
