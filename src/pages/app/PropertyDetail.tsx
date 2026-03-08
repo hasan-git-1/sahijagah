@@ -28,6 +28,12 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import NeighborhoodReviews from "@/components/NeighborhoodReviews";
 import AutoRenewalReminder from "@/components/AutoRenewalReminder";
 import MoveInChecklist from "@/components/MoveInChecklist";
+import PriceHistoryChart from "@/components/PriceHistoryChart";
+import RentReceiptGenerator from "@/components/RentReceiptGenerator";
+import PropertyInsightsWidget from "@/components/PropertyInsightsWidget";
+import SocialProofBanner from "@/components/SocialProofBanner";
+import OwnerContactHours from "@/components/OwnerContactHours";
+import WishlistCollections from "@/components/WishlistCollections";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
