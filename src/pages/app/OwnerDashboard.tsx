@@ -97,8 +97,29 @@ const OwnerDashboard = () => {
     { key: "stats", label: "Stats" },
   ];
 
+  const COLORS = ["hsl(217,91%,50%)", "hsl(142,64%,36%)", "hsl(0,84%,60%)", "hsl(45,93%,47%)"];
+
+  const viewsData = properties?.map((p) => ({
+    name: p.title.length > 12 ? p.title.slice(0, 12) + "…" : p.title,
+    views: p.view_count || 0,
+  })) || [];
+
+  const statusData = [
+    { name: "Active", value: properties?.filter((p) => p.status === "active").length || 0 },
+    { name: "Pending", value: properties?.filter((p) => p.status === "pending").length || 0 },
+    { name: "Rejected", value: properties?.filter((p) => p.status === "rejected").length || 0 },
+  ].filter((d) => d.value > 0);
+
+  const bookingStatusData = [
+    { name: "Pending", value: bookings?.filter((b) => b.status === "pending").length || 0 },
+    { name: "Confirmed", value: bookings?.filter((b) => b.status === "confirmed").length || 0 },
+    { name: "Cancelled", value: bookings?.filter((b) => b.status === "cancelled").length || 0 },
+    { name: "Completed", value: bookings?.filter((b) => b.status === "completed").length || 0 },
+  ].filter((d) => d.value > 0);
+
   return (
     <div className="bg-background min-h-screen">
+      <SEOHead title="Owner Dashboard" />
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5 text-foreground" /></button>
