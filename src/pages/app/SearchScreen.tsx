@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark, Map } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/contexts/I18nContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
 import { useFilteredProperties, Property } from "@/hooks/useProperties";
 import { toast } from "sonner";
@@ -18,7 +19,8 @@ const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
 const PropertyCard = ({ property, isWishlisted, onWishlist }: { property: Property; isWishlisted: boolean; onWishlist: (e: React.MouseEvent) => void }) => {
   const navigate = useNavigate();
-  const typeLabel: Record<string, string> = { rent: "Rent", sale: "Buy", pg: "PG", commercial: "Commercial" };
+  const { t } = useI18n();
+  const typeLabel: Record<string, string> = { rent: t("rent"), sale: t("buy"), pg: t("pg"), commercial: t("commercial") };
   const formatPrice = (p: number) => {
     if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
     if (p >= 100000) return `₹${(p / 100000).toFixed(1)} L`;
@@ -54,12 +56,8 @@ const PropertyCard = ({ property, isWishlisted, onWishlist }: { property: Proper
           <span className="text-xs">{property.address || property.city}</span>
         </div>
         <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-          {property.bedrooms > 0 && (
-            <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {property.bedrooms} Beds</span>
-          )}
-          {property.bathrooms > 0 && (
-            <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {property.bathrooms} Bath</span>
-          )}
+          {property.bedrooms > 0 && <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {property.bedrooms} {t("beds")}</span>}
+          {property.bathrooms > 0 && <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {property.bathrooms} {t("bath")}</span>}
           {property.area && <span>{property.area}</span>}
         </div>
       </div>
@@ -77,6 +75,7 @@ const SearchScreen = () => {
   const [advFilters, setAdvFilters] = useState<AdvancedFilters>(defaultAdvancedFilters);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
   const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
 
@@ -153,16 +152,16 @@ const SearchScreen = () => {
       ) : results && results.length > 0 ? (
         <div className="px-4 py-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">{results.length} properties found</p>
+            <p className="text-sm text-muted-foreground">{results.length} {t("properties_found")}</p>
             <div className="flex items-center gap-3">
               <button onClick={() => setShowMap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
-                <Map className="h-3.5 w-3.5" /> Map
+                <Map className="h-3.5 w-3.5" /> {t("map")}
               </button>
               <button onClick={() => setShowHeatmap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
-                🔥 Heatmap
+                🔥 {t("heatmap")}
               </button>
               <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
-                <Bookmark className="h-3.5 w-3.5" /> Save
+                <Bookmark className="h-3.5 w-3.5" /> {t("save")}
               </button>
             </div>
           </div>
@@ -180,10 +179,8 @@ const SearchScreen = () => {
           <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <MapPin className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="font-bold text-foreground mb-1">Search for properties</h3>
-          <p className="text-sm text-muted-foreground">
-            Try searching "Hyderabad", "Bengaluru", or "Pune"
-          </p>
+          <h3 className="font-bold text-foreground mb-1">{t("no_results")}</h3>
+          <p className="text-sm text-muted-foreground">{t("try_searching")}</p>
         </div>
       )}
 

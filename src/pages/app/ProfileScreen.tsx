@@ -2,6 +2,7 @@ import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Do
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/contexts/I18nContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 const ProfileScreen = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { t } = useI18n();
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -29,7 +31,6 @@ const ProfileScreen = () => {
     enabled: !!user,
   });
 
-
   const { data: hasListings } = useQuery({
     queryKey: ["hasListings", user?.id],
     queryFn: async () => {
@@ -49,32 +50,32 @@ const ProfileScreen = () => {
   });
 
   const menuItems = [
-    { icon: Heart, label: "Wishlist", path: "/app/wishlist" },
-    { icon: Calendar, label: "My Bookings", path: "/app/bookings" },
-    { icon: Bell, label: "Notifications", path: "/app/notifications", badge: notifCount },
-    { icon: Clock, label: "Recently Viewed", path: "/app/recently-viewed" },
-    { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
-    { icon: Search, label: "Saved Searches", path: "/app/saved-searches" },
-    { icon: ShieldCheck, label: "Verify Identity", path: "/app/verify" },
-    { icon: Building2, label: "City Analytics", path: "/app/city-analytics" },
-    { icon: Calculator, label: "Property Tools", path: "/app/tools" },
-    { icon: LayoutDashboard, label: "Landlord Dashboard", path: "/app/landlord-dashboard" },
-    { icon: MessageSquarePlus, label: "Share Feedback", path: "/app/feedback" },
-    { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
-    { icon: Download, label: "Install App", path: "/app/install" },
-    { icon: Settings, label: "Settings", path: "/app/settings" },
+    { icon: Heart, label: t("wishlist"), path: "/app/wishlist" },
+    { icon: Calendar, label: t("my_bookings"), path: "/app/bookings" },
+    { icon: Bell, label: t("notifications"), path: "/app/notifications", badge: notifCount },
+    { icon: Clock, label: t("recently_viewed"), path: "/app/recently-viewed" },
+    { icon: BarChart3, label: t("compare_properties"), path: "/app/compare" },
+    { icon: Search, label: t("saved_searches"), path: "/app/saved-searches" },
+    { icon: ShieldCheck, label: t("verify_identity"), path: "/app/verify" },
+    { icon: Building2, label: t("city_analytics"), path: "/app/city-analytics" },
+    { icon: Calculator, label: t("property_tools"), path: "/app/tools" },
+    { icon: LayoutDashboard, label: t("landlord_dashboard"), path: "/app/landlord-dashboard" },
+    { icon: MessageSquarePlus, label: t("share_feedback"), path: "/app/feedback" },
+    { icon: Edit, label: t("edit_profile"), path: "/app/edit-profile" },
+    { icon: Download, label: t("install_app"), path: "/app/install" },
+    { icon: Settings, label: t("settings"), path: "/app/settings" },
   ];
 
   const handleSignOut = async () => {
     await signOut();
-    toast.success("Signed out");
+    toast.success(t("sign_out"));
     navigate("/");
   };
 
   return (
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
-        <h2 className="text-lg font-bold text-foreground">Profile</h2>
+        <h2 className="text-lg font-bold text-foreground">{t("profile")}</h2>
       </div>
 
       <div className="px-4 pt-6">
@@ -91,8 +92,8 @@ const ProfileScreen = () => {
             )}
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-foreground">{user ? (profile?.name || "User") : "Guest User"}</h3>
-            <p className="text-xs text-muted-foreground">{user ? user.email : "Sign in to access all features"}</p>
+            <h3 className="font-bold text-foreground">{user ? (profile?.name || t("user")) : t("guest_user")}</h3>
+            <p className="text-xs text-muted-foreground">{user ? user.email : t("sign_in_access")}</p>
             {profile?.phone && <p className="text-xs text-muted-foreground">{profile.phone}</p>}
             <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full capitalize">
               <Shield className="h-3 w-3" /> {profile?.role || "client"}
@@ -104,22 +105,22 @@ const ProfileScreen = () => {
       <div className="px-4 mt-4 space-y-2">
         {!user ? (
           <Button onClick={() => navigate("/auth")} className="w-full gradient-blue text-primary-foreground border-0 font-semibold">
-            Sign In / Register
+            {t("sign_in_register")}
           </Button>
         ) : (
           <>
             {isAdmin && (
               <Button onClick={() => navigate("/app/admin")} variant="outline" className="w-full gap-2">
-                <Shield className="h-4 w-4 text-primary" /> Admin Dashboard
+                <Shield className="h-4 w-4 text-primary" /> {t("admin_dashboard")}
               </Button>
             )}
             {hasListings && (
               <>
                 <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
-                  <Home className="h-4 w-4 text-primary" /> Owner Dashboard
+                  <Home className="h-4 w-4 text-primary" /> {t("owner_dashboard")}
                 </Button>
                 <Button onClick={() => navigate("/app/owner-analytics")} variant="outline" className="w-full gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" /> Owner Analytics
+                  <TrendingUp className="h-4 w-4 text-primary" /> {t("owner_analytics")}
                 </Button>
               </>
             )}
@@ -131,7 +132,7 @@ const ProfileScreen = () => {
         <div className="bg-card rounded-2xl shadow-card overflow-hidden divide-y divide-border">
           {menuItems.map((item) => (
             <button
-              key={item.label}
+              key={item.path}
               onClick={() => navigate(item.path)}
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors"
             >
@@ -156,7 +157,7 @@ const ProfileScreen = () => {
             className="w-full flex items-center gap-3 bg-card rounded-2xl shadow-card px-4 py-3.5 hover:bg-destructive/5 transition-colors"
           >
             <LogOut className="h-5 w-5 text-destructive" />
-            <span className="text-sm font-medium text-destructive">Log Out</span>
+            <span className="text-sm font-medium text-destructive">{t("log_out")}</span>
           </button>
         </div>
       )}

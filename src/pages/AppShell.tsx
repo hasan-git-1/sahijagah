@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import PropertyAssistant from "@/components/PropertyAssistant";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/contexts/I18nContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import HomeScreen from "./app/HomeScreen";
@@ -29,19 +30,19 @@ import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 import ToolsScreen from "./app/ToolsScreen";
 import FeedbackScreen from "./app/FeedbackScreen";
 import LandlordDashboard from "./app/LandlordDashboard";
-
-const navItems = [
-  { path: "/app", icon: Home, label: "Home" },
-  { path: "/app/search", icon: Search, label: "Search" },
-  { path: "/app/post", icon: PlusCircle, label: "Post" },
-  { path: "/app/chat", icon: MessageCircle, label: "Chat" },
-  { path: "/app/profile", icon: User, label: "Profile" },
-];
-
 const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
+
+  const navItems = [
+    { path: "/app", icon: Home, label: t("home") },
+    { path: "/app/search", icon: Search, label: t("search") },
+    { path: "/app/post", icon: PlusCircle, label: t("post") },
+    { path: "/app/chat", icon: MessageCircle, label: t("chat") },
+    { path: "/app/profile", icon: User, label: t("profile") },
+  ];
 
   const { data: unreadCount } = useQuery({
     queryKey: ["unread-count", user?.id],

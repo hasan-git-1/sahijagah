@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { Video, Play, X, Upload } from "lucide-react";
+import { Video, Play, X, Upload, Scissors } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import VideoEditor from "@/components/VideoEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -12,6 +13,7 @@ interface PropertyVideoProps {
 
 const PropertyVideo = ({ propertyId, videoUrl, isOwner }: PropertyVideoProps) => {
   const [playing, setPlaying] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [url, setUrl] = useState(videoUrl || "");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -63,7 +65,7 @@ const PropertyVideo = ({ propertyId, videoUrl, isOwner }: PropertyVideoProps) =>
       </div>
 
       {url ? (
-        <div className="relative rounded-xl overflow-hidden bg-secondary">
+        <><div className="relative rounded-xl overflow-hidden bg-secondary">
           <video
             ref={videoRef}
             src={url}
@@ -85,7 +87,19 @@ const PropertyVideo = ({ propertyId, videoUrl, isOwner }: PropertyVideoProps) =>
             </button>
           )}
         </div>
-      ) : isOwner ? (
+        {isOwner && (
+          <div className="mt-2">
+            <Button onClick={() => setShowEditor(!showEditor)} variant="outline" size="sm" className="w-full gap-2 text-xs">
+              <Scissors className="h-3 w-3" /> {showEditor ? "Hide Editor" : "Edit Video (Trim & Filters)"}
+            </Button>
+          </div>
+        )}
+        {showEditor && url && (
+          <div className="mt-3">
+            <VideoEditor videoUrl={url} />
+          </div>
+        )}
+      </>) : isOwner ? (
         <div
           onClick={() => fileRef.current?.click()}
           className="border-2 border-dashed border-input rounded-xl py-8 text-center cursor-pointer hover:bg-secondary/30 transition-colors"
