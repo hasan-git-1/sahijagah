@@ -111,6 +111,8 @@ const AdminDashboard = () => {
     { key: "stats", icon: BarChart3, label: "Stats" },
   ];
 
+  const handleManageUsers = () => navigate("/app/admin/users");
+
   return (
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
@@ -250,6 +252,9 @@ const AdminDashboard = () => {
         {/* Users */}
         {tab === "users" && (
           <div className="space-y-2">
+            <Button onClick={handleManageUsers} className="w-full gradient-blue text-primary-foreground border-0 gap-2 mb-3">
+              <Users className="h-4 w-4" /> Advanced User Management
+            </Button>
             {profiles?.map((p) => (
               <div key={p.id} className="bg-card rounded-xl p-3 shadow-card flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">

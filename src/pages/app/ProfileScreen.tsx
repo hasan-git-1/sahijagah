@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -64,6 +64,7 @@ const ProfileScreen = () => {
     { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
     { icon: Search, label: "Saved Searches", path: "/app/saved-searches" },
     { icon: Lock, label: "Document Vault", path: "/app/documents" },
+    { icon: ShieldCheck, label: "Verify Identity", path: "/app/verify" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },

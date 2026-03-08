@@ -1,4 +1,4 @@
-import { ArrowLeft, Heart, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye, Globe } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,6 +21,9 @@ import ReportPropertyModal from "@/components/ReportPropertyModal";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ConstructionTimeline from "@/components/ConstructionTimeline";
 import VirtualTourViewer from "@/components/VirtualTourViewer";
+import TranslatedDescription from "@/components/TranslatedDescription";
+import ClickToCall from "@/components/ClickToCall";
+import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -186,8 +189,7 @@ const PropertyDetail = () => {
         </div>
 
         <div className="mt-4">
-          <h3 className="font-bold text-foreground mb-2">Description</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">{property.description}</p>
+          <TranslatedDescription description={property.description || ""} />
         </div>
 
         {property.amenities?.length > 0 && (
@@ -239,6 +241,11 @@ const PropertyDetail = () => {
           </div>
         )}
 
+        {/* Availability Calendar */}
+        <div className="mt-4">
+          <AvailabilityCalendar readOnly />
+        </div>
+
         {/* Construction Timeline for sale/under-construction */}
         {(property.type === "sale" || property.category === "under-construction") && (
           <div className="mt-4">
@@ -265,9 +272,7 @@ const PropertyDetail = () => {
 
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-3 z-50">
-        <Button variant="outline" className="flex-1 gap-2">
-          <Phone className="h-4 w-4" /> Call
-        </Button>
+        <ClickToCall propertyId={property.id} propertyTitle={property.title} />
         <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
           <MessageSquare className="h-4 w-4" /> Message
         </Button>
