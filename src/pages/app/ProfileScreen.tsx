@@ -1,16 +1,46 @@
-import { User, Heart, Calendar, FileText, Settings, LogOut, ChevronRight, Shield } from "lucide-react";
+import { User, Heart, Calendar, FileText, Settings, LogOut, ChevronRight, Shield, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-
-const menuItems = [
-  { icon: Heart, label: "Wishlist", path: "/app/wishlist" },
-  { icon: Calendar, label: "My Bookings", path: "/app/bookings" },
-  { icon: FileText, label: "My Documents", path: "/app/documents" },
-  { icon: Settings, label: "Settings", path: "/app/settings" },
-];
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", user!.id).single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ["isAdmin", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "admin" });
+      return !!data;
+    },
+    enabled: !!user,
+  });
+
+  const menuItems = [
+    { icon: Heart, label: "Wishlist", path: "/app/wishlist" },
+    { icon: Calendar, label: "My Bookings", path: "/app/bookings" },
+    { icon: Download, label: "Install App", path: "/app/install" },
+    { icon: Settings, label: "Settings", path: "/app/settings" },
+  ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out");
+    navigate("/");
+  };
 
   return (
     <div className="bg-background min-h-screen">
@@ -22,23 +52,31 @@ const ProfileScreen = () => {
       <div className="px-4 pt-6">
         <div className="bg-card rounded-2xl p-5 shadow-card flex items-center gap-4">
           <div className="h-16 w-16 rounded-full gradient-blue flex items-center justify-center">
-            <User className="h-8 w-8 text-primary-foreground" />
+            <span className="text-primary-foreground font-bold text-xl">
+              {user ? (profile?.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || "U") : "G"}
+            </span>
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-foreground">Guest User</h3>
-            <p className="text-xs text-muted-foreground">Sign in to access all features</p>
-            <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-              <Shield className="h-3 w-3" /> Client
+            <h3 className="font-bold text-foreground">{user ? (profile?.name || "User") : "Guest User"}</h3>
+            <p className="text-xs text-muted-foreground">{user ? user.email : "Sign in to access all features"}</p>
+            <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full capitalize">
+              <Shield className="h-3 w-3" /> {profile?.role || "client"}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Sign In CTA */}
-      <div className="px-4 mt-4">
-        <Button className="w-full gradient-blue text-primary-foreground border-0 font-semibold">
-          Sign In / Register
-        </Button>
+      {/* Sign In CTA or Admin */}
+      <div className="px-4 mt-4 space-y-2">
+        {!user ? (
+          <Button onClick={() => navigate("/auth")} className="w-full gradient-blue text-primary-foreground border-0 font-semibold">
+            Sign In / Register
+          </Button>
+        ) : isAdmin ? (
+          <Button onClick={() => navigate("/app/admin")} variant="outline" className="w-full gap-2">
+            <Shield className="h-4 w-4 text-primary" /> Admin Dashboard
+          </Button>
+        ) : null}
       </div>
 
       {/* Menu */}
@@ -47,6 +85,7 @@ const ProfileScreen = () => {
           {menuItems.map((item) => (
             <button
               key={item.label}
+              onClick={() => navigate(item.path)}
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors"
             >
               <item.icon className="h-5 w-5 text-primary" />
@@ -58,12 +97,17 @@ const ProfileScreen = () => {
       </div>
 
       {/* Logout */}
-      <div className="px-4 mt-4">
-        <button className="w-full flex items-center gap-3 bg-card rounded-2xl shadow-card px-4 py-3.5 hover:bg-destructive/5 transition-colors">
-          <LogOut className="h-5 w-5 text-destructive" />
-          <span className="text-sm font-medium text-destructive">Log Out</span>
-        </button>
-      </div>
+      {user && (
+        <div className="px-4 mt-4">
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 bg-card rounded-2xl shadow-card px-4 py-3.5 hover:bg-destructive/5 transition-colors"
+          >
+            <LogOut className="h-5 w-5 text-destructive" />
+            <span className="text-sm font-medium text-destructive">Log Out</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
