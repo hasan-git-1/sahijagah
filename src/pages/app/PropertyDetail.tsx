@@ -225,9 +225,6 @@ const PropertyDetail = () => {
 
         <div className="mt-4"><NeighborhoodReviews city={property.city} locality={property.address} /></div>
 
-        {/* Legal Checklist */}
-        <div className="mt-4"><LegalChecklist type={property.type} /></div>
-
         {/* Rent-specific */}
         {property.type === "rent" && (
           <div className="mt-4 space-y-4">
