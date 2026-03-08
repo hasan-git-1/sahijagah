@@ -75,6 +75,17 @@ const SearchScreen = () => {
 
   const activeFilterCount = [filters.minPrice, filters.maxPrice, filters.bedrooms, filters.bathrooms].filter(Boolean).length + filters.amenities.length;
 
+  const handleSaveSearch = async () => {
+    if (!user) { toast.error("Sign in to save searches"); navigate("/auth"); return; }
+    const name = query || `${activeFilter} in all cities`;
+    const filterData = { query, type: activeFilter, ...filters };
+    const { error } = await supabase.from("saved_searches").insert({
+      user_id: user.id, name, filters: filterData,
+    });
+    if (error) { toast.error("Failed to save search"); return; }
+    toast.success("Search saved! You'll be notified of new matches.");
+  };
+
   const handleWishlist = (e: React.MouseEvent, propId: string) => {
     e.stopPropagation();
     if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
