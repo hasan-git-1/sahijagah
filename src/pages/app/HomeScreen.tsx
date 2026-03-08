@@ -1,5 +1,7 @@
 import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useFeaturedProperties, Property } from "@/hooks/useProperties";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
 import cityHyd from "@/assets/city-hyderabad.jpg";
@@ -7,9 +9,6 @@ import cityBlr from "@/assets/city-bengaluru.jpg";
 import cityPune from "@/assets/city-pune.jpg";
 import cityMum from "@/assets/city-mumbai.jpg";
 import cityChn from "@/assets/city-chennai.jpg";
-import prop1 from "@/assets/property-1.jpg";
-import prop2 from "@/assets/property-2.jpg";
-import prop3 from "@/assets/property-3.jpg";
 
 const categories = [
   { label: "Rent", emoji: "🏠" },
@@ -19,11 +18,11 @@ const categories = [
 ];
 
 const cities = [
-  { name: "Hyderabad", count: "1,190", img: cityHyd },
-  { name: "Bengaluru", count: "1,160", img: cityBlr },
-  { name: "Pune", count: "890", img: cityPune },
-  { name: "Mumbai", count: "2,100", img: cityMum },
-  { name: "Chennai", count: "760", img: cityChn },
+  { name: "Hyderabad", count: "3", img: cityHyd },
+  { name: "Bengaluru", count: "3", img: cityBlr },
+  { name: "Pune", count: "2", img: cityPune },
+  { name: "Mumbai", count: "1", img: cityMum },
+  { name: "Chennai", count: "1", img: cityChn },
 ];
 
 const popularAreas = [
@@ -34,26 +33,18 @@ const popularAreas = [
   { name: "OMR", img: cityChn },
 ];
 
-const featuredProperties = [
-  {
-    id: "1", title: "Modern 2BHK in Gachibowli", price: "₹18,000/mo",
-    location: "Gachibowli, Hyderabad", beds: 2, baths: 2, area: "1,100 sqft",
-    img: prop1, type: "Rent",
-  },
-  {
-    id: "2", title: "Luxury Villa with Garden", price: "₹1.2 Cr",
-    location: "Whitefield, Bengaluru", beds: 4, baths: 3, area: "2,800 sqft",
-    img: prop2, type: "Buy",
-  },
-  {
-    id: "3", title: "Co-working Office Space", price: "₹25,000/mo",
-    location: "Hinjewadi, Pune", beds: 0, baths: 1, area: "800 sqft",
-    img: prop3, type: "Commercial",
-  },
-];
+const formatPrice = (p: number, type: string) => {
+  if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
+  if (p >= 100000) return `₹${(p / 100000).toFixed(1)} L`;
+  return `₹${p.toLocaleString("en-IN")}${type === "rent" || type === "pg" ? "/mo" : ""}`;
+};
+
+const typeLabel: Record<string, string> = { rent: "Rent", sale: "Buy", pg: "PG", commercial: "Commercial" };
 
 const HomeScreen = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: featuredProperties, isLoading } = useFeaturedProperties();
 
   return (
     <div className="bg-background">
@@ -68,7 +59,7 @@ const HomeScreen = () => {
             <span className="text-sm text-muted-foreground">Search city or locality</span>
           </button>
           <button
-            onClick={() => navigate("/app/profile")}
+            onClick={() => user ? navigate("/app/profile") : navigate("/auth")}
             className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center"
           >
             <User className="h-5 w-5 text-primary" />
@@ -85,10 +76,7 @@ const HomeScreen = () => {
             Easy Home Rentals<br />& Sales!
           </h2>
           <p className="text-[10px] text-primary-foreground/80 mt-1">
-            Verified Listings | No Brokerages | 0 Brokerage
-          </p>
-          <p className="text-[10px] text-primary-foreground/60 mt-0.5">
-            <span className="font-semibold text-primary-foreground">2 4,007</span> properties listed
+            Verified Listings | No Brokerage | Direct Contact
           </p>
         </div>
       </div>
@@ -149,46 +137,58 @@ const HomeScreen = () => {
         </div>
       </div>
 
-      {/* Featured Properties */}
+      {/* Featured Properties from DB */}
       <div className="px-4 mb-6">
         <h3 className="font-bold text-foreground mb-3">Featured Properties</h3>
-        <div className="space-y-3">
-          {featuredProperties.map((prop) => (
-            <button
-              key={prop.id}
-              onClick={() => navigate(`/app/property/${prop.id}`)}
-              className="w-full bg-card rounded-xl overflow-hidden shadow-card text-left"
-            >
-              <div className="relative">
-                <img src={prop.img} alt={prop.title} className="w-full h-40 object-cover" />
-                <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                  {prop.type}
-                </span>
-                <button
-                  className="absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Heart className="h-4 w-4 text-muted-foreground" />
-                </button>
-              </div>
-              <div className="p-3">
-                <p className="font-bold text-primary text-lg">{prop.price}</p>
-                <p className="font-semibold text-sm text-foreground mt-0.5">{prop.title}</p>
-                <div className="flex items-center gap-1 mt-1 text-muted-foreground">
-                  <MapPin className="h-3 w-3" />
-                  <span className="text-xs">{prop.location}</span>
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {featuredProperties?.map((prop) => (
+              <button
+                key={prop.id}
+                onClick={() => navigate(`/app/property/${prop.id}`)}
+                className="w-full bg-card rounded-xl overflow-hidden shadow-card text-left"
+              >
+                <div className="relative">
+                  <img
+                    src={prop.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"}
+                    alt={prop.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-1 rounded-full">
+                    {typeLabel[prop.type] || prop.type}
+                  </span>
+                  <button
+                    className="absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Heart className="h-4 w-4 text-muted-foreground" />
+                  </button>
                 </div>
-                <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                  {prop.beds > 0 && (
-                    <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {prop.beds} Beds</span>
-                  )}
-                  <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {prop.baths} Bath</span>
-                  <span>{prop.area}</span>
+                <div className="p-3">
+                  <p className="font-bold text-primary text-lg">{formatPrice(prop.price, prop.type)}</p>
+                  <p className="font-semibold text-sm text-foreground mt-0.5">{prop.title}</p>
+                  <div className="flex items-center gap-1 mt-1 text-muted-foreground">
+                    <MapPin className="h-3 w-3" />
+                    <span className="text-xs">{prop.address || prop.city}</span>
+                  </div>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                    {prop.bedrooms > 0 && (
+                      <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {prop.bedrooms} Beds</span>
+                    )}
+                    {prop.bathrooms > 0 && (
+                      <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {prop.bathrooms} Bath</span>
+                    )}
+                    {prop.area && <span>{prop.area}</span>}
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
-        </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
