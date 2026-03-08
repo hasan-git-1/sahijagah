@@ -227,15 +227,39 @@ const PropertyDetail = () => {
           </div>
         )}
 
+        {/* Market Insights */}
+        <div className="mt-4">
+          <MarketInsights city={property.city} price={property.price} type={property.type} />
+        </div>
 
-        {/* Rent Agreement for rental properties */}
-        {property.type === "rent" && (
+        {/* Floor Plan */}
+        {property.images && property.images.length > 1 && (
           <div className="mt-4">
+            <FloorPlanViewer images={property.images} title={property.title} />
+          </div>
+        )}
+
+        {/* Neighborhood Reviews */}
+        <div className="mt-4">
+          <NeighborhoodReviews city={property.city} locality={property.address} />
+        </div>
+
+        {/* Rent Agreement & Renewal for rental properties */}
+        {property.type === "rent" && (
+          <div className="mt-4 space-y-4">
             <RentAgreementGenerator
               propertyTitle={property.title}
               propertyAddress={property.address || property.city}
               rent={property.price}
             />
+            <AutoRenewalReminder propertyTitle={property.title} />
+          </div>
+        )}
+
+        {/* Move-in Checklist for rent/pg */}
+        {(property.type === "rent" || property.type === "pg") && (
+          <div className="mt-4">
+            <MoveInChecklist />
           </div>
         )}
 
