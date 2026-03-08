@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Send, X, Bot, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { Send, X, Bot, Trash2 } from "lucide-react";
+import { useI18n } from "@/contexts/I18nContext";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/property-chat`;
 
 const quickPrompts = [
   "2BHK flats in Hyderabad under ₹20L",
@@ -24,7 +25,7 @@ const PropertyAssistant = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const { t } = useI18n();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,56 +37,108 @@ const PropertyAssistant = () => {
     setInput("");
 
     const userMsg: Message = { role: "user", content: msg };
-    setMessages((prev) => [...prev, userMsg]);
+    const allMessages = [...messages, userMsg];
+    setMessages(allMessages);
     setLoading(true);
 
+    let assistantSoFar = "";
+
+    const upsertAssistant = (chunk: string) => {
+      assistantSoFar += chunk;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && prev.length > allMessages.length) {
+          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
+        }
+        return [...prev.slice(0, allMessages.length), { role: "assistant", content: assistantSoFar }];
+      });
+    };
+
     try {
-      // Search properties based on user query
-      const keywords = msg.toLowerCase().split(/\s+/);
-      const cityKeywords = ["hyderabad", "bengaluru", "bangalore", "pune", "mumbai", "chennai"];
-      const typeKeywords: Record<string, string> = { rent: "rent", buy: "sale", sale: "sale", pg: "pg", commercial: "commercial" };
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
+        }),
+      });
 
-      let query = supabase.from("properties").select("*").eq("status", "active").limit(5);
-
-      const foundCity = cityKeywords.find((c) => keywords.some((k) => k.includes(c)));
-      if (foundCity) {
-        const cityName = foundCity.charAt(0).toUpperCase() + foundCity.slice(1);
-        query = query.ilike("city", `%${cityName}%`);
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({}));
+        throw new Error(errData.error || `Error ${resp.status}`);
       }
 
-      const foundType = Object.keys(typeKeywords).find((t) => keywords.includes(t));
-      if (foundType) {
-        query = query.eq("type", typeKeywords[foundType]);
+      if (!resp.body) throw new Error("No response body");
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
       }
 
-      // Check for bedroom count
-      const bhkMatch = msg.match(/(\d)\s*bhk/i);
-      if (bhkMatch) {
-        query = query.eq("bedrooms", parseInt(bhkMatch[1]));
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch { /* ignore */ }
+        }
       }
-
-      const { data: properties } = await query;
-
-      let response = "";
-      if (properties && properties.length > 0) {
-        response = `I found ${properties.length} properties matching your search:\n\n`;
-        properties.forEach((p, i) => {
-          const price = p.price >= 10000000 ? `₹${(p.price / 10000000).toFixed(1)} Cr` :
-            p.price >= 100000 ? `₹${(p.price / 100000).toFixed(1)} L` :
-            `₹${p.price.toLocaleString("en-IN")}`;
-          response += `${i + 1}. **${p.title}** - ${price}\n📍 ${p.city}${p.bedrooms ? ` · ${p.bedrooms} BHK` : ""}\n\n`;
-        });
-        response += "Would you like to see any of these properties in detail? Or refine your search?";
-      } else {
-        response = "I couldn't find exact matches for that query. Try specifying:\n\n• **City**: Hyderabad, Bengaluru, Pune, Mumbai, Chennai\n• **Type**: Rent, Buy, PG, Commercial\n• **Size**: 1BHK, 2BHK, 3BHK\n\nFor example: \"2BHK for rent in Hyderabad\"";
-      }
-
-      setMessages((prev) => [...prev, { role: "assistant", content: response }]);
-    } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Please try again!" }]);
+    } catch (e: any) {
+      setMessages((prev) => [
+        ...prev.slice(0, allMessages.length),
+        { role: "assistant", content: `Sorry, something went wrong: ${e.message || "Please try again!"}` },
+      ]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClear = () => {
+    setMessages([
+      { role: "assistant", content: "Hi! 👋 I'm your Sahi Jagah assistant. Tell me what kind of property you're looking for and I'll help you find it!" },
+    ]);
   };
 
   if (!open) {
@@ -110,6 +163,9 @@ const PropertyAssistant = () => {
           <p className="text-sm font-bold text-foreground">Sahi Jagah Assistant</p>
           <p className="text-[10px] text-muted-foreground">AI-powered property search</p>
         </div>
+        <button onClick={handleClear} className="mr-2" title="Clear chat">
+          <Trash2 className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+        </button>
         <button onClick={() => setOpen(false)}>
           <X className="h-5 w-5 text-muted-foreground" />
         </button>
@@ -124,19 +180,17 @@ const PropertyAssistant = () => {
                 ? "gradient-blue text-primary-foreground rounded-br-md"
                 : "bg-card shadow-card text-foreground rounded-bl-md"
             }`}>
-              {msg.content.split("\n").map((line, j) => (
-                <p key={j} className={j > 0 ? "mt-1" : ""}>
-                  {line.replace(/\*\*(.*?)\*\*/g, "").includes("**")
-                    ? line
-                    : line.split("**").map((part, k) =>
-                        k % 2 === 1 ? <strong key={k}>{part}</strong> : part
-                      )}
-                </p>
-              ))}
+              {msg.role === "assistant" ? (
+                <div className="prose prose-sm dark:prose-invert max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0.5 [&_h1]:text-base [&_h2]:text-sm [&_h3]:text-sm [&_strong]:text-foreground">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+              ) : (
+                <p>{msg.content}</p>
+              )}
             </div>
           </div>
         ))}
-        {loading && (
+        {loading && !messages[messages.length - 1]?.content && (
           <div className="flex justify-start">
             <div className="bg-card shadow-card rounded-2xl rounded-bl-md px-4 py-3">
               <div className="flex gap-1">
@@ -174,6 +228,7 @@ const PropertyAssistant = () => {
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Ask about properties..."
             className="flex-1 bg-secondary rounded-full px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
+            disabled={loading}
           />
           <button
             onClick={() => handleSend()}
