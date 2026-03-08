@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "next-themes";
 import { I18nProvider } from "@/contexts/I18nContext";
@@ -10,6 +10,12 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import NotFound from "./pages/NotFound";
+
+// Deep link redirect for /property/:id → /app/property/:id
+const PropertyRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/app/property/${id}`} replace />;
+};
 
 const queryClient = new QueryClient();
 
