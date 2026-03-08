@@ -1,0 +1,66 @@
+import { Home, Search, PlusCircle, MessageCircle, User } from "lucide-react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import HomeScreen from "./app/HomeScreen";
+import SearchScreen from "./app/SearchScreen";
+import PostScreen from "./app/PostScreen";
+import ChatScreen from "./app/ChatScreen";
+import ProfileScreen from "./app/ProfileScreen";
+import PropertyDetail from "./app/PropertyDetail";
+
+const navItems = [
+  { path: "/app", icon: Home, label: "Home" },
+  { path: "/app/search", icon: Search, label: "Search" },
+  { path: "/app/post", icon: PlusCircle, label: "Post" },
+  { path: "/app/chat", icon: MessageCircle, label: "Chat" },
+  { path: "/app/profile", icon: User, label: "Profile" },
+];
+
+const AppShell = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isDetail = location.pathname.includes("/app/property/");
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
+      <div className="flex-1 pb-20 overflow-y-auto">
+        <Routes>
+          <Route index element={<HomeScreen />} />
+          <Route path="search" element={<SearchScreen />} />
+          <Route path="post" element={<PostScreen />} />
+          <Route path="chat" element={<ChatScreen />} />
+          <Route path="profile" element={<ProfileScreen />} />
+          <Route path="property/:id" element={<PropertyDetail />} />
+        </Routes>
+      </div>
+
+      {!isDetail && (
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card shadow-nav border-t border-border z-50">
+          <div className="flex items-center justify-around py-2">
+            {navItems.map((item) => {
+              const isActive = item.path === "/app"
+                ? location.pathname === "/app"
+                : location.pathname.startsWith(item.path);
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors ${
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className={`h-5 w-5 ${item.label === "Post" ? "h-6 w-6" : ""}`} />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+    </div>
+  );
+};
+
+export default AppShell;
