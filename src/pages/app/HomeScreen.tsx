@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import PropertyTags from "@/components/PropertyTags";
+import GeolocationDetect from "@/components/GeolocationDetect";
+import AIRecommendations from "@/components/AIRecommendations";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFeaturedProperties, Property } from "@/hooks/useProperties";
