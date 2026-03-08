@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark, Map } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/contexts/I18nContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
 import { useFilteredProperties, Property } from "@/hooks/useProperties";
 import { toast } from "sonner";
