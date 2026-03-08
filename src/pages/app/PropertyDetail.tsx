@@ -221,12 +221,6 @@ const PropertyDetail = () => {
           </div>
         )}
 
-        {/* EMI Calculator for sale properties */}
-        {(property.type === "sale" || property.type === "commercial") && (
-          <div className="mt-4">
-            <EMICalculator propertyPrice={property.price} />
-          </div>
-        )}
 
         {/* Rent Agreement for rental properties */}
         {property.type === "rent" && (
