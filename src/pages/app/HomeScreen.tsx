@@ -56,6 +56,7 @@ const HomeScreen = () => {
     toggleWishlist.mutate(propId);
   };
 
+  return (
     <div className="bg-background">
       {/* Top Bar */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 pt-3 pb-2 shadow-card">
