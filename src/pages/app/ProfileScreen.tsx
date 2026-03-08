@@ -118,9 +118,14 @@ const ProfileScreen = () => {
               </Button>
             )}
             {hasListings && (
-              <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
-                <Home className="h-4 w-4 text-primary" /> Owner Dashboard
-              </Button>
+              <>
+                <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
+                  <Home className="h-4 w-4 text-primary" /> Owner Dashboard
+                </Button>
+                <Button onClick={() => navigate("/app/owner-analytics")} variant="outline" className="w-full gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" /> Owner Analytics
+                </Button>
+              </>
             )}
             {isAgent && (
               <Button onClick={() => navigate("/app/agent")} variant="outline" className="w-full gap-2">

@@ -341,6 +341,9 @@ const OwnerDashboard = () => {
           userId={user.id}
         />
       )}
+
+      {/* AI Chatbot for owners */}
+      <OwnerChatbot />
     </div>
   );
 };
