@@ -30,11 +30,19 @@ import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 import ToolsScreen from "./app/ToolsScreen";
 import FeedbackScreen from "./app/FeedbackScreen";
 import LandlordDashboard from "./app/LandlordDashboard";
-
 const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
+
+  const navItems = [
+    { path: "/app", icon: Home, label: t("home") },
+    { path: "/app/search", icon: Search, label: t("search") },
+    { path: "/app/post", icon: PlusCircle, label: t("post") },
+    { path: "/app/chat", icon: MessageCircle, label: t("chat") },
+    { path: "/app/profile", icon: User, label: t("profile") },
+  ];
 
   const { data: unreadCount } = useQuery({
     queryKey: ["unread-count", user?.id],
