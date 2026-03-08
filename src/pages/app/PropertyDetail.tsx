@@ -11,6 +11,8 @@ import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
 import EMICalculator from "@/components/EMICalculator";
 import PropertyReviews from "@/components/PropertyReviews";
+import NeighborhoodInsights from "@/components/NeighborhoodInsights";
+import RentAgreementGenerator from "@/components/RentAgreementGenerator";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -199,10 +201,28 @@ const PropertyDetail = () => {
           </div>
         )}
 
+        {/* Neighborhood Insights */}
+        {property.lat && property.lng && (
+          <div className="mt-4">
+            <NeighborhoodInsights lat={property.lat} lng={property.lng} city={property.city} />
+          </div>
+        )}
+
         {/* EMI Calculator for sale properties */}
         {(property.type === "sale" || property.type === "commercial") && (
           <div className="mt-4">
             <EMICalculator propertyPrice={property.price} />
+          </div>
+        )}
+
+        {/* Rent Agreement for rental properties */}
+        {property.type === "rent" && (
+          <div className="mt-4">
+            <RentAgreementGenerator
+              propertyTitle={property.title}
+              propertyAddress={property.address || property.city}
+              rent={property.price}
+            />
           </div>
         )}
 
