@@ -90,6 +90,9 @@ const SettingsScreen = () => {
           )}
         </div>
 
+        {/* Push Notifications */}
+        <PushNotificationSetup />
+
         {/* Menu Items */}
         <div className="bg-card rounded-2xl shadow-card overflow-hidden divide-y divide-border">
           {menuItems.map((item) => (
