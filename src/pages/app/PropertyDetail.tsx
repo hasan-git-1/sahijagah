@@ -13,6 +13,7 @@ import EMICalculator from "@/components/EMICalculator";
 import PropertyReviews from "@/components/PropertyReviews";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import RentAgreementGenerator from "@/components/RentAgreementGenerator";
+import SEOHead from "@/components/SEOHead";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
