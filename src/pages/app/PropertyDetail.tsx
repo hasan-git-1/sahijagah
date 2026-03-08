@@ -1,4 +1,4 @@
-import { ArrowLeft, Heart, Share2, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -14,6 +14,11 @@ import PropertyReviews from "@/components/PropertyReviews";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import RentAgreementGenerator from "@/components/RentAgreementGenerator";
 import SEOHead from "@/components/SEOHead";
+import PropertyShareMenu from "@/components/PropertyShareMenu";
+import ImageGallery from "@/components/ImageGallery";
+import SimilarProperties from "@/components/SimilarProperties";
+import ReportPropertyModal from "@/components/ReportPropertyModal";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
