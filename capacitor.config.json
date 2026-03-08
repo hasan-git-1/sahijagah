@@ -11,6 +11,12 @@
       "launchShowDuration": 2000,
       "backgroundColor": "#1d6ce0",
       "showSpinner": false
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "Camera": {
+      "permissions": ["camera", "photos"]
     }
   }
 }

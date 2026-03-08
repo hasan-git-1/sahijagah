@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Send, ArrowLeft, User } from "lucide-react";
+import { MessageSquare, Send, ArrowLeft, User, ImageIcon } from "lucide-react";
+import ImageUploader from "@/components/ImageUploader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,8 @@ const ChatScreen = () => {
   const queryClient = useQueryClient();
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
   const [messageText, setMessageText] = useState("");
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [chatImages, setChatImages] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Fetch conversations
@@ -119,8 +122,13 @@ const ChatScreen = () => {
   });
 
   const handleSend = () => {
-    if (!messageText.trim()) return;
-    sendMutation.mutate(messageText.trim());
+    const text = messageText.trim();
+    const imgText = chatImages.length ? chatImages.map(url => `[image](${url})`).join(" ") : "";
+    const fullText = [text, imgText].filter(Boolean).join(" ");
+    if (!fullText) return;
+    sendMutation.mutate(fullText);
+    setChatImages([]);
+    setShowImagePicker(false);
   };
 
   if (!user) {
@@ -160,6 +168,11 @@ const ChatScreen = () => {
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 pb-24">
           {messages?.map((msg) => {
             const isMine = msg.sender_id === user.id;
+            // Check if message contains image links
+            const imageMatch = msg.text.match(/\[image\]\((https?:\/\/[^\)]+)\)/g);
+            const textOnly = msg.text.replace(/\[image\]\(https?:\/\/[^\)]+\)/g, "").trim();
+            const imageUrls = imageMatch?.map(m => m.match(/\((https?:\/\/[^\)]+)\)/)?.[1]).filter(Boolean) as string[] || [];
+
             return (
               <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm ${
@@ -167,7 +180,14 @@ const ChatScreen = () => {
                     ? "bg-primary text-primary-foreground rounded-br-md"
                     : "bg-secondary text-foreground rounded-bl-md"
                 }`}>
-                  {msg.text}
+                  {imageUrls.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-1">
+                      {imageUrls.map((url, i) => (
+                        <img key={i} src={url} alt="" className="h-32 w-32 rounded-lg object-cover" />
+                      ))}
+                    </div>
+                  )}
+                  {textOnly && <span>{textOnly}</span>}
                   <p className={`text-[9px] mt-1 ${isMine ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
                     {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </p>
@@ -180,7 +200,25 @@ const ChatScreen = () => {
 
         {/* Message Input */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 z-50">
+          {showImagePicker && (
+            <div className="mb-3">
+              <ImageUploader userId={user.id} images={chatImages} onImagesChange={setChatImages} maxImages={3} />
+            </div>
+          )}
+          {chatImages.length > 0 && (
+            <div className="flex gap-1 mb-2">
+              {chatImages.map((url, i) => (
+                <img key={i} src={url} alt="" className="h-12 w-12 rounded-lg object-cover" />
+              ))}
+            </div>
+          )}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowImagePicker(!showImagePicker)}
+              className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center flex-shrink-0"
+            >
+              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+            </button>
             <input
               type="text"
               placeholder="Type a message..."
@@ -191,7 +229,7 @@ const ChatScreen = () => {
             />
             <button
               onClick={handleSend}
-              disabled={!messageText.trim()}
+              disabled={!messageText.trim() && !chatImages.length}
               className="h-10 w-10 rounded-full gradient-blue flex items-center justify-center disabled:opacity-50"
             >
               <Send className="h-4 w-4 text-primary-foreground" />

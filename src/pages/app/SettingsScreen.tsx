@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/contexts/I18nContext";
+import PushNotificationSetup from "@/components/PushNotificationSetup";
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
@@ -88,6 +89,9 @@ const SettingsScreen = () => {
             </div>
           )}
         </div>
+
+        {/* Push Notifications */}
+        <PushNotificationSetup />
 
         {/* Menu Items */}
         <div className="bg-card rounded-2xl shadow-card overflow-hidden divide-y divide-border">

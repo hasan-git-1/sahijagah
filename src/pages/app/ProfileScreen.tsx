@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -24,6 +24,15 @@ const ProfileScreen = () => {
     queryKey: ["isAdmin", user?.id],
     queryFn: async () => {
       const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "admin" });
+      return !!data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: isAgent } = useQuery({
+    queryKey: ["isAgent", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "agent" });
       return !!data;
     },
     enabled: !!user,
@@ -110,6 +119,11 @@ const ProfileScreen = () => {
             {hasListings && (
               <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
                 <Home className="h-4 w-4 text-primary" /> Owner Dashboard
+              </Button>
+            )}
+            {isAgent && (
+              <Button onClick={() => navigate("/app/agent")} variant="outline" className="w-full gap-2">
+                <Users className="h-4 w-4 text-primary" /> Agent Dashboard
               </Button>
             )}
           </>

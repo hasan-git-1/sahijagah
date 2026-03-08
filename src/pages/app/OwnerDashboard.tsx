@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X, TrendingUp } from "lucide-react";
 import PropertyEditModal from "@/components/PropertyEditModal";
+import BulkUploadModal from "@/components/BulkUploadModal";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,6 +32,7 @@ const OwnerDashboard = () => {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("listings");
   const [editProperty, setEditProperty] = useState<any>(null);
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
 
   // Owner's properties
   const { data: properties, isLoading } = useQuery({
@@ -221,9 +223,14 @@ const OwnerDashboard = () => {
         {/* Listings */}
         {tab === "listings" && (
           <div className="space-y-3">
-            <Button onClick={() => navigate("/app/post")} className="w-full gradient-blue text-primary-foreground border-0 gap-2">
-              <Plus className="h-4 w-4" /> Post New Property
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate("/app/post")} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
+                <Plus className="h-4 w-4" /> Post New
+              </Button>
+              <Button onClick={() => setShowBulkUpload(true)} variant="outline" className="gap-2">
+                <Plus className="h-4 w-4" /> CSV Upload
+              </Button>
+            </div>
 
             {isLoading ? (
               <div className="flex justify-center py-10">
@@ -322,6 +329,14 @@ const OwnerDashboard = () => {
           open={!!editProperty}
           onOpenChange={(open) => !open && setEditProperty(null)}
           property={editProperty}
+          userId={user.id}
+        />
+      )}
+
+      {showBulkUpload && user && (
+        <BulkUploadModal
+          open={showBulkUpload}
+          onOpenChange={setShowBulkUpload}
           userId={user.id}
         />
       )}
