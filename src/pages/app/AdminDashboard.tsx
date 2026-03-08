@@ -111,6 +111,8 @@ const AdminDashboard = () => {
     { key: "stats", icon: BarChart3, label: "Stats" },
   ];
 
+  const handleManageUsers = () => navigate("/app/admin/users");
+
   return (
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
