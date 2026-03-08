@@ -151,16 +151,16 @@ const SearchScreen = () => {
       ) : results && results.length > 0 ? (
         <div className="px-4 py-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">{results.length} properties found</p>
+            <p className="text-sm text-muted-foreground">{results.length} {t("properties_found")}</p>
             <div className="flex items-center gap-3">
               <button onClick={() => setShowMap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
-                <Map className="h-3.5 w-3.5" /> Map
+                <Map className="h-3.5 w-3.5" /> {t("map")}
               </button>
               <button onClick={() => setShowHeatmap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
-                🔥 Heatmap
+                🔥 {t("heatmap")}
               </button>
               <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
-                <Bookmark className="h-3.5 w-3.5" /> Save
+                <Bookmark className="h-3.5 w-3.5" /> {t("save")}
               </button>
             </div>
           </div>
