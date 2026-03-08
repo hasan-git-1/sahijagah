@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import ImageUploader from "@/components/ImageUploader";
+import BulkUploadModal from "@/components/BulkUploadModal";
 
 const steps = ["Photos", "Basic Info", "Location", "Details", "Amenities", "Review"];
 const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Security", "Garden", "Elevator", "Power Backup"];
