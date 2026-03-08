@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp, ShieldCheck, Wrench, MapPin, Building2, Calculator, MessageSquarePlus, AlertTriangle, FileCheck, FileSignature, UserPlus } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, TrendingUp, ShieldCheck, Building2, Calculator, MessageSquarePlus, LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,14 +29,6 @@ const ProfileScreen = () => {
     enabled: !!user,
   });
 
-  const { data: isAgent } = useQuery({
-    queryKey: ["isAgent", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "agent" });
-      return !!data;
-    },
-    enabled: !!user,
-  });
 
   const { data: hasListings } = useQuery({
     queryKey: ["hasListings", user?.id],
@@ -63,16 +55,10 @@ const ProfileScreen = () => {
     { icon: Clock, label: "Recently Viewed", path: "/app/recently-viewed" },
     { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
     { icon: Search, label: "Saved Searches", path: "/app/saved-searches" },
-    { icon: Wrench, label: "Maintenance", path: "/app/maintenance" },
-    { icon: Lock, label: "Document Vault", path: "/app/documents" },
     { icon: ShieldCheck, label: "Verify Identity", path: "/app/verify" },
-    { icon: MapPin, label: "Find an Agent", path: "/app/find-agent" },
     { icon: Building2, label: "City Analytics", path: "/app/city-analytics" },
     { icon: Calculator, label: "Property Tools", path: "/app/tools" },
-    { icon: AlertTriangle, label: "Dispute Resolution", path: "/app/disputes" },
-    { icon: FileCheck, label: "Document Verification", path: "/app/doc-verify" },
-    { icon: FileSignature, label: "Lease Management", path: "/app/leases" },
-    { icon: UserPlus, label: "Co-Living Matcher", path: "/app/co-living" },
+    { icon: LayoutDashboard, label: "Landlord Dashboard", path: "/app/landlord-dashboard" },
     { icon: MessageSquarePlus, label: "Share Feedback", path: "/app/feedback" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
@@ -136,11 +122,6 @@ const ProfileScreen = () => {
                   <TrendingUp className="h-4 w-4 text-primary" /> Owner Analytics
                 </Button>
               </>
-            )}
-            {isAgent && (
-              <Button onClick={() => navigate("/app/agent")} variant="outline" className="w-full gap-2">
-                <Users className="h-4 w-4 text-primary" /> Agent Dashboard
-              </Button>
             )}
           </>
         )}

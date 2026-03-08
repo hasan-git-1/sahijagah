@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/contexts/I18nContext";
 import PushNotificationSetup from "@/components/PushNotificationSetup";
-import ThemeCustomizer from "@/components/ThemeCustomizer";
+
 import TwoFactorSetup from "@/components/TwoFactorSetup";
 
 const SettingsScreen = () => {
@@ -95,8 +95,6 @@ const SettingsScreen = () => {
         {/* Push Notifications */}
         <PushNotificationSetup />
 
-        {/* Theme Customizer */}
-        <ThemeCustomizer />
 
         {/* Two-Factor Auth */}
         <TwoFactorSetup />

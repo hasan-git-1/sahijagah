@@ -34,6 +34,7 @@ import OwnerContactHours from "@/components/OwnerContactHours";
 import WishlistCollections from "@/components/WishlistCollections";
 import PropertyVideo from "@/components/PropertyVideo";
 import PriceDropAlert from "@/components/PriceDropAlert";
+import PropertyShareCard from "@/components/PropertyShareCard";
 
 import CommuteEstimator from "@/components/CommuteEstimator";
 import NearbyTransport from "@/components/NearbyTransport";
@@ -247,8 +248,9 @@ const PropertyDetail = () => {
         <div className="mt-4"><PropertyReviews propertyId={property.id} /></div>
         <SimilarProperties propertyId={property.id} city={property.city} type={property.type} price={property.price} />
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between flex-wrap gap-2">
           {user && <ReportPropertyModal propertyId={property.id} userId={user.id} />}
+          <PropertyShareCard propertyId={property.id} title={property.title} price={priceLabel} city={property.city} bedrooms={property.bedrooms} bathrooms={property.bathrooms} area={property.area} image={property.images?.[0]} type={property.type} />
           <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/app/compare")}>📊 Compare</Button>
         </div>
       </div>

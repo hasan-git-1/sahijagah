@@ -22,20 +22,13 @@ import NotificationsScreen from "./app/NotificationsScreen";
 import CompareScreen from "./app/CompareScreen";
 import RecentlyViewedScreen from "./app/RecentlyViewedScreen";
 import SavedSearchesScreen from "./app/SavedSearchesScreen";
-import AgentDashboard from "./app/AgentDashboard";
-import DocumentVaultScreen from "./app/DocumentVaultScreen";
 import OwnerAnalyticsScreen from "./app/OwnerAnalyticsScreen";
 import TenantVerificationScreen from "./app/TenantVerificationScreen";
 import AdminUserManagement from "./app/AdminUserManagement";
-import MaintenanceScreen from "./app/MaintenanceScreen";
-import AgentMatchingScreen from "./app/AgentMatchingScreen";
 import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 import ToolsScreen from "./app/ToolsScreen";
 import FeedbackScreen from "./app/FeedbackScreen";
-import DisputeResolutionScreen from "./app/DisputeResolutionScreen";
-import DocumentVerificationScreen from "./app/DocumentVerificationScreen";
-import LeaseManagementScreen from "./app/LeaseManagementScreen";
-import CoLivingMatcherScreen from "./app/CoLivingMatcherScreen";
+import LandlordDashboard from "./app/LandlordDashboard";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
@@ -88,9 +81,9 @@ const AppShell = () => {
   const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
     "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
     "/app/notifications", "/app/compare", "/app/recently-viewed", "/app/saved-searches",
-    "/app/agent", "/app/documents", "/app/owner-analytics", "/app/verify",
-    "/app/maintenance", "/app/find-agent", "/app/city-analytics", "/app/tools", "/app/feedback",
-    "/app/disputes", "/app/doc-verify", "/app/leases", "/app/co-living"].some((p) => location.pathname.includes(p));
+    "/app/owner-analytics", "/app/verify",
+    "/app/city-analytics", "/app/tools", "/app/feedback",
+    "/app/landlord-dashboard"].some((p) => location.pathname.includes(p));
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
@@ -114,20 +107,13 @@ const AppShell = () => {
           <Route path="compare" element={<CompareScreen />} />
           <Route path="recently-viewed" element={<RecentlyViewedScreen />} />
           <Route path="saved-searches" element={<SavedSearchesScreen />} />
-          <Route path="agent" element={<AgentDashboard />} />
-          <Route path="documents" element={<DocumentVaultScreen />} />
           <Route path="owner-analytics" element={<OwnerAnalyticsScreen />} />
           <Route path="verify" element={<TenantVerificationScreen />} />
           <Route path="admin/users" element={<AdminUserManagement />} />
-          <Route path="maintenance" element={<MaintenanceScreen />} />
-          <Route path="find-agent" element={<AgentMatchingScreen />} />
           <Route path="city-analytics" element={<CityAnalyticsScreen />} />
           <Route path="tools" element={<ToolsScreen />} />
           <Route path="feedback" element={<FeedbackScreen />} />
-          <Route path="disputes" element={<DisputeResolutionScreen />} />
-          <Route path="doc-verify" element={<DocumentVerificationScreen />} />
-          <Route path="leases" element={<LeaseManagementScreen />} />
-          <Route path="co-living" element={<CoLivingMatcherScreen />} />
+          <Route path="landlord-dashboard" element={<LandlordDashboard />} />
         </Routes>
       </div>
 
