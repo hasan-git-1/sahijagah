@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -63,6 +63,7 @@ const ProfileScreen = () => {
     { icon: Clock, label: "Recently Viewed", path: "/app/recently-viewed" },
     { icon: BarChart3, label: "Compare Properties", path: "/app/compare" },
     { icon: Search, label: "Saved Searches", path: "/app/saved-searches" },
+    { icon: Lock, label: "Document Vault", path: "/app/documents" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },
@@ -117,9 +118,14 @@ const ProfileScreen = () => {
               </Button>
             )}
             {hasListings && (
-              <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
-                <Home className="h-4 w-4 text-primary" /> Owner Dashboard
-              </Button>
+              <>
+                <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
+                  <Home className="h-4 w-4 text-primary" /> Owner Dashboard
+                </Button>
+                <Button onClick={() => navigate("/app/owner-analytics")} variant="outline" className="w-full gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" /> Owner Analytics
+                </Button>
+              </>
             )}
             {isAgent && (
               <Button onClick={() => navigate("/app/agent")} variant="outline" className="w-full gap-2">

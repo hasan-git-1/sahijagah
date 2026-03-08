@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X, TrendingUp } from "lucide-react";
 import PropertyEditModal from "@/components/PropertyEditModal";
 import BulkUploadModal from "@/components/BulkUploadModal";
+import OwnerChatbot from "@/components/OwnerChatbot";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -340,6 +341,9 @@ const OwnerDashboard = () => {
           userId={user.id}
         />
       )}
+
+      {/* AI Chatbot for owners */}
+      <OwnerChatbot />
     </div>
   );
 };
