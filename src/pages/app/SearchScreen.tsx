@@ -101,6 +101,7 @@ const SearchScreen = () => {
     <div className="bg-background min-h-screen">
       <SEOHead title="Search Properties" description="Search verified rental, sale, PG & commercial properties across India." />
       {showMap && results && <MapSearchView properties={results} onClose={() => setShowMap(false)} />}
+      {showHeatmap && results && <HeatmapSearchView properties={results} onClose={() => setShowHeatmap(false)} />}
       {/* Search Bar */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 pt-3 pb-2 shadow-card">
         <div className="flex items-center gap-2">
