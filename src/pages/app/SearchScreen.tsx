@@ -19,6 +19,7 @@ const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
 const PropertyCard = ({ property, isWishlisted, onWishlist }: { property: Property; isWishlisted: boolean; onWishlist: (e: React.MouseEvent) => void }) => {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const typeLabel: Record<string, string> = { rent: "Rent", sale: "Buy", pg: "PG", commercial: "Commercial" };
   const formatPrice = (p: number) => {
     if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
