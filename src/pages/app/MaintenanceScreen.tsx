@@ -32,7 +32,7 @@ const MaintenanceScreen = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ["maintenance", user?.id],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("maintenance_requests")
         .select("*, properties(title)")
         .eq("tenant_id", user!.id)
