@@ -10,6 +10,7 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import NotFound from "./pages/NotFound";
+import InstallScreen from "./pages/app/InstallScreen";
 
 // Deep link: /property/:id → /app/property/:id
 const PropertyRedirect = () => {
@@ -32,7 +33,7 @@ const App = () => (
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/app/*" element={<AppShell />} />
-                <Route path="/install" element={<AppShell />} />
+                <Route path="/install" element={<InstallScreen />} />
                 <Route path="/property/:id" element={<PropertyRedirect />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
