@@ -128,6 +128,9 @@ const AppShell = () => {
           </div>
         </nav>
       )}
+
+      {/* AI Property Assistant FAB */}
+      <PropertyAssistant />
     </div>
   );
 };
