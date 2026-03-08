@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
+import EMICalculator from "@/components/EMICalculator";
+import PropertyReviews from "@/components/PropertyReviews";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
