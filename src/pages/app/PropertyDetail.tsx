@@ -153,7 +153,10 @@ const PropertyDetail = () => {
 
       <div className="px-4 pt-4">
         <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
-        <h1 className="text-lg font-bold text-foreground mt-1">{property.title}</h1>
+        <h1 className="text-lg font-bold text-foreground mt-1 flex items-center gap-1.5">
+          {property.title}
+          <VerifiedBadge isVerified={property.is_verified} size="md" />
+        </h1>
         <div className="flex items-center gap-1 mt-1 text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" />
           <span className="text-sm">{property.address || property.city}</span>
