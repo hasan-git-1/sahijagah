@@ -34,6 +34,8 @@ import PropertyInsightsWidget from "@/components/PropertyInsightsWidget";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import OwnerContactHours from "@/components/OwnerContactHours";
 import WishlistCollections from "@/components/WishlistCollections";
+import PropertyVideo from "@/components/PropertyVideo";
+import PriceDropAlert from "@/components/PriceDropAlert";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
