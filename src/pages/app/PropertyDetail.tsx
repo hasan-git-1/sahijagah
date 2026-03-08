@@ -11,6 +11,8 @@ import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
 import EMICalculator from "@/components/EMICalculator";
 import PropertyReviews from "@/components/PropertyReviews";
+import NeighborhoodInsights from "@/components/NeighborhoodInsights";
+import RentAgreementGenerator from "@/components/RentAgreementGenerator";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
