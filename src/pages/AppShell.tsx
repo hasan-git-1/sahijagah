@@ -27,6 +27,9 @@ import DocumentVaultScreen from "./app/DocumentVaultScreen";
 import OwnerAnalyticsScreen from "./app/OwnerAnalyticsScreen";
 import TenantVerificationScreen from "./app/TenantVerificationScreen";
 import AdminUserManagement from "./app/AdminUserManagement";
+import MaintenanceScreen from "./app/MaintenanceScreen";
+import AgentMatchingScreen from "./app/AgentMatchingScreen";
+import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
