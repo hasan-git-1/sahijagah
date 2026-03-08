@@ -104,6 +104,8 @@ const AppShell = () => {
           <Route path="agent" element={<AgentDashboard />} />
           <Route path="documents" element={<DocumentVaultScreen />} />
           <Route path="owner-analytics" element={<OwnerAnalyticsScreen />} />
+          <Route path="verify" element={<TenantVerificationScreen />} />
+          <Route path="admin/users" element={<AdminUserManagement />} />
         </Routes>
       </div>
 
