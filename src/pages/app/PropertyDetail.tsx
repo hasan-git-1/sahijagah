@@ -77,15 +77,7 @@ const PropertyDetail = () => {
     );
   }
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}/app/property/${id}`;
-    if (navigator.share) {
-      await navigator.share({ title: property.title, url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copied to clipboard!");
-    }
-  };
+  const priceLabel = formatPrice(property.price, property.type);
 
   const handleWishlist = () => {
     if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
