@@ -32,6 +32,8 @@ const ChatScreen = () => {
   const queryClient = useQueryClient();
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
   const [messageText, setMessageText] = useState("");
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [chatImages, setChatImages] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Fetch conversations
