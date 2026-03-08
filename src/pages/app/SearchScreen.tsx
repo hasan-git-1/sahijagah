@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath } from "lucide-react";
+import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
 import { useFilteredProperties, Property } from "@/hooks/useProperties";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import FilterPanel, { SearchFilters, defaultFilters } from "@/components/FilterPanel";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
