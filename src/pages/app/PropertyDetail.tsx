@@ -1,4 +1,4 @@
-import { ArrowLeft, Heart, Share2, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, BedDouble, Bath, Phone, MessageSquare, Calendar, Wifi, Car, Dumbbell, Wind, Eye } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -14,6 +14,11 @@ import PropertyReviews from "@/components/PropertyReviews";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import RentAgreementGenerator from "@/components/RentAgreementGenerator";
 import SEOHead from "@/components/SEOHead";
+import PropertyShareMenu from "@/components/PropertyShareMenu";
+import ImageGallery from "@/components/ImageGallery";
+import SimilarProperties from "@/components/SimilarProperties";
+import ReportPropertyModal from "@/components/ReportPropertyModal";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -72,15 +77,7 @@ const PropertyDetail = () => {
     );
   }
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}/app/property/${id}`;
-    if (navigator.share) {
-      await navigator.share({ title: property.title, url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copied to clipboard!");
-    }
-  };
+  const priceLabel = formatPrice(property.price, property.type);
 
   const handleWishlist = () => {
     if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
@@ -137,9 +134,7 @@ const PropertyDetail = () => {
           <button onClick={handleWishlist} className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
             <Heart className={`h-5 w-5 ${isWishlisted ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
           </button>
-          <button onClick={handleShare} className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
-            <Share2 className="h-5 w-5 text-muted-foreground" />
-          </button>
+          <PropertyShareMenu propertyId={property.id} title={property.title} price={priceLabel} city={property.city} />
         </div>
         <div className="absolute bottom-3 left-3 flex items-center gap-2">
           <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
@@ -151,18 +146,17 @@ const PropertyDetail = () => {
         </div>
       </div>
 
-      {/* Image gallery */}
+      {/* Image gallery with fullscreen */}
       {property.images && property.images.length > 1 && (
-        <div className="flex gap-1.5 px-4 mt-3 overflow-x-auto hide-scrollbar">
-          {property.images.map((img, i) => (
-            <img key={i} src={img} alt="" className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border-2 border-transparent hover:border-primary transition-colors" />
-          ))}
-        </div>
+        <ImageGallery images={property.images} alt={property.title} />
       )}
 
       <div className="px-4 pt-4">
         <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
-        <h1 className="text-lg font-bold text-foreground mt-1">{property.title}</h1>
+        <h1 className="text-lg font-bold text-foreground mt-1 flex items-center gap-1.5">
+          {property.title}
+          <VerifiedBadge isVerified={property.is_verified} size="md" />
+        </h1>
         <div className="flex items-center gap-1 mt-1 text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" />
           <span className="text-sm">{property.address || property.city}</span>
@@ -241,10 +235,14 @@ const PropertyDetail = () => {
           <PropertyReviews propertyId={property.id} />
         </div>
 
-        {/* Compare CTA */}
-        <div className="mt-4">
-          <Button variant="outline" className="w-full gap-2" onClick={() => navigate("/app/compare")}>
-            📊 Compare with other properties
+        {/* Similar Properties */}
+        <SimilarProperties propertyId={property.id} city={property.city} type={property.type} price={property.price} />
+
+        {/* Report & Compare */}
+        <div className="mt-4 flex items-center justify-between">
+          {user && <ReportPropertyModal propertyId={property.id} userId={user.id} />}
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/app/compare")}>
+            📊 Compare
           </Button>
         </div>
       </div>

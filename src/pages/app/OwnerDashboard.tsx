@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Home, Eye, Calendar, Edit, Trash2, Plus, Check, X, TrendingUp } from "lucide-react";
+import PropertyEditModal from "@/components/PropertyEditModal";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ const OwnerDashboard = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("listings");
+  const [editProperty, setEditProperty] = useState<any>(null);
 
   // Owner's properties
   const { data: properties, isLoading } = useQuery({
@@ -257,6 +259,9 @@ const OwnerDashboard = () => {
                     <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => navigate(`/app/property/${p.id}`)}>
                       <Eye className="h-3 w-3" /> View
                     </Button>
+                    <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => setEditProperty(p)}>
+                      <Edit className="h-3 w-3" /> Edit
+                    </Button>
                     <Button size="sm" variant="outline" className="text-destructive border-destructive gap-1" onClick={() => deleteProperty.mutate(p.id)}>
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -311,6 +316,15 @@ const OwnerDashboard = () => {
           </div>
         )}
       </div>
+
+      {editProperty && user && (
+        <PropertyEditModal
+          open={!!editProperty}
+          onOpenChange={(open) => !open && setEditProperty(null)}
+          property={editProperty}
+          userId={user.id}
+        />
+      )}
     </div>
   );
 };

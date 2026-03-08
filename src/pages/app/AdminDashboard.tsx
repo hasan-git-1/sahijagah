@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3 } from "lucide-react";
+import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3, Flag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-type Tab = "properties" | "users" | "feedback" | "stats";
+type Tab = "properties" | "users" | "feedback" | "stats" | "reports";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -58,6 +58,17 @@ const AdminDashboard = () => {
     enabled: !!isAdmin,
   });
 
+  // Reports
+  const { data: reports } = useQuery({
+    queryKey: ["admin-reports"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("reports").select("*, properties(title, city)").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!isAdmin,
+  });
+
   const updateProperty = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Record<string, any> }) => {
       const { error } = await supabase.from("properties").update(updates).eq("id", id);
@@ -89,9 +100,12 @@ const AdminDashboard = () => {
   const totalUsers = profiles?.length || 0;
   const avgRating = feedback?.length ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(1) : "0";
 
+  const pendingReports = reports?.filter(r => r.status === "pending").length || 0;
+
   const tabs: { key: Tab; icon: React.ElementType; label: string }[] = [
     { key: "properties", icon: Home, label: "Properties" },
     { key: "users", icon: Users, label: "Users" },
+    { key: "reports", icon: Flag, label: "Reports" },
     { key: "feedback", icon: Star, label: "Feedback" },
     { key: "stats", icon: BarChart3, label: "Stats" },
   ];
@@ -218,6 +232,43 @@ const AdminDashboard = () => {
                 <p className="text-[10px] text-muted-foreground mt-1">{f.city} · {new Date(f.created_at).toLocaleDateString()}</p>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Reports */}
+        {tab === "reports" && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">{pendingReports} pending reports</p>
+            {!reports?.length ? (
+              <div className="text-center py-10 text-muted-foreground">
+                <Flag className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No reports yet</p>
+              </div>
+            ) : (
+              reports.map((r: any) => (
+                <div key={r.id} className="bg-card rounded-xl p-3 shadow-card">
+                  <p className="text-sm font-semibold text-foreground">{r.properties?.title || "Unknown"}</p>
+                  <p className="text-xs text-destructive font-medium mt-1">{r.reason}</p>
+                  {r.details && <p className="text-xs text-muted-foreground mt-1">{r.details}</p>}
+                  <div className="flex items-center justify-between mt-2">
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
+                      r.status === "pending" ? "bg-primary/10 text-primary" : r.status === "resolved" ? "bg-accent/10 text-accent" : "bg-secondary text-foreground"
+                    }`}>{r.status}</span>
+                    <span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</span>
+                  </div>
+                  {r.status === "pending" && (
+                    <div className="flex gap-2 mt-2">
+                      <Button size="sm" variant="outline" className="flex-1 text-xs" onClick={() => updateProperty.mutate({ id: r.id, updates: { status: "resolved" } })}>
+                        Mark Resolved
+                      </Button>
+                      <Button size="sm" variant="outline" className="flex-1 text-xs text-destructive border-destructive" onClick={() => updateProperty.mutate({ id: r.id, updates: { status: "dismissed" } })}>
+                        Dismiss
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>
