@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
-import EMICalculator from "@/components/EMICalculator";
 import PropertyReviews from "@/components/PropertyReviews";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
 import RentAgreementGenerator from "@/components/RentAgreementGenerator";
@@ -19,11 +18,16 @@ import ImageGallery from "@/components/ImageGallery";
 import SimilarProperties from "@/components/SimilarProperties";
 import ReportPropertyModal from "@/components/ReportPropertyModal";
 import VerifiedBadge from "@/components/VerifiedBadge";
-import ConstructionTimeline from "@/components/ConstructionTimeline";
 import VirtualTourViewer from "@/components/VirtualTourViewer";
 import TranslatedDescription from "@/components/TranslatedDescription";
 import ClickToCall from "@/components/ClickToCall";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
+import FloorPlanViewer from "@/components/FloorPlanViewer";
+import MarketInsights from "@/components/MarketInsights";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import NeighborhoodReviews from "@/components/NeighborhoodReviews";
+import AutoRenewalReminder from "@/components/AutoRenewalReminder";
+import MoveInChecklist from "@/components/MoveInChecklist";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -223,21 +227,39 @@ const PropertyDetail = () => {
           </div>
         )}
 
-        {/* EMI Calculator for sale properties */}
-        {(property.type === "sale" || property.type === "commercial") && (
+        {/* Market Insights */}
+        <div className="mt-4">
+          <MarketInsights city={property.city} price={property.price} type={property.type} />
+        </div>
+
+        {/* Floor Plan */}
+        {property.images && property.images.length > 1 && (
           <div className="mt-4">
-            <EMICalculator propertyPrice={property.price} />
+            <FloorPlanViewer images={property.images} title={property.title} />
           </div>
         )}
 
-        {/* Rent Agreement for rental properties */}
+        {/* Neighborhood Reviews */}
+        <div className="mt-4">
+          <NeighborhoodReviews city={property.city} locality={property.address} />
+        </div>
+
+        {/* Rent Agreement & Renewal for rental properties */}
         {property.type === "rent" && (
-          <div className="mt-4">
+          <div className="mt-4 space-y-4">
             <RentAgreementGenerator
               propertyTitle={property.title}
               propertyAddress={property.address || property.city}
               rent={property.price}
             />
+            <AutoRenewalReminder propertyTitle={property.title} />
+          </div>
+        )}
+
+        {/* Move-in Checklist for rent/pg */}
+        {(property.type === "rent" || property.type === "pg") && (
+          <div className="mt-4">
+            <MoveInChecklist />
           </div>
         )}
 
@@ -246,12 +268,6 @@ const PropertyDetail = () => {
           <AvailabilityCalendar readOnly />
         </div>
 
-        {/* Construction Timeline for sale/under-construction */}
-        {(property.type === "sale" || property.category === "under-construction") && (
-          <div className="mt-4">
-            <ConstructionTimeline />
-          </div>
-        )}
 
         {/* Reviews */}
         <div className="mt-4">
@@ -271,13 +287,14 @@ const PropertyDetail = () => {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-3 z-50">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-2 z-50">
         <ClickToCall propertyId={property.id} propertyTitle={property.title} />
+        <WhatsAppButton propertyTitle={property.title} propertyPrice={priceLabel} city={property.city} />
         <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
           <MessageSquare className="h-4 w-4" /> Message
         </Button>
         <Button onClick={handleBookVisit} className="flex-1 gradient-cta text-accent-foreground border-0 gap-2">
-          <Calendar className="h-4 w-4" /> Book Visit
+          <Calendar className="h-4 w-4" /> Visit
         </Button>
       </div>
 

@@ -1,6 +1,7 @@
 import { Home, Search, PlusCircle, MessageCircle, User, Bell } from "lucide-react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import PropertyAssistant from "@/components/PropertyAssistant";
+import OfflineIndicator from "@/components/OfflineIndicator";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,6 +83,7 @@ const AppShell = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
+      <OfflineIndicator />
       <div className="flex-1 pb-20 overflow-y-auto">
         <Routes>
           <Route index element={<HomeScreen />} />

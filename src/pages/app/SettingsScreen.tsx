@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/contexts/I18nContext";
 import PushNotificationSetup from "@/components/PushNotificationSetup";
+import ThemeCustomizer from "@/components/ThemeCustomizer";
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
@@ -92,6 +93,9 @@ const SettingsScreen = () => {
 
         {/* Push Notifications */}
         <PushNotificationSetup />
+
+        {/* Theme Customizer */}
+        <ThemeCustomizer />
 
         {/* Menu Items */}
         <div className="bg-card rounded-2xl shadow-card overflow-hidden divide-y divide-border">
