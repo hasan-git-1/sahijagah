@@ -150,20 +150,69 @@ const OwnerDashboard = () => {
       </div>
 
       <div className="px-4 py-4">
-        {/* Stats */}
+        {/* Stats with Charts */}
         {tab === "stats" && (
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: "Total Listings", value: properties?.length || 0, color: "text-primary" },
-              { label: "Active Listings", value: activeCount, color: "text-accent" },
-              { label: "Total Views", value: totalViews, color: "text-blue-500" },
-              { label: "Pending Bookings", value: pendingBookings, color: "text-yellow-600" },
-            ].map((s) => (
-              <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
-                <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Total Listings", value: properties?.length || 0, color: "text-primary" },
+                { label: "Active Listings", value: activeCount, color: "text-accent" },
+                { label: "Total Views", value: totalViews, color: "text-primary" },
+                { label: "Pending Bookings", value: pendingBookings, color: "text-destructive" },
+              ].map((s) => (
+                <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
+                  <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Views per listing chart */}
+            {viewsData.length > 0 && (
+              <div className="bg-card rounded-xl p-4 shadow-card">
+                <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" /> Views per Listing
+                </h4>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={viewsData}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215,16%,47%)" }} />
+                    <YAxis tick={{ fontSize: 10, fill: "hsl(215,16%,47%)" }} />
+                    <Tooltip />
+                    <Bar dataKey="views" fill="hsl(217,91%,50%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-            ))}
+            )}
+
+            {/* Status breakdown */}
+            <div className="grid grid-cols-2 gap-3">
+              {statusData.length > 0 && (
+                <div className="bg-card rounded-xl p-4 shadow-card">
+                  <h4 className="text-xs font-bold text-foreground mb-2">Listing Status</h4>
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart>
+                      <Pie data={statusData} dataKey="value" cx="50%" cy="50%" outerRadius={45} label={({ name }) => name}>
+                        {statusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+              {bookingStatusData.length > 0 && (
+                <div className="bg-card rounded-xl p-4 shadow-card">
+                  <h4 className="text-xs font-bold text-foreground mb-2">Booking Status</h4>
+                  <ResponsiveContainer width="100%" height={120}>
+                    <PieChart>
+                      <Pie data={bookingStatusData} dataKey="value" cx="50%" cy="50%" outerRadius={45} label={({ name }) => name}>
+                        {bookingStatusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
