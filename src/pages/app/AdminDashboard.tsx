@@ -137,23 +137,72 @@ const AdminDashboard = () => {
 
       <div className="px-4 py-4">
         {/* Stats cards */}
-        {tab === "stats" && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "Pending", value: pendingCount, color: "text-yellow-600" },
-                { label: "Active Listings", value: activeCount, color: "text-accent" },
-                { label: "Total Users", value: totalUsers, color: "text-primary" },
-                { label: "Avg Rating", value: avgRating, color: "text-orange-500" },
-              ].map((s) => (
-                <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
-                  <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+        {tab === "stats" && (() => {
+          const COLORS = ["hsl(217,91%,50%)", "hsl(142,64%,36%)", "hsl(0,84%,60%)", "hsl(45,93%,47%)", "hsl(280,60%,50%)"];
+          
+          const cityData = properties ? Object.entries(
+            properties.reduce((acc: Record<string, number>, p) => { acc[p.city] = (acc[p.city] || 0) + 1; return acc; }, {})
+          ).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 6) : [];
+
+          const typeData = properties ? Object.entries(
+            properties.reduce((acc: Record<string, number>, p) => { acc[p.type] = (acc[p.type] || 0) + 1; return acc; }, {})
+          ).map(([name, value]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), value })) : [];
+
+          const totalViews = properties?.reduce((s, p) => s + (p.view_count || 0), 0) || 0;
+          const totalReports = reports?.length || 0;
+
+          return (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Pending", value: pendingCount, color: "text-primary" },
+                  { label: "Active Listings", value: activeCount, color: "text-accent" },
+                  { label: "Total Users", value: totalUsers, color: "text-primary" },
+                  { label: "Avg Rating", value: avgRating, color: "text-primary" },
+                  { label: "Total Views", value: totalViews, color: "text-primary" },
+                  { label: "Reports", value: totalReports, color: "text-destructive" },
+                ].map((s) => (
+                  <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
+                    <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* City distribution chart */}
+              {cityData.length > 0 && (
+                <div className="bg-card rounded-xl p-4 shadow-card">
+                  <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" /> Listings by City
+                  </h4>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <BarChart data={cityData}>
+                      <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(215,16%,47%)" }} />
+                      <YAxis tick={{ fontSize: 10, fill: "hsl(215,16%,47%)" }} />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="hsl(217,91%,50%)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-              ))}
+              )}
+
+              {/* Type distribution */}
+              {typeData.length > 0 && (
+                <div className="bg-card rounded-xl p-4 shadow-card">
+                  <h4 className="text-xs font-bold text-foreground mb-2">Property Types</h4>
+                  <ResponsiveContainer width="100%" height={150}>
+                    <PieChart>
+                      <Pie data={typeData} dataKey="value" cx="50%" cy="50%" outerRadius={55} label={({ name, value }) => `${name} (${value})`}>
+                        {typeData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Properties */}
         {tab === "properties" && (
