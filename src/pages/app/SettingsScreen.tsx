@@ -4,7 +4,6 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/contexts/I18nContext";
 import PushNotificationSetup from "@/components/PushNotificationSetup";
-
 import TwoFactorSetup from "@/components/TwoFactorSetup";
 
 const SettingsScreen = () => {
@@ -26,9 +25,9 @@ const SettingsScreen = () => {
 
   const menuItems = [
     { icon: Bell, label: t("notifications"), path: "/app/notifications" },
-    { icon: Shield, label: "Privacy Policy", path: "#" },
-    { icon: FileText, label: "Terms of Service", path: "#" },
-    { icon: HelpCircle, label: "Help & Support", path: "#" },
+    { icon: Shield, label: t("privacy_policy"), path: "#" },
+    { icon: FileText, label: t("terms_of_service"), path: "#" },
+    { icon: HelpCircle, label: t("help_support"), path: "#" },
   ];
 
   return (
@@ -95,7 +94,6 @@ const SettingsScreen = () => {
         {/* Push Notifications */}
         <PushNotificationSetup />
 
-
         {/* Two-Factor Auth */}
         <TwoFactorSetup />
 
@@ -117,7 +115,7 @@ const SettingsScreen = () => {
         {/* App Info */}
         <div className="text-center text-xs text-muted-foreground">
           <p>Sahi Jagah v1.0.0</p>
-          <p className="mt-0.5">Made with ❤️ in India</p>
+          <p className="mt-0.5">{t("made_with_love")}</p>
         </div>
       </div>
     </div>
