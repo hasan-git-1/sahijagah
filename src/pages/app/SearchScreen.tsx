@@ -59,8 +59,6 @@ const PropertyCard = ({ property, isWishlisted, onWishlist }: { property: Proper
           {property.bedrooms > 0 && <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {property.bedrooms} {t("beds")}</span>}
           {property.bathrooms > 0 && <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {property.bathrooms} {t("bath")}</span>}
           {property.area && <span>{property.area}</span>}
-          )}
-          {property.area && <span>{property.area}</span>}
         </div>
       </div>
     </button>
