@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { SearchFilters } from "@/components/FilterPanel";
 
 export interface Property {
   id: string;
@@ -46,10 +47,27 @@ export const useSearchProperties = (query: string, type?: string) => {
   return useQuery({
     queryKey: ["properties", "search", query, type],
     queryFn: async () => {
-      let q = supabase
-        .from("properties")
-        .select("*")
-        .eq("status", "active");
+      let q = supabase.from("properties").select("*").eq("status", "active");
+      if (query) {
+        q = q.or(`city.ilike.%${query}%,title.ilike.%${query}%,address.ilike.%${query}%`);
+      }
+      if (type && type !== "All") {
+        const typeMap: Record<string, string> = { Rent: "rent", Buy: "sale", PG: "pg", Commercial: "commercial" };
+        q = q.eq("type", typeMap[type] || type.toLowerCase());
+      }
+      const { data, error } = await q.order("is_featured", { ascending: false }).order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Property[];
+    },
+    enabled: query.length > 0 || (!!type && type !== "All"),
+  });
+};
+
+export const useFilteredProperties = (query: string, type: string, filters: SearchFilters) => {
+  return useQuery({
+    queryKey: ["properties", "filtered", query, type, filters],
+    queryFn: async () => {
+      let q = supabase.from("properties").select("*").eq("status", "active");
 
       if (query) {
         q = q.or(`city.ilike.%${query}%,title.ilike.%${query}%,address.ilike.%${query}%`);
@@ -58,12 +76,34 @@ export const useSearchProperties = (query: string, type?: string) => {
         const typeMap: Record<string, string> = { Rent: "rent", Buy: "sale", PG: "pg", Commercial: "commercial" };
         q = q.eq("type", typeMap[type] || type.toLowerCase());
       }
+      if (filters.minPrice) q = q.gte("price", Number(filters.minPrice));
+      if (filters.maxPrice) q = q.lte("price", Number(filters.maxPrice));
+      if (filters.bedrooms) {
+        const beds = filters.bedrooms.replace("+", "");
+        q = q.gte("bedrooms", Number(beds));
+      }
+      if (filters.bathrooms) {
+        const baths = filters.bathrooms.replace("+", "");
+        q = q.gte("bathrooms", Number(baths));
+      }
+      if (filters.amenities.length > 0) {
+        q = q.contains("amenities", filters.amenities);
+      }
 
-      const { data, error } = await q.order("is_featured", { ascending: false }).order("created_at", { ascending: false });
+      // Sort
+      if (filters.sortBy === "price_asc") {
+        q = q.order("price", { ascending: true });
+      } else if (filters.sortBy === "price_desc") {
+        q = q.order("price", { ascending: false });
+      } else {
+        q = q.order("is_featured", { ascending: false }).order("created_at", { ascending: false });
+      }
+
+      const { data, error } = await q;
       if (error) throw error;
       return data as Property[];
     },
-    enabled: query.length > 0 || (!!type && type !== "All"),
+    enabled: query.length > 0 || (!!type && type !== "All") || !!filters.minPrice || !!filters.maxPrice || !!filters.bedrooms || !!filters.bathrooms || filters.amenities.length > 0,
   });
 };
 

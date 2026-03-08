@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import ImageUploader from "@/components/ImageUploader";
 
-const steps = ["Basic Info", "Location", "Details", "Amenities", "Review"];
-
+const steps = ["Photos", "Basic Info", "Location", "Details", "Amenities", "Review"];
 const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Security", "Garden", "Elevator", "Power Backup"];
 
 const PostScreen = () => {
@@ -15,6 +15,7 @@ const PostScreen = () => {
   const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     title: "", description: "", type: "", category: "",
@@ -37,12 +38,8 @@ const PostScreen = () => {
           <Camera className="h-8 w-8 text-primary-foreground" />
         </div>
         <h3 className="font-bold text-lg text-foreground mb-2">Sign in to post</h3>
-        <p className="text-sm text-muted-foreground mb-6 text-center">
-          Create an account to list your property for free.
-        </p>
-        <Button onClick={() => navigate("/auth")} className="gradient-blue text-primary-foreground border-0 px-8">
-          Sign In
-        </Button>
+        <p className="text-sm text-muted-foreground mb-6 text-center">Create an account to list your property for free.</p>
+        <Button onClick={() => navigate("/auth")} className="gradient-blue text-primary-foreground border-0 px-8">Sign In</Button>
       </div>
     );
   }
@@ -66,6 +63,7 @@ const PostScreen = () => {
         bathrooms: Number(form.bathrooms),
         area: form.area || null,
         amenities: form.amenities,
+        images: images,
         owner_id: user.id,
         status: "pending",
       });
@@ -86,7 +84,6 @@ const PostScreen = () => {
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
         <h2 className="text-lg font-bold text-foreground">Post Property</h2>
-        {/* Progress */}
         <div className="flex gap-1 mt-2">
           {steps.map((_, i) => (
             <div key={i} className={`flex-1 h-1 rounded-full ${i <= step ? "bg-primary" : "bg-secondary"}`} />
@@ -98,6 +95,13 @@ const PostScreen = () => {
       <div className="px-4 py-6">
         <div className="bg-card rounded-2xl p-6 shadow-card">
           {step === 0 && (
+            <div>
+              <p className="text-sm font-semibold text-foreground mb-3">Add Property Photos</p>
+              <ImageUploader userId={user.id} images={images} onImagesChange={setImages} maxImages={5} />
+            </div>
+          )}
+
+          {step === 1 && (
             <div className="space-y-3">
               <input className={inputClass} placeholder="Property Title *" value={form.title} onChange={(e) => update("title", e.target.value)} />
               <select className={selectClass} value={form.type} onChange={(e) => update("type", e.target.value)}>
@@ -119,7 +123,7 @@ const PostScreen = () => {
             </div>
           )}
 
-          {step === 1 && (
+          {step === 2 && (
             <div className="space-y-3">
               <input className={inputClass} placeholder="City *" value={form.city} onChange={(e) => update("city", e.target.value)} />
               <input className={inputClass} placeholder="Full Address" value={form.address} onChange={(e) => update("address", e.target.value)} />
@@ -130,7 +134,7 @@ const PostScreen = () => {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 3 && (
             <div className="space-y-3">
               <input className={inputClass} placeholder="Price (₹) *" type="number" value={form.price} onChange={(e) => update("price", e.target.value)} />
               <div className="grid grid-cols-2 gap-3">
@@ -141,7 +145,7 @@ const PostScreen = () => {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <div>
               <p className="text-sm font-semibold text-foreground mb-3">Select Amenities</p>
               <div className="flex flex-wrap gap-2">
@@ -150,9 +154,7 @@ const PostScreen = () => {
                     key={a}
                     onClick={() => toggleAmenity(a)}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors ${
-                      form.amenities.includes(a)
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-foreground"
+                      form.amenities.includes(a) ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
                     }`}
                   >
                     {form.amenities.includes(a) && <Check className="h-3 w-3" />}
@@ -163,9 +165,16 @@ const PostScreen = () => {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div className="space-y-3">
               <h3 className="font-bold text-foreground">Review Your Listing</h3>
+              {images.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto">
+                  {images.map((url, i) => (
+                    <img key={i} src={url} alt="" className="h-16 w-16 rounded-lg object-cover flex-shrink-0" />
+                  ))}
+                </div>
+              )}
               <div className="text-sm space-y-2">
                 <p><span className="text-muted-foreground">Title:</span> <span className="text-foreground font-medium">{form.title || "—"}</span></p>
                 <p><span className="text-muted-foreground">Type:</span> <span className="text-foreground font-medium capitalize">{form.type || "—"}</span></p>
@@ -176,12 +185,12 @@ const PostScreen = () => {
                 <p><span className="text-muted-foreground">Bedrooms:</span> <span className="text-foreground font-medium">{form.bedrooms}</span></p>
                 <p><span className="text-muted-foreground">Bathrooms:</span> <span className="text-foreground font-medium">{form.bathrooms}</span></p>
                 <p><span className="text-muted-foreground">Area:</span> <span className="text-foreground font-medium">{form.area || "—"}</span></p>
+                <p><span className="text-muted-foreground">Photos:</span> <span className="text-foreground font-medium">{images.length}</span></p>
                 <p><span className="text-muted-foreground">Amenities:</span> <span className="text-foreground font-medium">{form.amenities.join(", ") || "None"}</span></p>
               </div>
             </div>
           )}
 
-          {/* Navigation Buttons */}
           <div className="flex gap-3 mt-6">
             {step > 0 && (
               <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1 gap-1">
