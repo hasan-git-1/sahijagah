@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +25,27 @@ const ProfileScreen = () => {
     queryFn: async () => {
       const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "admin" });
       return !!data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: isOwner } = useQuery({
+    queryKey: ["isOwner", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "owner" });
+      return !!data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: hasListings } = useQuery({
+    queryKey: ["hasListings", user?.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("properties")
+        .select("*", { count: "exact", head: true })
+        .eq("owner_id", user!.id);
+      return (count || 0) > 0;
     },
     enabled: !!user,
   });
@@ -79,11 +100,20 @@ const ProfileScreen = () => {
           <Button onClick={() => navigate("/auth")} className="w-full gradient-blue text-primary-foreground border-0 font-semibold">
             Sign In / Register
           </Button>
-        ) : isAdmin ? (
-          <Button onClick={() => navigate("/app/admin")} variant="outline" className="w-full gap-2">
-            <Shield className="h-4 w-4 text-primary" /> Admin Dashboard
-          </Button>
-        ) : null}
+        ) : (
+          <>
+            {isAdmin && (
+              <Button onClick={() => navigate("/app/admin")} variant="outline" className="w-full gap-2">
+                <Shield className="h-4 w-4 text-primary" /> Admin Dashboard
+              </Button>
+            )}
+            {(isOwner || hasListings) && (
+              <Button onClick={() => navigate("/app/owner")} variant="outline" className="w-full gap-2">
+                <Home className="h-4 w-4 text-primary" /> Owner Dashboard
+              </Button>
+            )}
+          </>
+        )}
       </div>
 
       {/* Menu */}

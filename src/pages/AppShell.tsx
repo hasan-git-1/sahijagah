@@ -14,6 +14,8 @@ import BookingsScreen from "./app/BookingsScreen";
 import AdminDashboard from "./app/AdminDashboard";
 import InstallScreen from "./app/InstallScreen";
 import EditProfileScreen from "./app/EditProfileScreen";
+import OwnerDashboard from "./app/OwnerDashboard";
+import SettingsScreen from "./app/SettingsScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
@@ -28,17 +30,14 @@ const AppShell = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Unread message count
   const { data: unreadCount } = useQuery({
     queryKey: ["unread-count", user?.id],
     queryFn: async () => {
-      // Get conversation IDs for user
       const { data: convos } = await supabase
         .from("conversations")
         .select("id")
         .or(`participant_1.eq.${user!.id},participant_2.eq.${user!.id}`);
       if (!convos?.length) return 0;
-
       const convoIds = convos.map((c) => c.id);
       const { count } = await supabase
         .from("messages")
@@ -57,7 +56,9 @@ const AppShell = () => {
     location.pathname.includes("/app/bookings") ||
     location.pathname.includes("/app/admin") ||
     location.pathname.includes("/app/install") ||
-    location.pathname.includes("/app/edit-profile");
+    location.pathname.includes("/app/edit-profile") ||
+    location.pathname.includes("/app/owner") ||
+    location.pathname.includes("/app/settings");
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
@@ -74,6 +75,8 @@ const AppShell = () => {
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="install" element={<InstallScreen />} />
           <Route path="edit-profile" element={<EditProfileScreen />} />
+          <Route path="owner" element={<OwnerDashboard />} />
+          <Route path="settings" element={<SettingsScreen />} />
         </Routes>
       </div>
 
