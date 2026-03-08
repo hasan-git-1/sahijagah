@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-type Tab = "properties" | "users" | "feedback" | "stats";
+type Tab = "properties" | "users" | "feedback" | "stats" | "reports";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
