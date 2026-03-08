@@ -58,6 +58,17 @@ const AdminDashboard = () => {
     enabled: !!isAdmin,
   });
 
+  // Reports
+  const { data: reports } = useQuery({
+    queryKey: ["admin-reports"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("reports").select("*, properties(title, city)").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!isAdmin,
+  });
+
   const updateProperty = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Record<string, any> }) => {
       const { error } = await supabase.from("properties").update(updates).eq("id", id);
