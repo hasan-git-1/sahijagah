@@ -56,11 +56,9 @@ const PropertyCard = ({ property, isWishlisted, onWishlist }: { property: Proper
           <span className="text-xs">{property.address || property.city}</span>
         </div>
         <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-          {property.bedrooms > 0 && (
-            <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {property.bedrooms} Beds</span>
-          )}
-          {property.bathrooms > 0 && (
-            <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {property.bathrooms} Bath</span>
+          {property.bedrooms > 0 && <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {property.bedrooms} {t("beds")}</span>}
+          {property.bathrooms > 0 && <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {property.bathrooms} {t("bath")}</span>}
+          {property.area && <span>{property.area}</span>}
           )}
           {property.area && <span>{property.area}</span>}
         </div>
