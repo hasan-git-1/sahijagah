@@ -124,6 +124,10 @@ const AppShell = () => {
           <Route path="city-analytics" element={<CityAnalyticsScreen />} />
           <Route path="tools" element={<ToolsScreen />} />
           <Route path="feedback" element={<FeedbackScreen />} />
+          <Route path="disputes" element={<DisputeResolutionScreen />} />
+          <Route path="doc-verify" element={<DocumentVerificationScreen />} />
+          <Route path="leases" element={<LeaseManagementScreen />} />
+          <Route path="co-living" element={<CoLivingMatcherScreen />} />
         </Routes>
       </div>
 
