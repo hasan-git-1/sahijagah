@@ -235,10 +235,14 @@ const PropertyDetail = () => {
           <PropertyReviews propertyId={property.id} />
         </div>
 
-        {/* Compare CTA */}
-        <div className="mt-4">
-          <Button variant="outline" className="w-full gap-2" onClick={() => navigate("/app/compare")}>
-            📊 Compare with other properties
+        {/* Similar Properties */}
+        <SimilarProperties propertyId={property.id} city={property.city} type={property.type} price={property.price} />
+
+        {/* Report & Compare */}
+        <div className="mt-4 flex items-center justify-between">
+          {user && <ReportPropertyModal propertyId={property.id} userId={user.id} />}
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => navigate("/app/compare")}>
+            📊 Compare
           </Button>
         </div>
       </div>
