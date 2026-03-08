@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Star, Download, Globe, Phone, MapPin, Shield, Users, Building, Search, Map, CalendarCheck, MessageSquare, FileText, Briefcase, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.jpeg";
@@ -41,9 +42,19 @@ const LandingPage = () => {
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  const handleFeedback = (e: React.FormEvent) => {
+  const handleFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFeedbackSubmitted(true);
+    try {
+      const { error } = await supabase.from("feedback").insert({
+        name: feedbackName,
+        rating: feedbackRating,
+        message: feedbackMessage,
+      });
+      if (error) throw error;
+      setFeedbackSubmitted(true);
+    } catch {
+      // silently fail
+    }
     setFeedbackName("");
     setFeedbackMessage("");
     setFeedbackRating(0);
