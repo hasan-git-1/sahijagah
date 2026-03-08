@@ -178,10 +178,8 @@ const SearchScreen = () => {
           <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <MapPin className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="font-bold text-foreground mb-1">Search for properties</h3>
-          <p className="text-sm text-muted-foreground">
-            Try searching "Hyderabad", "Bengaluru", or "Pune"
-          </p>
+          <h3 className="font-bold text-foreground mb-1">{t("no_results")}</h3>
+          <p className="text-sm text-muted-foreground">{t("try_searching")}</p>
         </div>
       )}
 
