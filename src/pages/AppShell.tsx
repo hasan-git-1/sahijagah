@@ -93,6 +93,7 @@ const AppShell = () => {
           <Route path="notifications" element={<NotificationsScreen />} />
           <Route path="compare" element={<CompareScreen />} />
           <Route path="recently-viewed" element={<RecentlyViewedScreen />} />
+          <Route path="saved-searches" element={<SavedSearchesScreen />} />
         </Routes>
       </div>
 
