@@ -122,8 +122,13 @@ const ChatScreen = () => {
   });
 
   const handleSend = () => {
-    if (!messageText.trim()) return;
-    sendMutation.mutate(messageText.trim());
+    const text = messageText.trim();
+    const imgText = chatImages.length ? chatImages.map(url => `[image](${url})`).join(" ") : "";
+    const fullText = [text, imgText].filter(Boolean).join(" ");
+    if (!fullText) return;
+    sendMutation.mutate(fullText);
+    setChatImages([]);
+    setShowImagePicker(false);
   };
 
   if (!user) {
