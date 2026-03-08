@@ -65,7 +65,7 @@ const PropertyVideo = ({ propertyId, videoUrl, isOwner }: PropertyVideoProps) =>
       </div>
 
       {url ? (
-        <div className="relative rounded-xl overflow-hidden bg-secondary">
+        <><div className="relative rounded-xl overflow-hidden bg-secondary">
           <video
             ref={videoRef}
             src={url}
