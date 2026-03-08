@@ -234,6 +234,58 @@ const AdminDashboard = () => {
             ))}
           </div>
         )}
+
+        {/* Reports */}
+        {tab === "reports" && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">{pendingReports} pending reports</p>
+            {!reports?.length ? (
+              <div className="text-center py-10 text-muted-foreground">
+                <Flag className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No reports yet</p>
+              </div>
+            ) : (
+              reports.map((r: any) => (
+                <div key={r.id} className="bg-card rounded-xl p-3 shadow-card">
+                  <p className="text-sm font-semibold text-foreground">{r.properties?.title || "Unknown"}</p>
+                  <p className="text-xs text-destructive font-medium mt-1">{r.reason}</p>
+                  {r.details && <p className="text-xs text-muted-foreground mt-1">{r.details}</p>}
+                  <div className="flex items-center justify-between mt-2">
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
+                      r.status === "pending" ? "bg-primary/10 text-primary" : r.status === "resolved" ? "bg-accent/10 text-accent" : "bg-secondary text-foreground"
+                    }`}>{r.status}</span>
+                    <span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</span>
+                  </div>
+                  {r.status === "pending" && (
+                    <div className="flex gap-2 mt-2">
+                      <Button size="sm" variant="outline" className="flex-1 text-xs" onClick={() => updateProperty.mutate({ id: r.id, updates: { status: "resolved" } })}>
+                        Mark Resolved
+                      </Button>
+                      <Button size="sm" variant="outline" className="flex-1 text-xs text-destructive border-destructive" onClick={() => updateProperty.mutate({ id: r.id, updates: { status: "dismissed" } })}>
+                        Dismiss
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+              <div key={f.id} className="bg-card rounded-xl p-3 shadow-card">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-sm text-foreground">{f.name}</p>
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`h-3 w-3 ${i < f.rating ? "text-yellow-500 fill-yellow-500" : "text-muted"}`} />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{f.message}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{f.city} · {new Date(f.created_at).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
