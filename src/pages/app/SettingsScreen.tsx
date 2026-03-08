@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useI18n } from "@/contexts/I18nContext";
 import PushNotificationSetup from "@/components/PushNotificationSetup";
 import ThemeCustomizer from "@/components/ThemeCustomizer";
+import TwoFactorSetup from "@/components/TwoFactorSetup";
 
 const SettingsScreen = () => {
   const navigate = useNavigate();
