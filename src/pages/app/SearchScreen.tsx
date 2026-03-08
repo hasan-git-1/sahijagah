@@ -11,6 +11,7 @@ import MapSearchView from "@/components/MapSearchView";
 import HeatmapSearchView from "@/components/HeatmapSearchView";
 import SEOHead from "@/components/SEOHead";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
+import AdvancedFilterChips, { AdvancedFilters, defaultAdvancedFilters } from "@/components/AdvancedFilterChips";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
@@ -72,6 +73,7 @@ const SearchScreen = () => {
   const [showMap, setShowMap] = useState(false);
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
+  const [advFilters, setAdvFilters] = useState<AdvancedFilters>(defaultAdvancedFilters);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: wishlistIds } = useWishlist();
@@ -136,7 +138,10 @@ const SearchScreen = () => {
             </button>
           ))}
         </div>
-      </div>
+        </div>
+        <div className="px-4 pt-2">
+          <AdvancedFilterChips filters={advFilters} onChange={setAdvFilters} />
+        </div>
 
       {/* Results */}
       {isLoading ? (
