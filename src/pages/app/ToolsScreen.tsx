@@ -24,6 +24,7 @@ const ToolsScreen = () => {
         <StampDutyCalculator />
         <RentalYieldCalculator />
         <AreaConverter />
+        <RegionalAgreementTemplates />
         <VastuTips />
       </div>
     </div>
