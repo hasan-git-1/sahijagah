@@ -175,8 +175,16 @@ const PropertyDetail = () => {
         </div>
       )}
 
+      {/* Video Tour */}
+      <div className="px-4 mt-4">
+        <PropertyVideo propertyId={property.id} isOwner={user?.id === property.owner_id} />
+      </div>
+
       <div className="px-4 pt-4">
-        <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
+          <PriceDropAlert propertyId={property.id} propertyTitle={property.title} currentPrice={property.price} />
+        </div>
         <h1 className="text-lg font-bold text-foreground mt-1 flex items-center gap-1.5">
           {property.title}
           <VerifiedBadge isVerified={property.is_verified} size="md" />
