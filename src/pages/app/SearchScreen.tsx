@@ -11,6 +11,7 @@ import MapSearchView from "@/components/MapSearchView";
 import HeatmapSearchView from "@/components/HeatmapSearchView";
 import SEOHead from "@/components/SEOHead";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
+import AdvancedFilterChips, { AdvancedFilters, defaultAdvancedFilters } from "@/components/AdvancedFilterChips";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
