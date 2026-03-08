@@ -22,8 +22,6 @@ import NotificationsScreen from "./app/NotificationsScreen";
 import CompareScreen from "./app/CompareScreen";
 import RecentlyViewedScreen from "./app/RecentlyViewedScreen";
 import SavedSearchesScreen from "./app/SavedSearchesScreen";
-import AgentDashboard from "./app/AgentDashboard";
-import DocumentVaultScreen from "./app/DocumentVaultScreen";
 import OwnerAnalyticsScreen from "./app/OwnerAnalyticsScreen";
 import TenantVerificationScreen from "./app/TenantVerificationScreen";
 import AdminUserManagement from "./app/AdminUserManagement";
