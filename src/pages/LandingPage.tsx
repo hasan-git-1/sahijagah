@@ -86,7 +86,7 @@ const LandingPage = () => {
           <h1 className="text-3xl md:text-5xl font-extrabold text-primary-foreground mb-3 leading-tight">
             India's Smartest Property<br />Rental & Sales Platform
           </h1>
-          <p className="text-primary-foreground/80 text-base md:text-lg mb-8 max-w-lg mx-auto">
+          <p className="text-sky-300 text-base md:text-lg mb-8 max-w-lg mx-auto">
             Find, Rent, Buy verified properties in your city — No Brokerage, No Fraud
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
