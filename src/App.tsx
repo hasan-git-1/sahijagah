@@ -11,7 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import NotFound from "./pages/NotFound";
 
-// Deep link redirect for /property/:id → /app/property/:id
+// Deep link: /property/:id → /app/property/:id
 const PropertyRedirect = () => {
   const { id } = useParams();
   return <Navigate to={`/app/property/${id}`} replace />;
