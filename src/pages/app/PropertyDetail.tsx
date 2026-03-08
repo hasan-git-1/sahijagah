@@ -199,6 +199,18 @@ const PropertyDetail = () => {
           </div>
         )}
 
+        {/* EMI Calculator for sale properties */}
+        {(property.type === "sale" || property.type === "commercial") && (
+          <div className="mt-4">
+            <EMICalculator propertyPrice={property.price} />
+          </div>
+        )}
+
+        {/* Reviews */}
+        <div className="mt-4">
+          <PropertyReviews propertyId={property.id} />
+        </div>
+
         {/* Compare CTA */}
         <div className="mt-4">
           <Button variant="outline" className="w-full gap-2" onClick={() => navigate("/app/compare")}>

@@ -71,7 +71,7 @@ const AppShell = () => {
 
   const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
     "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
-    "/app/notifications", "/app/compare", "/app/recently-viewed"].some((p) => location.pathname.includes(p));
+    "/app/notifications", "/app/compare", "/app/recently-viewed", "/app/saved-searches"].some((p) => location.pathname.includes(p));
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
