@@ -61,7 +61,7 @@ const MaintenanceScreen = () => {
     mutationFn: async () => {
       const propertyId = myProperties?.[0]?.property_id;
       if (!propertyId) throw new Error("No property found");
-      const { error } = await supabase.from("maintenance_requests").insert({
+      const { error } = await (supabase as any).from("maintenance_requests").insert({
         tenant_id: user!.id,
         property_id: propertyId,
         category,
