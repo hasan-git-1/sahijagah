@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, Download, Globe, Phone, MapPin, Shield, Users, Building, Search, Map, CalendarCheck, MessageSquare, FileText, Briefcase, ChevronRight } from "lucide-react";
+import { Star, Download, Globe, Phone, MapPin, Shield, Users, Building, Search, Map, CalendarCheck, MessageSquare, FileText, Briefcase, ChevronRight, Share, X, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
@@ -42,6 +42,66 @@ const LandingPage = () => {
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
+  // PWA install state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const [showIOSModal, setShowIOSModal] = useState(false);
+  const [installSuccess, setInstallSuccess] = useState(false);
+
+  useEffect(() => {
+    // Detect iOS
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    setIsIOS(isIOSDevice);
+
+    // Check if already installed (standalone mode)
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setIsInstalled(true);
+    }
+
+    // Capture the beforeinstallprompt event (Android Chrome)
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+
+    // Listen for app installed event
+    const installedHandler = () => setIsInstalled(true);
+    window.addEventListener("appinstalled", installedHandler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("appinstalled", installedHandler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (isInstalled) {
+      navigate("/app");
+      return;
+    }
+
+    if (isIOS) {
+      // iOS: show manual instructions modal
+      setShowIOSModal(true);
+      return;
+    }
+
+    if (deferredPrompt) {
+      // Android Chrome: trigger native install prompt
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setInstallSuccess(true);
+        setDeferredPrompt(null);
+      }
+    } else {
+      // Desktop / unsupported: go to install instructions page
+      navigate("/install");
+    }
+  };
+
   const handleFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -60,10 +120,73 @@ const LandingPage = () => {
     setFeedbackRating(0);
   };
 
+  // Install button label based on state
+  const installLabel = isInstalled
+    ? "Already Installed ✓"
+    : installSuccess
+    ? "Installed! Open App"
+    : isIOS
+    ? "Add to Home Screen"
+    : deferredPrompt
+    ? "Install App"
+    : "Download / Install App";
+
   return (
     <div className="min-h-screen bg-background font-display">
+      {/* iOS Instructions Modal */}
+      {showIOSModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/60 backdrop-blur-sm px-4 pb-4">
+          <div className="bg-card rounded-2xl shadow-elevated w-full max-w-sm p-6 animate-fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-foreground text-lg">Install on iPhone / iPad</h3>
+              <button onClick={() => setShowIOSModal(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 bg-secondary rounded-xl p-3">
+                <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-primary-foreground text-xs font-bold">1</div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Tap the Share button</p>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                    <Share className="h-3.5 w-3.5" />
+                    <span>at the bottom of Safari browser</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-secondary rounded-xl p-3">
+                <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-primary-foreground text-xs font-bold">2</div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Scroll down &amp; tap</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">"<strong>Add to Home Screen</strong>"</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-secondary rounded-xl p-3">
+                <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-primary-foreground text-xs font-bold">3</div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Tap "Add"</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Sahi Jagah will appear on your home screen</p>
+                </div>
+              </div>
+            </div>
+            <Button className="w-full mt-5 gradient-blue text-primary-foreground border-0" onClick={() => setShowIOSModal(false)}>
+              Got it!
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Install Success Banner */}
+      {installSuccess && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-card border border-border rounded-xl shadow-elevated px-5 py-3 flex items-center gap-3 animate-fade-in">
+          <CheckCircle className="h-5 w-5 text-accent" />
+          <span className="text-sm font-medium text-foreground">App installed successfully!</span>
+          <button onClick={() => navigate("/app")} className="text-xs text-primary font-semibold underline">Open</button>
+        </div>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-lg border-b border-border">
+      <header className="sticky top-0 z-40 bg-card/90 backdrop-blur-lg border-b border-border">
         <div className="container flex items-center justify-between py-3">
           <div className="flex items-center gap-2">
             <img src={logo} alt="Sahi Jagah" className="h-9 w-9 rounded-lg object-cover" />
@@ -84,14 +207,18 @@ const LandingPage = () => {
         <div className="relative container py-16 md:py-24 text-center">
           <img src={logo} alt="Sahi Jagah" className="h-20 w-20 rounded-2xl mx-auto mb-5 shadow-elevated object-cover" />
           <h1 className="text-3xl md:text-5xl font-extrabold text-primary-foreground mb-3 leading-tight">
-            India's Smartest Property<br />Rental & Sales Platform
+            India's Smartest Property<br />Rental &amp; Sales Platform
           </h1>
           <p className="text-sky-300 text-base md:text-lg mb-8 max-w-lg mx-auto">
             Find, Rent, Buy verified properties in your city — No Brokerage, No Fraud
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button size="lg" className="gradient-cta text-accent-foreground border-0 text-base font-semibold px-8 gap-2">
-              <Download className="h-5 w-5" /> Download Android App
+            <Button
+              size="lg"
+              onClick={handleInstall}
+              className="gradient-blue text-primary-foreground border-0 text-base font-semibold px-8 gap-2"
+            >
+              <Download className="h-5 w-5" /> {installLabel}
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate("/app")} className="bg-card/20 backdrop-blur border-primary-foreground/30 text-primary-foreground hover:bg-card/40 text-base font-semibold px-8 gap-2">
               <Globe className="h-5 w-5" /> Open Web App
@@ -242,10 +369,18 @@ const LandingPage = () => {
             Install directly on your Android phone. No Play Store needed.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button size="lg" className="bg-card text-foreground hover:bg-card/90 border-0 text-base font-semibold gap-2">
-              <Download className="h-5 w-5" /> Download APK
+            <Button
+              size="lg"
+              onClick={handleInstall}
+              className="gradient-blue text-primary-foreground border-0 text-base font-semibold gap-2"
+            >
+              <Download className="h-5 w-5" /> {isInstalled ? "Already Installed ✓" : "Download APK / Install"}
             </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base font-semibold gap-2">
+            <Button
+              size="lg"
+              onClick={handleInstall}
+              className="gradient-blue text-primary-foreground border-0 text-base font-semibold gap-2"
+            >
               ➕ Add to Home Screen
             </Button>
           </div>
