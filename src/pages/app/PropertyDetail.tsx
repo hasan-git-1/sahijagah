@@ -37,7 +37,7 @@ import PriceDropAlert from "@/components/PriceDropAlert";
 
 import CommuteEstimator from "@/components/CommuteEstimator";
 import NearbyTransport from "@/components/NearbyTransport";
-import LegalChecklist from "@/components/LegalChecklist";
+
 import SafetyScoreWidget from "@/components/SafetyScoreWidget";
 import PropertyTimeline from "@/components/PropertyTimeline";
 import QuickContactForm from "@/components/QuickContactForm";
