@@ -211,7 +211,7 @@ export type Database = {
           is_verified: boolean | null
           lat: number | null
           lng: number | null
-          owner_id: string
+          owner_id: string | null
           price: number
           status: string
           title: string
@@ -235,7 +235,7 @@ export type Database = {
           is_verified?: boolean | null
           lat?: number | null
           lng?: number | null
-          owner_id: string
+          owner_id?: string | null
           price: number
           status?: string
           title: string
@@ -259,7 +259,7 @@ export type Database = {
           is_verified?: boolean | null
           lat?: number | null
           lng?: number | null
-          owner_id?: string
+          owner_id?: string | null
           price?: number
           status?: string
           title?: string
