@@ -168,6 +168,11 @@ const ChatScreen = () => {
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 pb-24">
           {messages?.map((msg) => {
             const isMine = msg.sender_id === user.id;
+            // Check if message contains image links
+            const imageMatch = msg.text.match(/\[image\]\((https?:\/\/[^\)]+)\)/g);
+            const textOnly = msg.text.replace(/\[image\]\(https?:\/\/[^\)]+\)/g, "").trim();
+            const imageUrls = imageMatch?.map(m => m.match(/\((https?:\/\/[^\)]+)\)/)?.[1]).filter(Boolean) as string[] || [];
+
             return (
               <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm ${
@@ -175,7 +180,14 @@ const ChatScreen = () => {
                     ? "bg-primary text-primary-foreground rounded-br-md"
                     : "bg-secondary text-foreground rounded-bl-md"
                 }`}>
-                  {msg.text}
+                  {imageUrls.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-1">
+                      {imageUrls.map((url, i) => (
+                        <img key={i} src={url} alt="" className="h-32 w-32 rounded-lg object-cover" />
+                      ))}
+                    </div>
+                  )}
+                  {textOnly && <span>{textOnly}</span>}
                   <p className={`text-[9px] mt-1 ${isMine ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
                     {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </p>
