@@ -117,6 +117,8 @@ const AppShell = () => {
           <Route path="maintenance" element={<MaintenanceScreen />} />
           <Route path="find-agent" element={<AgentMatchingScreen />} />
           <Route path="city-analytics" element={<CityAnalyticsScreen />} />
+          <Route path="tools" element={<ToolsScreen />} />
+          <Route path="feedback" element={<FeedbackScreen />} />
         </Routes>
       </div>
 
