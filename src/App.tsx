@@ -33,7 +33,7 @@ const App = () => (
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/app/*" element={<AppShell />} />
-                <Route path="/install" element={<AppShell />} />
+                <Route path="/install" element={<InstallScreen />} />
                 <Route path="/property/:id" element={<PropertyRedirect />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
