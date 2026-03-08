@@ -138,7 +138,10 @@ const SearchScreen = () => {
             </button>
           ))}
         </div>
-      </div>
+        </div>
+        <div className="px-4 pt-2">
+          <AdvancedFilterChips filters={advFilters} onChange={setAdvFilters} />
+        </div>
 
       {/* Results */}
       {isLoading ? (

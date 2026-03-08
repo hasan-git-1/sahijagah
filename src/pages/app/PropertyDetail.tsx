@@ -238,9 +238,24 @@ const PropertyDetail = () => {
           </div>
         )}
 
+        {/* Price History */}
+        <div className="mt-4">
+          <PriceHistoryChart currentPrice={property.price} city={property.city} type={property.type} />
+        </div>
+
         {/* Market Insights */}
         <div className="mt-4">
           <MarketInsights city={property.city} price={property.price} type={property.type} />
+        </div>
+
+        {/* Property Performance */}
+        <div className="mt-4">
+          <PropertyInsightsWidget viewCount={property.view_count || 0} propertyId={property.id} />
+        </div>
+
+        {/* Owner Contact Hours */}
+        <div className="mt-4">
+          <OwnerContactHours />
         </div>
 
         {/* Floor Plan */}
@@ -255,7 +270,7 @@ const PropertyDetail = () => {
           <NeighborhoodReviews city={property.city} locality={property.address} />
         </div>
 
-        {/* Rent Agreement & Renewal for rental properties */}
+        {/* Rent Agreement, Receipt & Renewal for rental properties */}
         {property.type === "rent" && (
           <div className="mt-4 space-y-4">
             <RentAgreementGenerator
@@ -263,6 +278,7 @@ const PropertyDetail = () => {
               propertyAddress={property.address || property.city}
               rent={property.price}
             />
+            <RentReceiptGenerator propertyTitle={property.title} rent={property.price} />
             <AutoRenewalReminder propertyTitle={property.title} />
           </div>
         )}
@@ -271,6 +287,13 @@ const PropertyDetail = () => {
         {(property.type === "rent" || property.type === "pg") && (
           <div className="mt-4">
             <MoveInChecklist />
+          </div>
+        )}
+
+        {/* Save to Collection */}
+        {user && (
+          <div className="mt-4">
+            <WishlistCollections propertyId={property.id} />
           </div>
         )}
 

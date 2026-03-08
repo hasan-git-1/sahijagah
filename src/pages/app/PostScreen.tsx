@@ -85,7 +85,12 @@ const PostScreen = () => {
   return (
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
-        <h2 className="text-lg font-bold text-foreground">Post Property</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-foreground">Post Property</h2>
+          <button onClick={() => setShowBulk(true)} className="text-xs font-semibold text-primary">
+            📋 Bulk Upload
+          </button>
+        </div>
         <div className="flex gap-1 mt-2">
           {steps.map((_, i) => (
             <div key={i} className={`flex-1 h-1 rounded-full ${i <= step ? "bg-primary" : "bg-secondary"}`} />
