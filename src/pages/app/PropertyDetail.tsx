@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useProperty } from "@/hooks/useProperties";
+import { useAuth } from "@/contexts/AuthContext";
+import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
+import { supabase } from "@/integrations/supabase/client";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -19,7 +22,12 @@ const typeLabel: Record<string, string> = { rent: "Rent", sale: "Buy", pg: "PG",
 const PropertyDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
   const { data: property, isLoading } = useProperty(id || "");
+  const { data: wishlistIds } = useWishlist();
+  const toggleWishlist = useToggleWishlist();
+
+  const isWishlisted = wishlistIds?.includes(id || "") ?? false;
 
   if (isLoading) {
     return (
@@ -47,29 +55,68 @@ const PropertyDetail = () => {
     }
   };
 
+  const handleWishlist = () => {
+    if (!user) {
+      toast.error("Sign in to save properties");
+      navigate("/auth");
+      return;
+    }
+    toggleWishlist.mutate(id!);
+  };
+
+  const handleMessage = async () => {
+    if (!user) {
+      toast.error("Sign in to message owner");
+      navigate("/auth");
+      return;
+    }
+    if (!property.owner_id) {
+      toast.error("Owner not available");
+      return;
+    }
+    // Check for existing conversation
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .or(`and(participant_1.eq.${user.id},participant_2.eq.${property.owner_id}),and(participant_1.eq.${property.owner_id},participant_2.eq.${user.id})`)
+      .eq("property_id", property.id)
+      .maybeSingle();
+
+    if (existing) {
+      navigate("/app/chat");
+      return;
+    }
+
+    // Create new conversation
+    const { error } = await supabase.from("conversations").insert({
+      participant_1: user.id,
+      participant_2: property.owner_id,
+      property_id: property.id,
+    });
+    if (error) {
+      toast.error("Could not start conversation");
+      return;
+    }
+    toast.success("Conversation started!");
+    navigate("/app/chat");
+  };
+
   return (
     <div className="bg-background min-h-screen pb-24">
-      {/* Image */}
       <div className="relative">
         <img
           src={property.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"}
           alt={property.title}
           className="w-full h-64 object-cover"
         />
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
-        >
+        <button onClick={() => navigate(-1)} className="absolute top-4 left-4 h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
         <div className="absolute top-4 right-4 flex gap-2">
-          <button className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
-            <Heart className="h-5 w-5 text-muted-foreground" />
+          <button onClick={handleWishlist} className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
+            <Heart className={`h-5 w-5 ${isWishlisted ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
           </button>
-          <button
-            onClick={handleShare}
-            className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
-          >
+          <button onClick={handleShare} className="h-9 w-9 rounded-full bg-card/80 backdrop-blur flex items-center justify-center">
             <Share2 className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
@@ -78,7 +125,6 @@ const PropertyDetail = () => {
         </span>
       </div>
 
-      {/* Content */}
       <div className="px-4 pt-4">
         <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
         <h1 className="text-lg font-bold text-foreground mt-1">{property.title}</h1>
@@ -87,30 +133,25 @@ const PropertyDetail = () => {
           <span className="text-sm">{property.address || property.city}</span>
         </div>
 
-        {/* Stats */}
         <div className="flex gap-4 mt-4 py-3 border-y border-border">
           {property.bedrooms > 0 && (
             <div className="flex items-center gap-1.5 text-sm text-foreground">
-              <BedDouble className="h-4 w-4 text-primary" />
-              <span>{property.bedrooms} Beds</span>
+              <BedDouble className="h-4 w-4 text-primary" /><span>{property.bedrooms} Beds</span>
             </div>
           )}
           {property.bathrooms > 0 && (
             <div className="flex items-center gap-1.5 text-sm text-foreground">
-              <Bath className="h-4 w-4 text-primary" />
-              <span>{property.bathrooms} Bath</span>
+              <Bath className="h-4 w-4 text-primary" /><span>{property.bathrooms} Bath</span>
             </div>
           )}
           {property.area && <div className="text-sm text-foreground">{property.area}</div>}
         </div>
 
-        {/* Description */}
         <div className="mt-4">
           <h3 className="font-bold text-foreground mb-2">Description</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{property.description}</p>
         </div>
 
-        {/* Amenities */}
         {property.amenities?.length > 0 && (
           <div className="mt-4">
             <h3 className="font-bold text-foreground mb-2">Amenities</h3>
@@ -128,12 +169,11 @@ const PropertyDetail = () => {
         )}
       </div>
 
-      {/* Bottom Actions */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-3 z-50">
         <Button variant="outline" className="flex-1 gap-2">
           <Phone className="h-4 w-4" /> Call
         </Button>
-        <Button className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
+        <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
           <MessageSquare className="h-4 w-4" /> Message
         </Button>
         <Button className="flex-1 gradient-cta text-accent-foreground border-0 gap-2">
