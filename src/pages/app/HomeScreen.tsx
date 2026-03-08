@@ -173,9 +173,9 @@ const HomeScreen = () => {
                   </span>
                   <button
                     className="absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => handleWishlist(e, prop.id)}
                   >
-                    <Heart className="h-4 w-4 text-muted-foreground" />
+                    <Heart className={`h-4 w-4 ${wishlistIds?.includes(prop.id) ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
                   </button>
                 </div>
                 <div className="p-3">
