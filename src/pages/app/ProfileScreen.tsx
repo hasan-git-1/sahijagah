@@ -29,14 +29,6 @@ const ProfileScreen = () => {
     enabled: !!user,
   });
 
-  const { data: isAgent } = useQuery({
-    queryKey: ["isAgent", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "agent" });
-      return !!data;
-    },
-    enabled: !!user,
-  });
 
   const { data: hasListings } = useQuery({
     queryKey: ["hasListings", user?.id],
