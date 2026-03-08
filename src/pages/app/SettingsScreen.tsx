@@ -95,8 +95,6 @@ const SettingsScreen = () => {
         {/* Push Notifications */}
         <PushNotificationSetup />
 
-        {/* Theme Customizer */}
-        <ThemeCustomizer />
 
         {/* Two-Factor Auth */}
         <TwoFactorSetup />
