@@ -48,10 +48,7 @@ const ThemeCustomizer = () => {
               className={`h-9 w-9 rounded-full flex items-center justify-center transition-transform ${
                 active === color.name ? "scale-110 ring-2 ring-offset-2 ring-offset-card" : ""
               }`}
-              style={{
-                background: `hsl(${color.hsl})`,
-                ringColor: active === color.name ? `hsl(${color.hsl})` : undefined,
-              }}
+              style={{ background: `hsl(${color.hsl})` }}
             >
               {active === color.name && <Check className="h-4 w-4 text-primary-foreground" />}
             </div>
