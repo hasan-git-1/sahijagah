@@ -316,6 +316,15 @@ const OwnerDashboard = () => {
           </div>
         )}
       </div>
+
+      {editProperty && user && (
+        <PropertyEditModal
+          open={!!editProperty}
+          onOpenChange={(open) => !open && setEditProperty(null)}
+          property={editProperty}
+          userId={user.id}
+        />
+      )}
     </div>
   );
 };
