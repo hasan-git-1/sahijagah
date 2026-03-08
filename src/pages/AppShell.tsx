@@ -32,6 +32,10 @@ import AgentMatchingScreen from "./app/AgentMatchingScreen";
 import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 import ToolsScreen from "./app/ToolsScreen";
 import FeedbackScreen from "./app/FeedbackScreen";
+import DisputeResolutionScreen from "./app/DisputeResolutionScreen";
+import DocumentVerificationScreen from "./app/DocumentVerificationScreen";
+import LeaseManagementScreen from "./app/LeaseManagementScreen";
+import CoLivingMatcherScreen from "./app/CoLivingMatcherScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
