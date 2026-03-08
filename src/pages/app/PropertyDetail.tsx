@@ -20,6 +20,7 @@ import SimilarProperties from "@/components/SimilarProperties";
 import ReportPropertyModal from "@/components/ReportPropertyModal";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import ConstructionTimeline from "@/components/ConstructionTimeline";
+import VirtualTourViewer from "@/components/VirtualTourViewer";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,

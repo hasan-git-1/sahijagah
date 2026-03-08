@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import FilterPanel, { SearchFilters, defaultFilters } from "@/components/FilterPanel";
 import MapSearchView from "@/components/MapSearchView";
+import HeatmapSearchView from "@/components/HeatmapSearchView";
 import SEOHead from "@/components/SEOHead";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
