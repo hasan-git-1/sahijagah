@@ -189,8 +189,7 @@ const PropertyDetail = () => {
         </div>
 
         <div className="mt-4">
-          <h3 className="font-bold text-foreground mb-2">Description</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">{property.description}</p>
+          <TranslatedDescription description={property.description || ""} />
         </div>
 
         {property.amenities?.length > 0 && (
