@@ -1,4 +1,4 @@
-import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp, ShieldCheck, Wrench, MapPin, Building2, Calculator, MessageSquarePlus } from "lucide-react";
+import { User, Heart, Calendar, Edit, Settings, LogOut, ChevronRight, Shield, Download, Home, Bell, Clock, BarChart3, Search, Users, Lock, TrendingUp, ShieldCheck, Wrench, MapPin, Building2, Calculator, MessageSquarePlus, AlertTriangle, FileCheck, FileSignature, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -69,6 +69,10 @@ const ProfileScreen = () => {
     { icon: MapPin, label: "Find an Agent", path: "/app/find-agent" },
     { icon: Building2, label: "City Analytics", path: "/app/city-analytics" },
     { icon: Calculator, label: "Property Tools", path: "/app/tools" },
+    { icon: AlertTriangle, label: "Dispute Resolution", path: "/app/disputes" },
+    { icon: FileCheck, label: "Document Verification", path: "/app/doc-verify" },
+    { icon: FileSignature, label: "Lease Management", path: "/app/leases" },
+    { icon: UserPlus, label: "Co-Living Matcher", path: "/app/co-living" },
     { icon: MessageSquarePlus, label: "Share Feedback", path: "/app/feedback" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },

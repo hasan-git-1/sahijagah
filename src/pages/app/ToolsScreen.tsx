@@ -6,6 +6,7 @@ import StampDutyCalculator from "@/components/StampDutyCalculator";
 import RentalYieldCalculator from "@/components/RentalYieldCalculator";
 import HomeValueEstimator from "@/components/HomeValueEstimator";
 import VastuTips from "@/components/VastuTips";
+import RegionalAgreementTemplates from "@/components/RegionalAgreementTemplates";
 
 const ToolsScreen = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const ToolsScreen = () => {
         <StampDutyCalculator />
         <RentalYieldCalculator />
         <AreaConverter />
+        <RegionalAgreementTemplates />
         <VastuTips />
       </div>
     </div>

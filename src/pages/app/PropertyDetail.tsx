@@ -23,23 +23,21 @@ import TranslatedDescription from "@/components/TranslatedDescription";
 import ClickToCall from "@/components/ClickToCall";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import FloorPlanViewer from "@/components/FloorPlanViewer";
-import MarketInsights from "@/components/MarketInsights";
+
 import WhatsAppButton from "@/components/WhatsAppButton";
 import NeighborhoodReviews from "@/components/NeighborhoodReviews";
 import AutoRenewalReminder from "@/components/AutoRenewalReminder";
 import MoveInChecklist from "@/components/MoveInChecklist";
-import PriceHistoryChart from "@/components/PriceHistoryChart";
 import RentReceiptGenerator from "@/components/RentReceiptGenerator";
-import PropertyInsightsWidget from "@/components/PropertyInsightsWidget";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import OwnerContactHours from "@/components/OwnerContactHours";
 import WishlistCollections from "@/components/WishlistCollections";
 import PropertyVideo from "@/components/PropertyVideo";
 import PriceDropAlert from "@/components/PriceDropAlert";
-import LocalityScoreCard from "@/components/LocalityScoreCard";
+
 import CommuteEstimator from "@/components/CommuteEstimator";
 import NearbyTransport from "@/components/NearbyTransport";
-import LegalChecklist from "@/components/LegalChecklist";
+
 import SafetyScoreWidget from "@/components/SafetyScoreWidget";
 import PropertyTimeline from "@/components/PropertyTimeline";
 import QuickContactForm from "@/components/QuickContactForm";
@@ -206,9 +204,6 @@ const PropertyDetail = () => {
         {/* Safety Score */}
         <div className="mt-4"><SafetyScoreWidget city={property.city} /></div>
 
-        {/* Locality Score */}
-        <div className="mt-4"><LocalityScoreCard city={property.city} locality={property.address} /></div>
-
         {/* Nearby Transport */}
         <div className="mt-4"><NearbyTransport city={property.city} /></div>
 
@@ -224,17 +219,11 @@ const PropertyDetail = () => {
         )}
         {property.lat && property.lng && <div className="mt-4"><NeighborhoodInsights lat={property.lat} lng={property.lng} city={property.city} /></div>}
 
-        <div className="mt-4"><PriceHistoryChart currentPrice={property.price} city={property.city} type={property.type} /></div>
-        <div className="mt-4"><MarketInsights city={property.city} price={property.price} type={property.type} /></div>
-        <div className="mt-4"><PropertyInsightsWidget viewCount={property.view_count || 0} propertyId={property.id} /></div>
         <div className="mt-4"><OwnerContactHours /></div>
 
         {property.images && property.images.length > 1 && <div className="mt-4"><FloorPlanViewer images={property.images} title={property.title} /></div>}
 
         <div className="mt-4"><NeighborhoodReviews city={property.city} locality={property.address} /></div>
-
-        {/* Legal Checklist */}
-        <div className="mt-4"><LegalChecklist type={property.type} /></div>
 
         {/* Rent-specific */}
         {property.type === "rent" && (

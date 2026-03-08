@@ -12,6 +12,7 @@ import HeatmapSearchView from "@/components/HeatmapSearchView";
 import SEOHead from "@/components/SEOHead";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import AdvancedFilterChips, { AdvancedFilters, defaultAdvancedFilters } from "@/components/AdvancedFilterChips";
+import VoiceSearchInput from "@/components/VoiceSearchInput";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
@@ -113,6 +114,7 @@ const SearchScreen = () => {
             onChange={setQuery}
             autoFocus
           />
+          <VoiceSearchInput onResult={setQuery} />
           <button
             onClick={() => setShowFilters(true)}
             className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center relative"
