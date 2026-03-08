@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Property } from "@/hooks/useProperties";
+import ComparisonPDFExport from "@/components/ComparisonPDFExport";
 
 const formatPrice = (p: number, type: string) => {
   if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
