@@ -34,6 +34,7 @@ import OwnerContactHours from "@/components/OwnerContactHours";
 import WishlistCollections from "@/components/WishlistCollections";
 import PropertyVideo from "@/components/PropertyVideo";
 import PriceDropAlert from "@/components/PriceDropAlert";
+import PropertyShareCard from "@/components/PropertyShareCard";
 
 import CommuteEstimator from "@/components/CommuteEstimator";
 import NearbyTransport from "@/components/NearbyTransport";
