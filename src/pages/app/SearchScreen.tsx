@@ -10,6 +10,7 @@ import FilterPanel, { SearchFilters, defaultFilters } from "@/components/FilterP
 import MapSearchView from "@/components/MapSearchView";
 import HeatmapSearchView from "@/components/HeatmapSearchView";
 import SEOHead from "@/components/SEOHead";
+import SearchAutocomplete from "@/components/SearchAutocomplete";
 
 const filterTypes = ["All", "Rent", "Buy", "PG", "Commercial"];
 
