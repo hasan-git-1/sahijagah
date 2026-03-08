@@ -17,6 +17,7 @@ const PostScreen = () => {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [showBulk, setShowBulk] = useState(false);
 
   const [form, setForm] = useState({
     title: "", description: "", type: "", category: "",
