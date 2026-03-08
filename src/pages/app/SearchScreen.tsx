@@ -75,7 +75,7 @@ const SearchScreen = () => {
   const [advFilters, setAdvFilters] = useState<AdvancedFilters>(defaultAdvancedFilters);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: wishlistIds } = useWishlist();
+  const { t } = useI18n();
   const toggleWishlist = useToggleWishlist();
 
   const { data: results, isLoading } = useFilteredProperties(query, activeFilter, filters);
