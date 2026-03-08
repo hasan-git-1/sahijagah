@@ -181,7 +181,10 @@ const HomeScreen = () => {
                 </div>
                 <div className="p-3">
                   <p className="font-bold text-primary text-lg">{formatPrice(prop.price, prop.type)}</p>
-                  <p className="font-semibold text-sm text-foreground mt-0.5">{prop.title}</p>
+                  <p className="font-semibold text-sm text-foreground mt-0.5 flex items-center gap-1">
+                    {prop.title}
+                    <VerifiedBadge isVerified={prop.is_verified} />
+                  </p>
                   <div className="flex items-center gap-1 mt-1 text-muted-foreground">
                     <MapPin className="h-3 w-3" />
                     <span className="text-xs">{prop.address || prop.city}</span>
