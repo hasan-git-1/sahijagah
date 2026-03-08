@@ -1,5 +1,6 @@
 import { Home, Search, PlusCircle, MessageCircle, User, Bell } from "lucide-react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import PropertyAssistant from "@/components/PropertyAssistant";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
