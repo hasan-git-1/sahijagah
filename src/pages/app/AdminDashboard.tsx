@@ -1,0 +1,228 @@
+import { useState } from "react";
+import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+type Tab = "properties" | "users" | "feedback" | "stats";
+
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [tab, setTab] = useState<Tab>("properties");
+
+  // Check admin role
+  const { data: isAdmin, isLoading: checkingRole } = useQuery({
+    queryKey: ["isAdmin", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("has_role", { _user_id: user!.id, _role: "admin" });
+      return !!data;
+    },
+    enabled: !!user,
+  });
+
+  // Properties
+  const { data: properties } = useQuery({
+    queryKey: ["admin-properties"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("properties").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!isAdmin,
+  });
+
+  // Users
+  const { data: profiles } = useQuery({
+    queryKey: ["admin-profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!isAdmin,
+  });
+
+  // Feedback
+  const { data: feedback } = useQuery({
+    queryKey: ["admin-feedback"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("feedback").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!isAdmin,
+  });
+
+  const updateProperty = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Record<string, any> }) => {
+      const { error } = await supabase.from("properties").update(updates).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-properties"] });
+      toast.success("Property updated");
+    },
+  });
+
+  if (checkingRole) {
+    return <div className="flex items-center justify-center min-h-screen"><div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="bg-background min-h-screen flex flex-col items-center justify-center px-6">
+        <Shield className="h-12 w-12 text-destructive mb-4" />
+        <h3 className="font-bold text-foreground mb-2">Access Denied</h3>
+        <p className="text-sm text-muted-foreground mb-6">You need admin privileges to access this page.</p>
+        <Button onClick={() => navigate("/app")} variant="outline">Go Home</Button>
+      </div>
+    );
+  }
+
+  const pendingCount = properties?.filter((p) => p.status === "pending").length || 0;
+  const activeCount = properties?.filter((p) => p.status === "active").length || 0;
+  const totalUsers = profiles?.length || 0;
+  const avgRating = feedback?.length ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(1) : "0";
+
+  const tabs: { key: Tab; icon: React.ElementType; label: string }[] = [
+    { key: "properties", icon: Home, label: "Properties" },
+    { key: "users", icon: Users, label: "Users" },
+    { key: "feedback", icon: Star, label: "Feedback" },
+    { key: "stats", icon: BarChart3, label: "Stats" },
+  ];
+
+  return (
+    <div className="bg-background min-h-screen">
+      <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5 text-foreground" /></button>
+          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" /> Admin Dashboard
+          </h2>
+        </div>
+        <div className="flex gap-1 mt-3">
+          {tabs.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                tab === t.key ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
+              }`}
+            >
+              <t.icon className="h-3.5 w-3.5" /> {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="px-4 py-4">
+        {/* Stats cards */}
+        {tab === "stats" && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Pending", value: pendingCount, color: "text-yellow-600" },
+                { label: "Active Listings", value: activeCount, color: "text-accent" },
+                { label: "Total Users", value: totalUsers, color: "text-primary" },
+                { label: "Avg Rating", value: avgRating, color: "text-orange-500" },
+              ].map((s) => (
+                <div key={s.label} className="bg-card rounded-xl p-4 shadow-card text-center">
+                  <p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Properties */}
+        {tab === "properties" && (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">{pendingCount} pending approval</p>
+            {properties?.map((p) => (
+              <div key={p.id} className="bg-card rounded-xl p-3 shadow-card">
+                <div className="flex gap-3">
+                  <img
+                    src={p.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"}
+                    alt="" className="h-16 w-16 rounded-lg object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">{p.title}</p>
+                    <p className="text-xs text-muted-foreground">{p.city} · ₹{Number(p.price).toLocaleString("en-IN")}</p>
+                    <span className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
+                      p.status === "active" ? "bg-green-100 text-green-800" : p.status === "pending" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"
+                    }`}>{p.status}</span>
+                  </div>
+                </div>
+                {p.status === "pending" && (
+                  <div className="flex gap-2 mt-3">
+                    <Button
+                      size="sm"
+                      className="flex-1 gradient-cta text-accent-foreground border-0 gap-1"
+                      onClick={() => updateProperty.mutate({ id: p.id, updates: { status: "active", is_verified: true } })}
+                    >
+                      <Check className="h-3 w-3" /> Approve
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 text-destructive border-destructive gap-1"
+                      onClick={() => updateProperty.mutate({ id: p.id, updates: { status: "rejected" } })}
+                    >
+                      <X className="h-3 w-3" /> Reject
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Users */}
+        {tab === "users" && (
+          <div className="space-y-2">
+            {profiles?.map((p) => (
+              <div key={p.id} className="bg-card rounded-xl p-3 shadow-card flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary-foreground font-bold text-sm">{p.name?.charAt(0)?.toUpperCase() || "U"}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{p.name || "Unnamed"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{p.email}</p>
+                </div>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize">{p.role}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Feedback */}
+        {tab === "feedback" && (
+          <div className="space-y-3">
+            {feedback?.map((f) => (
+              <div key={f.id} className="bg-card rounded-xl p-3 shadow-card">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-sm text-foreground">{f.name}</p>
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`h-3 w-3 ${i < f.rating ? "text-yellow-500 fill-yellow-500" : "text-muted"}`} />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{f.message}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{f.city} · {new Date(f.created_at).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;

@@ -6,6 +6,9 @@ import { useProperty } from "@/hooks/useProperties";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import PropertyMap from "@/components/PropertyMap";
+import BookingModal from "@/components/BookingModal";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -26,6 +29,7 @@ const PropertyDetail = () => {
   const { data: property, isLoading } = useProperty(id || "");
   const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
+  const [showBooking, setShowBooking] = useState(false);
 
   const isWishlisted = wishlistIds?.includes(id || "") ?? false;
 
@@ -56,25 +60,13 @@ const PropertyDetail = () => {
   };
 
   const handleWishlist = () => {
-    if (!user) {
-      toast.error("Sign in to save properties");
-      navigate("/auth");
-      return;
-    }
+    if (!user) { toast.error("Sign in to save properties"); navigate("/auth"); return; }
     toggleWishlist.mutate(id!);
   };
 
   const handleMessage = async () => {
-    if (!user) {
-      toast.error("Sign in to message owner");
-      navigate("/auth");
-      return;
-    }
-    if (!property.owner_id) {
-      toast.error("Owner not available");
-      return;
-    }
-    // Check for existing conversation
+    if (!user) { toast.error("Sign in to message owner"); navigate("/auth"); return; }
+    if (!property.owner_id) { toast.error("Owner not available"); return; }
     const { data: existing } = await supabase
       .from("conversations")
       .select("id")
@@ -82,23 +74,20 @@ const PropertyDetail = () => {
       .eq("property_id", property.id)
       .maybeSingle();
 
-    if (existing) {
-      navigate("/app/chat");
-      return;
-    }
+    if (existing) { navigate("/app/chat"); return; }
 
-    // Create new conversation
     const { error } = await supabase.from("conversations").insert({
-      participant_1: user.id,
-      participant_2: property.owner_id,
-      property_id: property.id,
+      participant_1: user.id, participant_2: property.owner_id, property_id: property.id,
     });
-    if (error) {
-      toast.error("Could not start conversation");
-      return;
-    }
+    if (error) { toast.error("Could not start conversation"); return; }
     toast.success("Conversation started!");
     navigate("/app/chat");
+  };
+
+  const handleBookVisit = () => {
+    if (!user) { toast.error("Sign in to book a visit"); navigate("/auth"); return; }
+    if (!property.owner_id) { toast.error("Owner not available"); return; }
+    setShowBooking(true);
   };
 
   return (
@@ -167,8 +156,17 @@ const PropertyDetail = () => {
             </div>
           </div>
         )}
+
+        {/* Map */}
+        {property.lat && property.lng && (
+          <div className="mt-4">
+            <h3 className="font-bold text-foreground mb-2">Location</h3>
+            <PropertyMap lat={property.lat} lng={property.lng} title={property.title} className="h-48 w-full rounded-xl overflow-hidden" />
+          </div>
+        )}
       </div>
 
+      {/* Bottom CTA */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-3 z-50">
         <Button variant="outline" className="flex-1 gap-2">
           <Phone className="h-4 w-4" /> Call
@@ -176,10 +174,22 @@ const PropertyDetail = () => {
         <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
           <MessageSquare className="h-4 w-4" /> Message
         </Button>
-        <Button className="flex-1 gradient-cta text-accent-foreground border-0 gap-2">
+        <Button onClick={handleBookVisit} className="flex-1 gradient-cta text-accent-foreground border-0 gap-2">
           <Calendar className="h-4 w-4" /> Book Visit
         </Button>
       </div>
+
+      {/* Booking Modal */}
+      {property.owner_id && user && (
+        <BookingModal
+          open={showBooking}
+          onOpenChange={setShowBooking}
+          propertyId={property.id}
+          ownerId={property.owner_id}
+          userId={user.id}
+          propertyTitle={property.title}
+        />
+      )}
     </div>
   );
 };

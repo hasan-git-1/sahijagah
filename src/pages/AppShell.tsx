@@ -7,6 +7,9 @@ import ChatScreen from "./app/ChatScreen";
 import ProfileScreen from "./app/ProfileScreen";
 import PropertyDetail from "./app/PropertyDetail";
 import WishlistScreen from "./app/WishlistScreen";
+import BookingsScreen from "./app/BookingsScreen";
+import AdminDashboard from "./app/AdminDashboard";
+import InstallScreen from "./app/InstallScreen";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
@@ -19,7 +22,11 @@ const navItems = [
 const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const hideNav = location.pathname.includes("/app/property/") || location.pathname.includes("/app/wishlist");
+  const hideNav = location.pathname.includes("/app/property/") ||
+    location.pathname.includes("/app/wishlist") ||
+    location.pathname.includes("/app/bookings") ||
+    location.pathname.includes("/app/admin") ||
+    location.pathname.includes("/app/install");
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
@@ -32,6 +39,9 @@ const AppShell = () => {
           <Route path="profile" element={<ProfileScreen />} />
           <Route path="property/:id" element={<PropertyDetail />} />
           <Route path="wishlist" element={<WishlistScreen />} />
+          <Route path="bookings" element={<BookingsScreen />} />
+          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="install" element={<InstallScreen />} />
         </Routes>
       </div>
 
