@@ -1,0 +1,16 @@
+{
+  "appId": "app.lovable.d0e94ad27f314268b996d1930a441899",
+  "appName": "Sahi Jagah",
+  "webDir": "dist",
+  "server": {
+    "url": "https://d0e94ad2-7f31-4268-b996-d1930a441899.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#1d6ce0",
+      "showSpinner": false
+    }
+  }
+}
