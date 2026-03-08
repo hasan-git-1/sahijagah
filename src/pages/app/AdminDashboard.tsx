@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3 } from "lucide-react";
+import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3, Flag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
