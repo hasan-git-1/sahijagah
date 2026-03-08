@@ -146,13 +146,9 @@ const PropertyDetail = () => {
         </div>
       </div>
 
-      {/* Image gallery */}
+      {/* Image gallery with fullscreen */}
       {property.images && property.images.length > 1 && (
-        <div className="flex gap-1.5 px-4 mt-3 overflow-x-auto hide-scrollbar">
-          {property.images.map((img, i) => (
-            <img key={i} src={img} alt="" className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border-2 border-transparent hover:border-primary transition-colors" />
-          ))}
-        </div>
+        <ImageGallery images={property.images} alt={property.title} />
       )}
 
       <div className="px-4 pt-4">
