@@ -287,13 +287,14 @@ const PropertyDetail = () => {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-3 z-50">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-2 z-50">
         <ClickToCall propertyId={property.id} propertyTitle={property.title} />
+        <WhatsAppButton propertyTitle={property.title} propertyPrice={priceLabel} city={property.city} />
         <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
           <MessageSquare className="h-4 w-4" /> Message
         </Button>
         <Button onClick={handleBookVisit} className="flex-1 gradient-cta text-accent-foreground border-0 gap-2">
-          <Calendar className="h-4 w-4" /> Book Visit
+          <Calendar className="h-4 w-4" /> Visit
         </Button>
       </div>
 

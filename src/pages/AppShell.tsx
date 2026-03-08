@@ -83,6 +83,7 @@ const AppShell = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
+      <OfflineIndicator />
       <div className="flex-1 pb-20 overflow-y-auto">
         <Routes>
           <Route index element={<HomeScreen />} />
