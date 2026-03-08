@@ -87,7 +87,19 @@ const PropertyVideo = ({ propertyId, videoUrl, isOwner }: PropertyVideoProps) =>
             </button>
           )}
         </div>
-      ) : isOwner ? (
+        {isOwner && (
+          <div className="mt-2">
+            <Button onClick={() => setShowEditor(!showEditor)} variant="outline" size="sm" className="w-full gap-2 text-xs">
+              <Scissors className="h-3 w-3" /> {showEditor ? "Hide Editor" : "Edit Video (Trim & Filters)"}
+            </Button>
+          </div>
+        )}
+        {showEditor && url && (
+          <div className="mt-3">
+            <VideoEditor videoUrl={url} />
+          </div>
+        )}
+      </>) : isOwner ? (
         <div
           onClick={() => fileRef.current?.click()}
           className="border-2 border-dashed border-input rounded-xl py-8 text-center cursor-pointer hover:bg-secondary/30 transition-colors"
