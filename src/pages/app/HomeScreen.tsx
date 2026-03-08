@@ -2,6 +2,8 @@ import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "luci
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFeaturedProperties, Property } from "@/hooks/useProperties";
+import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
+import { toast } from "sonner";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
 import cityHyd from "@/assets/city-hyderabad.jpg";
