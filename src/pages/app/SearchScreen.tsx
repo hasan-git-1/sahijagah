@@ -156,6 +156,9 @@ const SearchScreen = () => {
               <button onClick={() => setShowMap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
                 <Map className="h-3.5 w-3.5" /> Map
               </button>
+              <button onClick={() => setShowHeatmap(true)} className="flex items-center gap-1 text-xs text-primary font-semibold">
+                🔥 Heatmap
+              </button>
               <button onClick={handleSaveSearch} className="flex items-center gap-1 text-xs text-primary font-semibold">
                 <Bookmark className="h-3.5 w-3.5" /> Save
               </button>

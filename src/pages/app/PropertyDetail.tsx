@@ -153,6 +153,13 @@ const PropertyDetail = () => {
         <ImageGallery images={property.images} alt={property.title} />
       )}
 
+      {/* Virtual Tour */}
+      {property.images && property.images.length > 2 && (
+        <div className="px-4 mt-4">
+          <VirtualTourViewer images={property.images} title={property.title} />
+        </div>
+      )}
+
       <div className="px-4 pt-4">
         <p className="text-2xl font-extrabold text-primary">{formatPrice(property.price, property.type)}</p>
         <h1 className="text-lg font-bold text-foreground mt-1 flex items-center gap-1.5">
