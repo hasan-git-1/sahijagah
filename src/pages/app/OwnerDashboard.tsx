@@ -32,6 +32,7 @@ const OwnerDashboard = () => {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("listings");
   const [editProperty, setEditProperty] = useState<any>(null);
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
 
   // Owner's properties
   const { data: properties, isLoading } = useQuery({
