@@ -99,6 +99,8 @@ const AppShell = () => {
           <Route path="recently-viewed" element={<RecentlyViewedScreen />} />
           <Route path="saved-searches" element={<SavedSearchesScreen />} />
           <Route path="agent" element={<AgentDashboard />} />
+          <Route path="documents" element={<DocumentVaultScreen />} />
+          <Route path="owner-analytics" element={<OwnerAnalyticsScreen />} />
         </Routes>
       </div>
 
