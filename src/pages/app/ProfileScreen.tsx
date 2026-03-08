@@ -68,6 +68,8 @@ const ProfileScreen = () => {
     { icon: ShieldCheck, label: "Verify Identity", path: "/app/verify" },
     { icon: MapPin, label: "Find an Agent", path: "/app/find-agent" },
     { icon: Building2, label: "City Analytics", path: "/app/city-analytics" },
+    { icon: Calculator, label: "Property Tools", path: "/app/tools" },
+    { icon: MessageSquarePlus, label: "Share Feedback", path: "/app/feedback" },
     { icon: Edit, label: "Edit Profile", path: "/app/edit-profile" },
     { icon: Download, label: "Install App", path: "/app/install" },
     { icon: Settings, label: "Settings", path: "/app/settings" },
