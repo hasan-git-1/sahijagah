@@ -170,9 +170,14 @@ const HomeScreen = () => {
                     alt={prop.title}
                     className="w-full h-40 object-cover"
                   />
-                  <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                    {typeLabel[prop.type] || prop.type}
+                  <span className="absolute top-2 left-2 flex items-center gap-1">
+                    <span className="bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-1 rounded-full">
+                      {typeLabel[prop.type] || prop.type}
+                    </span>
                   </span>
+                  <div className="absolute bottom-2 left-2">
+                    <PropertyTags createdAt={prop.created_at} viewCount={prop.view_count} isFeatured={prop.is_featured} />
+                  </div>
                   <button
                     className="absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center"
                     onClick={(e) => handleWishlist(e, prop.id)}

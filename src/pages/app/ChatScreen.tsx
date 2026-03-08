@@ -200,7 +200,25 @@ const ChatScreen = () => {
 
         {/* Message Input */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 z-50">
+          {showImagePicker && (
+            <div className="mb-3">
+              <ImageUploader userId={user.id} images={chatImages} onImagesChange={setChatImages} maxImages={3} />
+            </div>
+          )}
+          {chatImages.length > 0 && (
+            <div className="flex gap-1 mb-2">
+              {chatImages.map((url, i) => (
+                <img key={i} src={url} alt="" className="h-12 w-12 rounded-lg object-cover" />
+              ))}
+            </div>
+          )}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowImagePicker(!showImagePicker)}
+              className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center flex-shrink-0"
+            >
+              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+            </button>
             <input
               type="text"
               placeholder="Type a message..."
@@ -211,7 +229,7 @@ const ChatScreen = () => {
             />
             <button
               onClick={handleSend}
-              disabled={!messageText.trim()}
+              disabled={!messageText.trim() && !chatImages.length}
               className="h-10 w-10 rounded-full gradient-blue flex items-center justify-center disabled:opacity-50"
             >
               <Send className="h-4 w-4 text-primary-foreground" />
