@@ -100,9 +100,12 @@ const AdminDashboard = () => {
   const totalUsers = profiles?.length || 0;
   const avgRating = feedback?.length ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(1) : "0";
 
+  const pendingReports = reports?.filter(r => r.status === "pending").length || 0;
+
   const tabs: { key: Tab; icon: React.ElementType; label: string }[] = [
     { key: "properties", icon: Home, label: "Properties" },
     { key: "users", icon: Users, label: "Users" },
+    { key: "reports", icon: Flag, label: "Reports" },
     { key: "feedback", icon: Star, label: "Feedback" },
     { key: "stats", icon: BarChart3, label: "Stats" },
   ];
