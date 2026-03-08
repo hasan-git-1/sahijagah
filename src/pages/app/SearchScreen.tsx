@@ -67,6 +67,7 @@ const SearchScreen = () => {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [showFilters, setShowFilters] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
   const navigate = useNavigate();
   const { user } = useAuth();
