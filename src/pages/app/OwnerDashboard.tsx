@@ -223,9 +223,14 @@ const OwnerDashboard = () => {
         {/* Listings */}
         {tab === "listings" && (
           <div className="space-y-3">
-            <Button onClick={() => navigate("/app/post")} className="w-full gradient-blue text-primary-foreground border-0 gap-2">
-              <Plus className="h-4 w-4" /> Post New Property
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate("/app/post")} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
+                <Plus className="h-4 w-4" /> Post New
+              </Button>
+              <Button onClick={() => setShowBulkUpload(true)} variant="outline" className="gap-2">
+                <Plus className="h-4 w-4" /> CSV Upload
+              </Button>
+            </div>
 
             {isLoading ? (
               <div className="flex justify-center py-10">
