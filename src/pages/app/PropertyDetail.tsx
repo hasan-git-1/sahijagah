@@ -22,6 +22,12 @@ import VirtualTourViewer from "@/components/VirtualTourViewer";
 import TranslatedDescription from "@/components/TranslatedDescription";
 import ClickToCall from "@/components/ClickToCall";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
+import FloorPlanViewer from "@/components/FloorPlanViewer";
+import MarketInsights from "@/components/MarketInsights";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import NeighborhoodReviews from "@/components/NeighborhoodReviews";
+import AutoRenewalReminder from "@/components/AutoRenewalReminder";
+import MoveInChecklist from "@/components/MoveInChecklist";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
