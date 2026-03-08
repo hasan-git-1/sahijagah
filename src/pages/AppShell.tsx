@@ -21,6 +21,7 @@ import NotificationsScreen from "./app/NotificationsScreen";
 import CompareScreen from "./app/CompareScreen";
 import RecentlyViewedScreen from "./app/RecentlyViewedScreen";
 import SavedSearchesScreen from "./app/SavedSearchesScreen";
+import AgentDashboard from "./app/AgentDashboard";
 
 const navItems = [
   { path: "/app", icon: Home, label: "Home" },
