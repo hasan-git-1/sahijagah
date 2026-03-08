@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search as SearchIcon, SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark, Map } from "lucide-react";
+import { SlidersHorizontal, MapPin, Heart, BedDouble, Bath, Bookmark, Map } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, useToggleWishlist } from "@/hooks/useWishlist";
