@@ -216,6 +216,7 @@ const PostScreen = () => {
           </div>
         </div>
       </div>
+      <BulkUploadModal open={showBulk} onOpenChange={setShowBulk} />
     </div>
   );
 };
