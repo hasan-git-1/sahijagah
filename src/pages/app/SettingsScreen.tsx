@@ -98,6 +98,9 @@ const SettingsScreen = () => {
         {/* Theme Customizer */}
         <ThemeCustomizer />
 
+        {/* Two-Factor Auth */}
+        <TwoFactorSetup />
+
         {/* Menu Items */}
         <div className="bg-card rounded-2xl shadow-card overflow-hidden divide-y divide-border">
           {menuItems.map((item) => (
