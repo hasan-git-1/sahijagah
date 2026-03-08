@@ -76,6 +76,7 @@ const SearchScreen = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useI18n();
+  const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
 
   const { data: results, isLoading } = useFilteredProperties(query, activeFilter, filters);
