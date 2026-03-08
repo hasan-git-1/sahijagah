@@ -46,6 +46,9 @@ const NotificationsScreen = () => {
     message: "💬",
     approval: "✅",
     general: "🔔",
+    saved_search: "🔍",
+    price_drop: "💰",
+    verification: "🛡️",
   };
 
   const timeAgo = (date: string) => {

@@ -36,7 +36,7 @@ const TenantVerificationScreen = () => {
     enabled: !!user,
   });
 
-  const verifyStatus: VerifyStatus = profile?.is_verified
+  const verifyStatus: string = profile?.is_verified
     ? "verified"
     : (kycDocs && kycDocs.length > 0)
     ? "pending"

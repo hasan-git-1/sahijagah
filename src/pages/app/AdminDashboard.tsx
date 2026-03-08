@@ -252,6 +252,9 @@ const AdminDashboard = () => {
         {/* Users */}
         {tab === "users" && (
           <div className="space-y-2">
+            <Button onClick={handleManageUsers} className="w-full gradient-blue text-primary-foreground border-0 gap-2 mb-3">
+              <Users className="h-4 w-4" /> Advanced User Management
+            </Button>
             {profiles?.map((p) => (
               <div key={p.id} className="bg-card rounded-xl p-3 shadow-card flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">

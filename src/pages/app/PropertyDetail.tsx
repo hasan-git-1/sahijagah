@@ -272,9 +272,7 @@ const PropertyDetail = () => {
 
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-3 z-50">
-        <Button variant="outline" className="flex-1 gap-2">
-          <Phone className="h-4 w-4" /> Call
-        </Button>
+        <ClickToCall propertyId={property.id} propertyTitle={property.title} />
         <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2">
           <MessageSquare className="h-4 w-4" /> Message
         </Button>

@@ -106,17 +106,11 @@ const SearchScreen = () => {
       {/* Search Bar */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 pt-3 pb-2 shadow-card">
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 bg-secondary rounded-full px-4 py-2.5">
-            <SearchIcon className="h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search city or locality"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
-              autoFocus
-            />
-          </div>
+          <SearchAutocomplete
+            value={query}
+            onChange={setQuery}
+            autoFocus
+          />
           <button
             onClick={() => setShowFilters(true)}
             className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center relative"
