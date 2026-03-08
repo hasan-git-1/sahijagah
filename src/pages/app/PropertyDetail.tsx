@@ -184,6 +184,11 @@ const PropertyDetail = () => {
           <span className="text-sm">{property.address || property.city}</span>
         </div>
 
+        {/* Social Proof */}
+        <div className="mt-3">
+          <SocialProofBanner viewCount={property.view_count || 0} createdAt={property.created_at} />
+        </div>
+
         <div className="flex gap-4 mt-4 py-3 border-y border-border">
           {property.bedrooms > 0 && (
             <div className="flex items-center gap-1.5 text-sm text-foreground">
