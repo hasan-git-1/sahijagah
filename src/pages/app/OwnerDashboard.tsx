@@ -332,6 +332,14 @@ const OwnerDashboard = () => {
           userId={user.id}
         />
       )}
+
+      {showBulkUpload && user && (
+        <BulkUploadModal
+          open={showBulkUpload}
+          onOpenChange={setShowBulkUpload}
+          userId={user.id}
+        />
+      )}
     </div>
   );
 };
