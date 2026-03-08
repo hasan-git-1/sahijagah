@@ -259,6 +259,9 @@ const OwnerDashboard = () => {
                     <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => navigate(`/app/property/${p.id}`)}>
                       <Eye className="h-3 w-3" /> View
                     </Button>
+                    <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => setEditProperty(p)}>
+                      <Edit className="h-3 w-3" /> Edit
+                    </Button>
                     <Button size="sm" variant="outline" className="text-destructive border-destructive gap-1" onClick={() => deleteProperty.mutate(p.id)}>
                       <Trash2 className="h-3 w-3" />
                     </Button>
