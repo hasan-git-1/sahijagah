@@ -71,6 +71,8 @@ const PostScreen = () => {
         images: images,
         owner_id: user.id,
         status: "pending",
+        lat: form.lat,
+        lng: form.lng,
       });
       if (error) throw error;
       toast.success("Property posted! It will be reviewed shortly.");
