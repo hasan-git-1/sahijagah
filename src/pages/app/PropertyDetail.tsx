@@ -11,7 +11,6 @@ import PropertyMapWithNearby from "@/components/PropertyMapWithNearby";
 import BookingModal from "@/components/BookingModal";
 import PropertyReviews from "@/components/PropertyReviews";
 import NeighborhoodInsights from "@/components/NeighborhoodInsights";
-import RentAgreementGenerator from "@/components/RentAgreementGenerator";
 import SEOHead from "@/components/SEOHead";
 import PropertyShareMenu from "@/components/PropertyShareMenu";
 import ImageGallery from "@/components/ImageGallery";
@@ -21,17 +20,13 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import VirtualTourViewer from "@/components/VirtualTourViewer";
 import TranslatedDescription from "@/components/TranslatedDescription";
 import ClickToCall from "@/components/ClickToCall";
-import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import FloorPlanViewer from "@/components/FloorPlanViewer";
 
 import WhatsAppButton from "@/components/WhatsAppButton";
 import NeighborhoodReviews from "@/components/NeighborhoodReviews";
 import AutoRenewalReminder from "@/components/AutoRenewalReminder";
-import MoveInChecklist from "@/components/MoveInChecklist";
-import RentReceiptGenerator from "@/components/RentReceiptGenerator";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import OwnerContactHours from "@/components/OwnerContactHours";
-import WishlistCollections from "@/components/WishlistCollections";
 import PropertyVideo from "@/components/PropertyVideo";
 import PriceDropAlert from "@/components/PriceDropAlert";
 import PropertyShareCard from "@/components/PropertyShareCard";
@@ -42,7 +37,6 @@ import NearbyTransport from "@/components/NearbyTransport";
 import SafetyScoreWidget from "@/components/SafetyScoreWidget";
 import PropertyTimeline from "@/components/PropertyTimeline";
 import QuickContactForm from "@/components/QuickContactForm";
-import PropertyHandoverChecklist from "@/components/PropertyHandoverChecklist";
 
 const amenityIcons: Record<string, React.ElementType> = {
   WiFi: Wifi, Parking: Car, Gym: Dumbbell, AC: Wind, Pool: Dumbbell,
@@ -65,6 +59,7 @@ const PropertyDetail = () => {
   const toggleWishlist = useToggleWishlist();
   const [showBooking, setShowBooking] = useState(false);
   const [viewTracked, setViewTracked] = useState(false);
+  const [ownerProfile, setOwnerProfile] = useState<{ phone?: string | null } | null>(null);
 
   useEffect(() => {
     if (!id || viewTracked) return;
@@ -77,6 +72,14 @@ const PropertyDetail = () => {
       ).then();
     }
   }, [id, user, viewTracked]);
+
+  // Fetch owner phone for WhatsApp/Call
+  useEffect(() => {
+    if (!property?.owner_id) return;
+    supabase.from("profiles").select("phone").eq("id", property.owner_id).maybeSingle().then(({ data }) => {
+      if (data) setOwnerProfile(data);
+    });
+  }, [property?.owner_id]);
 
   const isWishlisted = wishlistIds?.includes(id || "") ?? false;
 
@@ -226,25 +229,13 @@ const PropertyDetail = () => {
 
         <div className="mt-4"><NeighborhoodReviews city={property.city} locality={property.address} /></div>
 
-        {/* Rent-specific */}
+        {/* Auto Renewal Reminder for rent */}
         {property.type === "rent" && (
-          <div className="mt-4 space-y-4">
-            <RentAgreementGenerator propertyTitle={property.title} propertyAddress={property.address || property.city} rent={property.price} />
-            <RentReceiptGenerator propertyTitle={property.title} rent={property.price} />
+          <div className="mt-4">
             <AutoRenewalReminder propertyTitle={property.title} />
           </div>
         )}
 
-        {/* Move-in & Handover Checklists */}
-        {(property.type === "rent" || property.type === "pg") && (
-          <div className="mt-4 space-y-4">
-            <MoveInChecklist />
-            <PropertyHandoverChecklist />
-          </div>
-        )}
-
-        {user && <div className="mt-4"><WishlistCollections propertyId={property.id} /></div>}
-        <div className="mt-4"><AvailabilityCalendar readOnly /></div>
         <div className="mt-4"><PropertyReviews propertyId={property.id} /></div>
         <SimilarProperties propertyId={property.id} city={property.city} type={property.type} price={property.price} />
 
@@ -258,7 +249,7 @@ const PropertyDetail = () => {
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 flex gap-2 z-50">
         <ClickToCall propertyId={property.id} propertyTitle={property.title} />
-        <WhatsAppButton propertyTitle={property.title} propertyPrice={priceLabel} city={property.city} />
+        <WhatsAppButton propertyTitle={property.title} propertyPrice={priceLabel} city={property.city} phone={ownerProfile?.phone || undefined} />
         <Button onClick={handleMessage} className="flex-1 gradient-blue text-primary-foreground border-0 gap-2"><MessageSquare className="h-4 w-4" /> Message</Button>
         <Button onClick={handleBookVisit} className="flex-1 gradient-cta text-accent-foreground border-0 gap-2"><Calendar className="h-4 w-4" /> Visit</Button>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MapPin, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Camera, MapPin, ChevronLeft, ChevronRight, Check, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,7 +22,7 @@ const PostScreen = () => {
 
   const [form, setForm] = useState({
     title: "", description: "", type: "", category: "",
-    price: "", city: "", address: "",
+    price: "", city: "", address: "", phone: "",
     bedrooms: "0", bathrooms: "0", area: "",
     amenities: [] as string[],
     lat: null as number | null,
@@ -54,8 +54,15 @@ const PostScreen = () => {
       toast.error("Please fill in all required fields");
       return;
     }
+    if (!form.phone) {
+      toast.error("Please provide a phone number");
+      return;
+    }
     setLoading(true);
     try {
+      // Save phone to profile
+      await supabase.from("profiles").update({ phone: form.phone }).eq("id", user.id);
+
       const { error } = await supabase.from("properties").insert({
         title: form.title,
         description: form.description || null,
@@ -70,12 +77,13 @@ const PostScreen = () => {
         amenities: form.amenities,
         images: images,
         owner_id: user.id,
-        status: "pending",
+        status: "active",
+        is_featured: true,
         lat: form.lat,
         lng: form.lng,
       });
       if (error) throw error;
-      toast.success("Property posted! It will be reviewed shortly.");
+      toast.success("Property posted successfully! 🎉");
       navigate("/app");
     } catch (err: any) {
       toast.error(err.message || "Failed to post property");
@@ -156,6 +164,17 @@ const PostScreen = () => {
                 <input className={inputClass} placeholder="Bathrooms" type="number" value={form.bathrooms} onChange={(e) => update("bathrooms", e.target.value)} />
               </div>
               <input className={inputClass} placeholder="Area (e.g. 1,100 sqft)" value={form.area} onChange={(e) => update("area", e.target.value)} />
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  className={inputClass + " pl-10"}
+                  placeholder="Phone Number * (for WhatsApp & calls)"
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground">Your phone number will be used for WhatsApp enquiries and calls from interested buyers/tenants.</p>
             </div>
           )}
 
@@ -196,11 +215,13 @@ const PostScreen = () => {
                 <p><span className="text-muted-foreground">Price:</span> <span className="text-foreground font-medium">₹{Number(form.price).toLocaleString("en-IN") || "—"}</span></p>
                 <p><span className="text-muted-foreground">City:</span> <span className="text-foreground font-medium">{form.city || "—"}</span></p>
                 <p><span className="text-muted-foreground">Address:</span> <span className="text-foreground font-medium">{form.address || "—"}</span></p>
+                <p><span className="text-muted-foreground">Phone:</span> <span className="text-foreground font-medium">{form.phone || "—"}</span></p>
                 <p><span className="text-muted-foreground">Bedrooms:</span> <span className="text-foreground font-medium">{form.bedrooms}</span></p>
                 <p><span className="text-muted-foreground">Bathrooms:</span> <span className="text-foreground font-medium">{form.bathrooms}</span></p>
                 <p><span className="text-muted-foreground">Area:</span> <span className="text-foreground font-medium">{form.area || "—"}</span></p>
                 <p><span className="text-muted-foreground">Photos:</span> <span className="text-foreground font-medium">{images.length}</span></p>
                 <p><span className="text-muted-foreground">Amenities:</span> <span className="text-foreground font-medium">{form.amenities.join(", ") || "None"}</span></p>
+                {form.lat && form.lng && <p><span className="text-muted-foreground">📍 Location:</span> <span className="text-foreground font-medium">{form.lat}, {form.lng}</span></p>}
               </div>
             </div>
           )}
