@@ -301,7 +301,7 @@ const OwnerDashboard = () => {
               bookings.map((b: any) => (
                 <div key={b.id} className="bg-card rounded-xl p-3 shadow-card">
                   <p className="text-sm font-semibold text-foreground">{b.properties?.title}</p>
-                  <p className="text-xs text-muted-foreground">{b.profiles?.name || b.profiles?.email} wants to visit</p>
+                  <p className="text-xs text-muted-foreground">{b.client_profile?.name || b.client_profile?.email || "A user"} wants to visit</p>
                   <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     <span>{b.scheduled_date}</span>
                     <span>{b.scheduled_time}</span>
