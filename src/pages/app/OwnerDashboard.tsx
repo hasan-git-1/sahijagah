@@ -56,11 +56,20 @@ const OwnerDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("bookings")
-        .select("*, properties(title, city), profiles!bookings_client_id_fkey(name, email)")
+        .select("*, properties(title, city)")
         .eq("owner_id", user!.id)
         .order("scheduled_date", { ascending: true });
       if (error) throw error;
-      return data;
+      
+      // Fetch client profiles separately since there's no FK
+      const clientIds = [...new Set((data || []).map(b => b.client_id))];
+      const { data: profiles } = await supabase.from("profiles").select("id, name, email").in("id", clientIds);
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      
+      return (data || []).map(b => ({
+        ...b,
+        client_profile: profileMap.get(b.client_id) || null,
+      }));
     },
     enabled: !!user,
   });
@@ -292,7 +301,7 @@ const OwnerDashboard = () => {
               bookings.map((b: any) => (
                 <div key={b.id} className="bg-card rounded-xl p-3 shadow-card">
                   <p className="text-sm font-semibold text-foreground">{b.properties?.title}</p>
-                  <p className="text-xs text-muted-foreground">{b.profiles?.name || b.profiles?.email} wants to visit</p>
+                  <p className="text-xs text-muted-foreground">{b.client_profile?.name || b.client_profile?.email || "A user"} wants to visit</p>
                   <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                     <span>{b.scheduled_date}</span>
                     <span>{b.scheduled_time}</span>
