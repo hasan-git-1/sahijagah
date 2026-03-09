@@ -25,6 +25,8 @@ const PostScreen = () => {
     price: "", city: "", address: "",
     bedrooms: "0", bathrooms: "0", area: "",
     amenities: [] as string[],
+    lat: null as number | null,
+    lng: null as number | null,
   });
 
   const update = (key: string, val: string) => setForm((f) => ({ ...f, [key]: val }));
