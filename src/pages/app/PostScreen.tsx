@@ -137,10 +137,12 @@ const PostScreen = () => {
             <div className="space-y-3">
               <input className={inputClass} placeholder="City *" value={form.city} onChange={(e) => update("city", e.target.value)} />
               <input className={inputClass} placeholder="Full Address" value={form.address} onChange={(e) => update("address", e.target.value)} />
-              <div className="flex items-center gap-2 bg-secondary rounded-lg px-4 py-3 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                <span>Map pin selection (coming soon)</span>
-              </div>
+              <MapPinPicker
+                lat={form.lat ?? undefined}
+                lng={form.lng ?? undefined}
+                city={form.city}
+                onChange={(lat, lng) => setForm((f) => ({ ...f, lat, lng }))}
+              />
             </div>
           )}
 
