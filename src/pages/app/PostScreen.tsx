@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import ImageUploader from "@/components/ImageUploader";
 import BulkUploadModal from "@/components/BulkUploadModal";
+import MapPinPicker from "@/components/MapPinPicker";
 
 const steps = ["Photos", "Basic Info", "Location", "Details", "Amenities", "Review"];
 const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Security", "Garden", "Elevator", "Power Backup"];
@@ -24,6 +25,8 @@ const PostScreen = () => {
     price: "", city: "", address: "",
     bedrooms: "0", bathrooms: "0", area: "",
     amenities: [] as string[],
+    lat: null as number | null,
+    lng: null as number | null,
   });
 
   const update = (key: string, val: string) => setForm((f) => ({ ...f, [key]: val }));
@@ -68,6 +71,8 @@ const PostScreen = () => {
         images: images,
         owner_id: user.id,
         status: "pending",
+        lat: form.lat,
+        lng: form.lng,
       });
       if (error) throw error;
       toast.success("Property posted! It will be reviewed shortly.");
@@ -134,10 +139,12 @@ const PostScreen = () => {
             <div className="space-y-3">
               <input className={inputClass} placeholder="City *" value={form.city} onChange={(e) => update("city", e.target.value)} />
               <input className={inputClass} placeholder="Full Address" value={form.address} onChange={(e) => update("address", e.target.value)} />
-              <div className="flex items-center gap-2 bg-secondary rounded-lg px-4 py-3 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                <span>Map pin selection (coming soon)</span>
-              </div>
+              <MapPinPicker
+                lat={form.lat ?? undefined}
+                lng={form.lng ?? undefined}
+                city={form.city}
+                onChange={(lat, lng) => setForm((f) => ({ ...f, lat, lng }))}
+              />
             </div>
           )}
 
