@@ -115,13 +115,13 @@ const PropertyDetail = () => {
       .or(`and(participant_1.eq.${user.id},participant_2.eq.${property.owner_id}),and(participant_1.eq.${property.owner_id},participant_2.eq.${user.id})`)
       .eq("property_id", property.id)
       .maybeSingle();
-    if (existing) { navigate("/app/chat"); return; }
-    const { error } = await supabase.from("conversations").insert({
+    if (existing) { navigate("/app/chat", { state: { openConvoId: existing.id } }); return; }
+    const { data: newConvo, error } = await supabase.from("conversations").insert({
       participant_1: user.id, participant_2: property.owner_id, property_id: property.id,
-    });
-    if (error) { toast.error("Could not start conversation"); return; }
+    }).select("id").single();
+    if (error || !newConvo) { toast.error("Could not start conversation"); return; }
     toast.success("Conversation started!");
-    navigate("/app/chat");
+    navigate("/app/chat", { state: { openConvoId: newConvo.id } });
   };
 
   const handleBookVisit = () => {

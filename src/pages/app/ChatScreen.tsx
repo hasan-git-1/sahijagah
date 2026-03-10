@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Send, ArrowLeft, User, ImageIcon, Play, Pause } from "lucide-react";
+import { MessageSquare, Send, ArrowLeft, ImageIcon } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ interface Conversation {
   last_message: string | null;
   last_message_at: string | null;
   other_name?: string;
+  property_title?: string;
 }
 
 interface Message {
@@ -30,6 +31,7 @@ interface Message {
 const ChatScreen = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [activeConvo, setActiveConvo] = useState<Conversation | null>(null);
   const [messageText, setMessageText] = useState("");
@@ -48,19 +50,35 @@ const ChatScreen = () => {
         .order("last_message_at", { ascending: false });
       if (error) throw error;
 
-      // Fetch other participant names
       const convos = data || [];
       const otherIds = convos.map((c) => c.participant_1 === user!.id ? c.participant_2 : c.participant_1);
-      const { data: profiles } = await supabase.from("profiles").select("id, name").in("id", otherIds);
-      const nameMap = new Map(profiles?.map((p) => [p.id, p.name]) || []);
+      const propIds = convos.map((c) => c.property_id).filter(Boolean) as string[];
+
+      const [profilesRes, propsRes] = await Promise.all([
+        supabase.from("profiles").select("id, name").in("id", otherIds),
+        propIds.length > 0 ? supabase.from("properties").select("id, title").in("id", propIds) : { data: [] },
+      ]);
+
+      const nameMap = new Map(profilesRes.data?.map((p) => [p.id, p.name]) || []);
+      const propMap = new Map((propsRes.data || []).map((p) => [p.id, p.title]));
 
       return convos.map((c) => ({
         ...c,
         other_name: nameMap.get(c.participant_1 === user!.id ? c.participant_2 : c.participant_1) || "User",
+        property_title: c.property_id ? propMap.get(c.property_id) || undefined : undefined,
       }));
     },
     enabled: !!user,
   });
+
+  // Auto-open conversation from navigation state
+  useEffect(() => {
+    const openId = (location.state as any)?.openConvoId;
+    if (openId && conversations) {
+      const convo = conversations.find((c) => c.id === openId);
+      if (convo) setActiveConvo(convo);
+    }
+  }, [conversations, location.state]);
 
   // Fetch messages for active conversation
   const { data: messages } = useQuery({
@@ -75,10 +93,24 @@ const ChatScreen = () => {
       return data as Message[];
     },
     enabled: !!activeConvo,
-    refetchInterval: 3000, // Poll every 3s for now
   });
 
-  // Realtime subscription
+  // Mark messages as read
+  useEffect(() => {
+    if (!activeConvo || !messages || !user) return;
+    const unread = messages.filter((m) => m.sender_id !== user.id && !m.read);
+    if (unread.length > 0) {
+      supabase
+        .from("messages")
+        .update({ read: true })
+        .in("id", unread.map((m) => m.id))
+        .then(() => {
+          queryClient.invalidateQueries({ queryKey: ["unread-count"] });
+        });
+    }
+  }, [messages, activeConvo, user, queryClient]);
+
+  // Realtime subscription for messages
   useEffect(() => {
     if (!activeConvo) return;
     const channel = supabase
@@ -96,12 +128,29 @@ const ChatScreen = () => {
     return () => { supabase.removeChannel(channel); };
   }, [activeConvo?.id, queryClient]);
 
+  // Realtime for conversation list updates
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase
+      .channel("conversations-list")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "conversations",
+      }, () => {
+        queryClient.invalidateQueries({ queryKey: ["conversations", user.id] });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id, queryClient]);
+
   // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send message
+  // Send message + notification
   const sendMutation = useMutation({
     mutationFn: async (text: string) => {
       const { error } = await supabase.from("messages").insert({
@@ -110,10 +159,25 @@ const ChatScreen = () => {
         text,
       });
       if (error) throw error;
+
+      // Update conversation last_message
       await supabase.from("conversations").update({
         last_message: text,
         last_message_at: new Date().toISOString(),
       }).eq("id", activeConvo!.id);
+
+      // Send notification to other participant
+      const recipientId = activeConvo!.participant_1 === user!.id
+        ? activeConvo!.participant_2
+        : activeConvo!.participant_1;
+
+      await supabase.from("notifications").insert({
+        user_id: recipientId,
+        title: "New Message 💬",
+        message: text.length > 80 ? text.slice(0, 80) + "…" : text,
+        type: "message",
+        link: "/app/chat",
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages", activeConvo?.id] });
@@ -161,15 +225,23 @@ const ChatScreen = () => {
           </div>
           <div>
             <p className="font-semibold text-sm text-foreground">{activeConvo.other_name}</p>
-            <p className="text-[10px] text-muted-foreground">Online</p>
+            {activeConvo.property_title && (
+              <p className="text-[10px] text-muted-foreground truncate max-w-[200px]">
+                Re: {activeConvo.property_title}
+              </p>
+            )}
           </div>
         </div>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 pb-24">
+          {messages?.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">No messages yet. Say hello! 👋</p>
+            </div>
+          )}
           {messages?.map((msg) => {
             const isMine = msg.sender_id === user.id;
-            // Check if message contains image links
             const imageMatch = msg.text.match(/\[image\]\((https?:\/\/[^\)]+)\)/g);
             const textOnly = msg.text.replace(/\[image\]\(https?:\/\/[^\)]+\)/g, "").trim();
             const imageUrls = imageMatch?.map(m => m.match(/\((https?:\/\/[^\)]+)\)/)?.[1]).filter(Boolean) as string[] || [];
@@ -220,9 +292,6 @@ const ChatScreen = () => {
             >
               <ImageIcon className="h-4 w-4 text-muted-foreground" />
             </button>
-            <VoiceRecorder onRecorded={(url, dur) => {
-              sendMutation.mutate(`🎤 Voice message (${dur}s)`);
-            }} />
             <input
               type="text"
               placeholder="Type a message..."
@@ -276,6 +345,9 @@ const ChatScreen = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-foreground">{convo.other_name}</p>
+                {convo.property_title && (
+                  <p className="text-[10px] text-primary truncate">Re: {convo.property_title}</p>
+                )}
                 <p className="text-xs text-muted-foreground truncate">{convo.last_message || "No messages yet"}</p>
               </div>
               {convo.last_message_at && (
