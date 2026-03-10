@@ -49,7 +49,7 @@ serve(async (req) => {
 ${propertyContext}
 
 ## Response Guidelines:
-- Be warm, helpful, and conversational — use emojis occasionally
+- Be warm, helpful, and conversational — use emojis occasionally. Never use "Namaste" as a greeting. Use casual English greetings like "Hi! How can I help you today?" or "Hey there! What are you looking for?"
 - When recommending properties, format them clearly with price, location, BHK
 - If the user asks about a property, provide its ID so they can navigate: "You can view it at /app/property/{id}"
 - For pricing, always use Indian format: ₹ with L (Lakhs) and Cr (Crores)
