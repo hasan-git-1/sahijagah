@@ -150,36 +150,28 @@ const HomeScreen = () => {
             <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
             {featuredProperties?.map((prop) => (
-              <button key={prop.id} onClick={() => navigate(`/app/property/${prop.id}`)} className="w-full bg-card rounded-xl overflow-hidden shadow-card text-left">
+              <button key={prop.id} onClick={() => navigate(`/app/property/${prop.id}`)} className="w-full bg-card rounded-xl overflow-hidden shadow-card text-left flex flex-col">
                 <div className="relative">
-                  <img src={prop.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"} alt={prop.title} className="w-full h-40 object-cover" />
-                  <span className="absolute top-2 left-2 flex items-center gap-1">
-                    <span className="bg-primary text-primary-foreground text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                      {typeLabel[prop.type] || prop.type}
-                    </span>
+                  <img src={prop.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"} alt={prop.title} className="w-full h-28 object-cover" />
+                  <span className="absolute top-1.5 left-1.5 bg-primary text-primary-foreground text-[9px] font-semibold px-2 py-0.5 rounded-full">
+                    {typeLabel[prop.type] || prop.type}
                   </span>
-                  <div className="absolute bottom-2 left-2">
-                    <PropertyTags createdAt={prop.created_at} viewCount={prop.view_count} isFeatured={prop.is_featured} />
-                  </div>
-                  <button className="absolute top-2 right-2 h-8 w-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center" onClick={(e) => handleWishlist(e, prop.id)}>
-                    <Heart className={`h-4 w-4 ${wishlistIds?.includes(prop.id) ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
+                  <button className="absolute top-1.5 right-1.5 h-7 w-7 rounded-full bg-card/70 backdrop-blur flex items-center justify-center" onClick={(e) => handleWishlist(e, prop.id)}>
+                    <Heart className={`h-3.5 w-3.5 ${wishlistIds?.includes(prop.id) ? "text-destructive fill-destructive" : "text-muted-foreground"}`} />
                   </button>
                 </div>
-                <div className="p-3">
-                  <p className="font-bold text-primary text-lg">{formatPrice(prop.price, prop.type)}</p>
-                  <p className="font-semibold text-sm text-foreground mt-0.5 flex items-center gap-1">
-                    {prop.title}
-                    <VerifiedBadge isVerified={prop.is_verified} />
-                  </p>
-                  <div className="flex items-center gap-1 mt-1 text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    <span className="text-xs">{prop.address || prop.city}</span>
+                <div className="p-2.5 flex flex-col gap-0.5 flex-1">
+                  <p className="font-bold text-primary text-sm">{formatPrice(prop.price, prop.type)}</p>
+                  <p className="font-semibold text-xs text-foreground truncate">{prop.title}</p>
+                  <div className="flex items-center gap-0.5 text-muted-foreground">
+                    <MapPin className="h-2.5 w-2.5 flex-shrink-0" />
+                    <span className="text-[10px] truncate">{prop.address || prop.city}</span>
                   </div>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                    {prop.bedrooms > 0 && <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" /> {prop.bedrooms} {t("beds")}</span>}
-                    {prop.bathrooms > 0 && <span className="flex items-center gap-1"><Bath className="h-3 w-3" /> {prop.bathrooms} {t("bath")}</span>}
+                  <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground flex-wrap">
+                    {prop.bedrooms > 0 && <span className="flex items-center gap-0.5"><BedDouble className="h-2.5 w-2.5" /> {prop.bedrooms} {t("beds")}</span>}
+                    {prop.bathrooms > 0 && <span className="flex items-center gap-0.5"><Bath className="h-2.5 w-2.5" /> {prop.bathrooms} {t("bath")}</span>}
                     {prop.area && <span>{prop.area}</span>}
                   </div>
                 </div>
