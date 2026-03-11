@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
-import { MessageSquare, Send, ArrowLeft, ImageIcon } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { MessageSquare, Send, ArrowLeft, ImageIcon, Trash2, MoreVertical } from "lucide-react";
 import ImageUploader from "@/components/ImageUploader";
-import VoiceRecorder from "@/components/VoiceRecorder";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface Conversation {
   id: string;
@@ -37,7 +37,12 @@ const ChatScreen = () => {
   const [messageText, setMessageText] = useState("");
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [chatImages, setChatImages] = useState<string[]>([]);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const [showConvoMenu, setShowConvoMenu] = useState<string | null>(null);
+  const [selectedMessages, setSelectedMessages] = useState<Set<string>>(new Set());
+  const [selectMode, setSelectMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch conversations
   const { data: conversations } = useQuery({
@@ -80,7 +85,7 @@ const ChatScreen = () => {
     }
   }, [conversations, location.state]);
 
-  // Fetch messages for active conversation
+  // Fetch messages
   const { data: messages } = useQuery({
     queryKey: ["messages", activeConvo?.id],
     queryFn: async () => {
@@ -110,7 +115,7 @@ const ChatScreen = () => {
     }
   }, [messages, activeConvo, user, queryClient]);
 
-  // Realtime subscription for messages
+  // Realtime for messages
   useEffect(() => {
     if (!activeConvo) return;
     const channel = supabase
@@ -123,34 +128,62 @@ const ChatScreen = () => {
       }, () => {
         queryClient.invalidateQueries({ queryKey: ["messages", activeConvo.id] });
       })
+      .on("postgres_changes", {
+        event: "DELETE",
+        schema: "public",
+        table: "messages",
+        filter: `conversation_id=eq.${activeConvo.id}`,
+      }, () => {
+        queryClient.invalidateQueries({ queryKey: ["messages", activeConvo.id] });
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, [activeConvo?.id, queryClient]);
 
-  // Realtime for conversation list updates
+  // Typing indicator via broadcast
+  useEffect(() => {
+    if (!activeConvo || !user) return;
+    const channel = supabase.channel(`typing:${activeConvo.id}`);
+    
+    channel.on("broadcast", { event: "typing" }, (payload) => {
+      if (payload.payload?.user_id !== user.id) {
+        setIsOtherTyping(true);
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => setIsOtherTyping(false), 2500);
+      }
+    }).subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [activeConvo?.id, user?.id]);
+
+  const broadcastTyping = useCallback(() => {
+    if (!activeConvo || !user) return;
+    supabase.channel(`typing:${activeConvo.id}`).send({
+      type: "broadcast",
+      event: "typing",
+      payload: { user_id: user.id },
+    });
+  }, [activeConvo?.id, user?.id]);
+
+  // Realtime for conversation list
   useEffect(() => {
     if (!user) return;
     const channel = supabase
       .channel("conversations-list")
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "conversations",
-      }, () => {
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => {
         queryClient.invalidateQueries({ queryKey: ["conversations", user.id] });
       })
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [user?.id, queryClient]);
 
   // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isOtherTyping]);
 
-  // Send message + notification
+  // Send message
   const sendMutation = useMutation({
     mutationFn: async (text: string) => {
       const { error } = await supabase.from("messages").insert({
@@ -160,13 +193,11 @@ const ChatScreen = () => {
       });
       if (error) throw error;
 
-      // Update conversation last_message
       await supabase.from("conversations").update({
         last_message: text,
         last_message_at: new Date().toISOString(),
       }).eq("id", activeConvo!.id);
 
-      // Send notification to other participant
       const recipientId = activeConvo!.participant_1 === user!.id
         ? activeConvo!.participant_2
         : activeConvo!.participant_1;
@@ -186,6 +217,39 @@ const ChatScreen = () => {
     },
   });
 
+  // Delete messages
+  const deleteMessagesMutation = useMutation({
+    mutationFn: async (messageIds: string[]) => {
+      const { error } = await supabase
+        .from("messages")
+        .delete()
+        .in("id", messageIds);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["messages", activeConvo?.id] });
+      setSelectedMessages(new Set());
+      setSelectMode(false);
+      toast.success("Messages deleted");
+    },
+  });
+
+  // Delete conversation
+  const deleteConvoMutation = useMutation({
+    mutationFn: async (convoId: string) => {
+      // Delete all messages first, then conversation
+      await supabase.from("messages").delete().eq("conversation_id", convoId);
+      const { error } = await supabase.from("conversations").delete().eq("id", convoId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["conversations", user?.id] });
+      setActiveConvo(null);
+      setShowConvoMenu(null);
+      toast.success("Conversation deleted");
+    },
+  });
+
   const handleSend = () => {
     const text = messageText.trim();
     const imgText = chatImages.length ? chatImages.map(url => `[image](${url})`).join(" ") : "";
@@ -194,6 +258,14 @@ const ChatScreen = () => {
     sendMutation.mutate(fullText);
     setChatImages([]);
     setShowImagePicker(false);
+  };
+
+  const toggleMessageSelect = (msgId: string) => {
+    setSelectedMessages(prev => {
+      const next = new Set(prev);
+      if (next.has(msgId)) next.delete(msgId); else next.add(msgId);
+      return next;
+    });
   };
 
   if (!user) {
@@ -209,13 +281,13 @@ const ChatScreen = () => {
     );
   }
 
-  // Chat view
+  // Active chat view
   if (activeConvo) {
     return (
-      <div className="bg-background min-h-screen flex flex-col">
+      <div className="bg-background flex flex-col h-screen">
         {/* Chat Header */}
-        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card flex items-center gap-3">
-          <button onClick={() => setActiveConvo(null)}>
+        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card flex items-center gap-3 flex-shrink-0">
+          <button onClick={() => { setActiveConvo(null); setSelectMode(false); setSelectedMessages(new Set()); }}>
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
           <div className="h-9 w-9 rounded-full gradient-blue flex items-center justify-center">
@@ -223,18 +295,38 @@ const ChatScreen = () => {
               {activeConvo.other_name?.charAt(0)?.toUpperCase() || "U"}
             </span>
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm text-foreground">{activeConvo.other_name}</p>
             {activeConvo.property_title && (
-              <p className="text-[10px] text-muted-foreground truncate max-w-[200px]">
-                Re: {activeConvo.property_title}
-              </p>
+              <p className="text-[10px] text-muted-foreground truncate">Re: {activeConvo.property_title}</p>
             )}
+          </div>
+          <div className="flex items-center gap-1">
+            {selectMode && selectedMessages.size > 0 && (
+              <button
+                onClick={() => deleteMessagesMutation.mutate(Array.from(selectedMessages))}
+                className="h-9 w-9 rounded-full bg-destructive/10 flex items-center justify-center"
+              >
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </button>
+            )}
+            <button
+              onClick={() => { setSelectMode(!selectMode); setSelectedMessages(new Set()); }}
+              className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center"
+            >
+              <MoreVertical className="h-4 w-4 text-muted-foreground" />
+            </button>
           </div>
         </div>
 
+        {selectMode && (
+          <div className="bg-primary/5 px-4 py-2 text-xs text-muted-foreground flex-shrink-0">
+            Tap messages to select • {selectedMessages.size} selected
+          </div>
+        )}
+
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 pb-24">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
           {messages?.length === 0 && (
             <div className="text-center py-8">
               <p className="text-sm text-muted-foreground">No messages yet. Say hello! 👋</p>
@@ -245,10 +337,17 @@ const ChatScreen = () => {
             const imageMatch = msg.text.match(/\[image\]\((https?:\/\/[^\)]+)\)/g);
             const textOnly = msg.text.replace(/\[image\]\(https?:\/\/[^\)]+\)/g, "").trim();
             const imageUrls = imageMatch?.map(m => m.match(/\((https?:\/\/[^\)]+)\)/)?.[1]).filter(Boolean) as string[] || [];
+            const isSelected = selectedMessages.has(msg.id);
 
             return (
-              <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm ${
+              <div
+                key={msg.id}
+                className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+                onClick={() => selectMode && toggleMessageSelect(msg.id)}
+              >
+                <div className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm transition-colors ${
+                  isSelected ? "ring-2 ring-primary" : ""
+                } ${
                   isMine
                     ? "bg-primary text-primary-foreground rounded-br-md"
                     : "bg-secondary text-foreground rounded-bl-md"
@@ -268,11 +367,22 @@ const ChatScreen = () => {
               </div>
             );
           })}
+
+          {/* Typing indicator */}
+          {isOtherTyping && (
+            <div className="flex justify-start">
+              <div className="bg-secondary rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Message Input */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-border px-4 py-3 z-50">
+        {/* Message Input - sticky at bottom */}
+        <div className="bg-card border-t border-border px-4 py-3 flex-shrink-0">
           {showImagePicker && (
             <div className="mb-3">
               <ImageUploader userId={user.id} images={chatImages} onImagesChange={setChatImages} maxImages={3} />
@@ -296,7 +406,10 @@ const ChatScreen = () => {
               type="text"
               placeholder="Type a message..."
               value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
+              onChange={(e) => {
+                setMessageText(e.target.value);
+                broadcastTyping();
+              }}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               className="flex-1 bg-secondary rounded-full px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
             />
@@ -326,36 +439,61 @@ const ChatScreen = () => {
             <MessageSquare className="h-8 w-8 text-primary" />
           </div>
           <h3 className="font-bold text-foreground mb-1">No messages yet</h3>
-          <p className="text-sm text-muted-foreground">
-            Start a conversation by contacting a property owner
-          </p>
+          <p className="text-sm text-muted-foreground">Start a conversation by contacting a property owner</p>
         </div>
       ) : (
         <div className="divide-y divide-border">
           {conversations.map((convo) => (
-            <button
-              key={convo.id}
-              onClick={() => setActiveConvo(convo)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left"
-            >
-              <div className="h-11 w-11 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">
-                <span className="text-primary-foreground font-bold text-sm">
-                  {convo.other_name?.charAt(0)?.toUpperCase() || "U"}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-foreground">{convo.other_name}</p>
-                {convo.property_title && (
-                  <p className="text-[10px] text-primary truncate">Re: {convo.property_title}</p>
+            <div key={convo.id} className="relative flex items-center">
+              <button
+                onClick={() => setActiveConvo(convo)}
+                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left"
+              >
+                <div className="h-11 w-11 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary-foreground font-bold text-sm">
+                    {convo.other_name?.charAt(0)?.toUpperCase() || "U"}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-foreground">{convo.other_name}</p>
+                  {convo.property_title && (
+                    <p className="text-[10px] text-primary truncate">Re: {convo.property_title}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground truncate">{convo.last_message || "No messages yet"}</p>
+                </div>
+                {convo.last_message_at && (
+                  <span className="text-[10px] text-muted-foreground flex-shrink-0">
+                    {new Date(convo.last_message_at).toLocaleDateString([], { month: "short", day: "numeric" })}
+                  </span>
                 )}
-                <p className="text-xs text-muted-foreground truncate">{convo.last_message || "No messages yet"}</p>
-              </div>
-              {convo.last_message_at && (
-                <span className="text-[10px] text-muted-foreground flex-shrink-0">
-                  {new Date(convo.last_message_at).toLocaleDateString([], { month: "short", day: "numeric" })}
-                </span>
+              </button>
+              {/* Delete conversation button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConvoMenu(showConvoMenu === convo.id ? null : convo.id);
+                }}
+                className="absolute right-2 top-2 h-7 w-7 rounded-full bg-secondary flex items-center justify-center opacity-60 hover:opacity-100"
+              >
+                <MoreVertical className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+              {showConvoMenu === convo.id && (
+                <div className="absolute right-2 top-10 bg-card border border-border rounded-lg shadow-elevated z-10 py-1">
+                  <button
+                    onClick={() => {
+                      if (confirm("Delete this entire conversation?")) {
+                        deleteConvoMutation.mutate(convo.id);
+                      } else {
+                        setShowConvoMenu(null);
+                      }
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-secondary w-full"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
           ))}
         </div>
       )}

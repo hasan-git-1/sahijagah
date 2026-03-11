@@ -199,28 +199,28 @@ const LandingPage = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden min-h-[70vh] flex items-center">
         <div className="absolute inset-0">
           <img src={heroBanner} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-foreground/70" />
         </div>
-        <div className="relative container py-16 md:py-24 text-center">
-          <img src={logo} alt="Sahi Jagah" className="h-20 w-20 rounded-2xl mx-auto mb-5 shadow-elevated object-cover" />
-          <h1 className="text-3xl md:text-5xl font-extrabold text-primary-foreground mb-3 leading-tight">
-            India's Smartest Property<br />Rental &amp; Sales Platform
+        <div className="relative container py-20 md:py-32 text-center">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground mb-4 leading-tight drop-shadow-lg">
+            India's Leading Property<br />Rental &amp; Sales Platform
           </h1>
-          <p className="text-sky-300 text-base md:text-lg mb-8 max-w-lg mx-auto">
-            Find, Rent, Buy verified properties in your city — No Brokerage, No Fraud
+          <p className="text-primary-foreground/80 text-base md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow">
+            Rent &amp; Buy verified properties in your city — No Brokerage,<br className="hidden sm:block" />
+            No Middlemen, No Fraud
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
               onClick={handleInstall}
-              className="gradient-blue text-primary-foreground border-0 text-base font-semibold px-8 gap-2"
+              className="gradient-blue text-primary-foreground border-0 text-base font-semibold px-10 py-6 gap-2 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
             >
               <Download className="h-5 w-5" /> {installLabel}
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/app")} className="bg-card/20 backdrop-blur border-primary-foreground/30 text-primary-foreground hover:bg-card/40 text-base font-semibold px-8 gap-2">
+            <Button size="lg" variant="outline" onClick={() => navigate("/app")} className="bg-card/10 backdrop-blur-md border-2 border-primary-foreground/40 text-primary-foreground hover:bg-card/30 text-base font-semibold px-10 py-6 gap-2 rounded-xl shadow-lg">
               <Globe className="h-5 w-5" /> Open Web App
             </Button>
           </div>
