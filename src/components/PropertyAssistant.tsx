@@ -145,7 +145,7 @@ const PropertyAssistant = () => {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 right-4 z-50 h-14 w-14 rounded-full gradient-blue shadow-elevated flex items-center justify-center animate-scale-in"
+        className="fixed bottom-36 right-4 z-50 h-14 w-14 rounded-full gradient-blue shadow-elevated flex items-center justify-center animate-scale-in"
       >
         <Bot className="h-6 w-6 text-primary-foreground" />
       </button>

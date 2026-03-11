@@ -107,7 +107,7 @@ const OwnerChatbot = () => {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-24 right-4 z-50 h-12 w-12 rounded-full gradient-blue shadow-elevated flex items-center justify-center"
+          className="fixed bottom-36 right-4 z-50 h-12 w-12 rounded-full gradient-blue shadow-elevated flex items-center justify-center"
         >
           <Bot className="h-6 w-6 text-primary-foreground" />
         </button>
