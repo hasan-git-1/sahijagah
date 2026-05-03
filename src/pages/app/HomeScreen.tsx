@@ -72,6 +72,20 @@ const HomeScreen = () => {
 
   const typeLabel: Record<string, string> = { rent: t("rent"), sale: t("buy"), pg: t("pg"), commercial: t("commercial") };
 
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+
+  const popularAreas = useMemo(() => {
+    if (!userLoc) return defaultPopularAreas.slice(0, 6);
+    const within = defaultPopularAreas
+      .map((a) => ({ ...a, d: distKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
+      .filter((a) => a.d <= 5)
+      .sort((a, b) => a.d - b.d);
+    return within.length ? within : defaultPopularAreas
+      .map((a) => ({ ...a, d: distKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 6);
+  }, [userLoc]);
+
   const handleWishlist = (e: React.MouseEvent, propId: string) => {
     e.stopPropagation();
     if (!user) { toast.error(t("sign_in")); navigate("/auth"); return; }
