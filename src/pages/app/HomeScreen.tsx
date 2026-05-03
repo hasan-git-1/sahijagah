@@ -26,13 +26,28 @@ const cities = [
   { name: "Chennai", count: "1", img: cityChn },
 ];
 
-const popularAreas = [
-  { name: "Gachibowli", img: cityHyd },
-  { name: "Whitefield", img: cityBlr },
-  { name: "Hinjewadi", img: cityPune },
-  { name: "Andheri", img: cityMum },
-  { name: "OMR", img: cityChn },
+// Default popular areas (Hyderabad-focused) — replaced with nearby ones once geolocation is granted
+const defaultPopularAreas = [
+  { name: "Gachibowli", img: cityHyd, lat: 17.4401, lng: 78.3489 },
+  { name: "Kukatpally", img: cityHyd, lat: 17.4948, lng: 78.3996 },
+  { name: "HITEC City", img: cityHyd, lat: 17.4435, lng: 78.3772 },
+  { name: "Madhapur", img: cityHyd, lat: 17.4483, lng: 78.3915 },
+  { name: "Kondapur", img: cityHyd, lat: 17.4615, lng: 78.3673 },
+  { name: "Miyapur", img: cityHyd, lat: 17.4969, lng: 78.3724 },
+  { name: "Whitefield", img: cityBlr, lat: 12.9698, lng: 77.7500 },
+  { name: "Hinjewadi", img: cityPune, lat: 18.5912, lng: 73.7389 },
+  { name: "Andheri", img: cityMum, lat: 19.1136, lng: 72.8697 },
+  { name: "OMR", img: cityChn, lat: 12.8996, lng: 80.2279 },
 ];
+
+// Haversine distance in km
+const distKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
 
 const formatPrice = (p: number, type: string) => {
   if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
