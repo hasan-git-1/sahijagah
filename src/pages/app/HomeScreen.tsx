@@ -133,27 +133,6 @@ const HomeScreen = () => {
         ))}
       </div>
 
-      {/* Properties Near You */}
-      <div className="px-4 mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-foreground">{t("properties_near")}</h3>
-          <button onClick={() => navigate("/app/search")} className="text-xs text-primary font-medium flex items-center gap-0.5">
-            {t("view_all")} <ChevronRight className="h-3 w-3" />
-          </button>
-        </div>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
-          {cities.map((city) => (
-            <button key={city.name} onClick={() => navigate("/app/search")} className="flex-shrink-0 w-36 rounded-xl overflow-hidden shadow-card bg-card">
-              <img src={city.img} alt={city.name} className="w-full h-20 object-cover" />
-              <div className="p-2.5">
-                <p className="text-sm font-semibold text-foreground">{city.name}</p>
-                <p className="text-[10px] text-muted-foreground">{city.count} {t("properties")}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Popular Areas */}
       <div className="px-4 mb-5">
         <h3 className="font-bold text-foreground mb-3">{t("popular_areas")}</h3>
