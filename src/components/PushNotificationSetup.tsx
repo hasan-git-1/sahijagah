@@ -22,7 +22,7 @@ const PushNotificationSetup = () => {
       setSubscribed(true);
       toast.success("Push notifications enabled!");
       // Show a test notification
-      new Notification("Sahi Jagah", {
+      new Notification("urbanStay", {
         body: "You'll now receive updates on new listings and bookings!",
         icon: "/pwa-192.png",
       });
