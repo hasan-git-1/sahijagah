@@ -18,14 +18,6 @@ import cityPune from "@/assets/city-pune.jpg";
 import cityMum from "@/assets/city-mumbai.jpg";
 import cityChn from "@/assets/city-chennai.jpg";
 
-const cities = [
-  { name: "Hyderabad", count: "3", img: cityHyd },
-  { name: "Bengaluru", count: "3", img: cityBlr },
-  { name: "Pune", count: "2", img: cityPune },
-  { name: "Mumbai", count: "1", img: cityMum },
-  { name: "Chennai", count: "1", img: cityChn },
-];
-
 // Default popular areas (Hyderabad-focused) — replaced with nearby ones once geolocation is granted
 const defaultPopularAreas = [
   { name: "Gachibowli", img: cityHyd, lat: 17.4401, lng: 78.3489 },
