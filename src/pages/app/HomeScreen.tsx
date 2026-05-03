@@ -108,7 +108,7 @@ const HomeScreen = () => {
       </div>
 
       <div className="px-4 mt-2 flex justify-end">
-        <GeolocationDetect onLocationDetected={(lat, lng, city) => navigate("/app/search")} />
+        <GeolocationDetect onLocationDetected={(lat, lng) => setUserLoc({ lat, lng })} />
       </div>
 
       {/* Hero Banner */}
