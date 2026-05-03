@@ -64,12 +64,12 @@ const AuthPage = () => {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
-        <img src={logo} alt="Sahi Jagah" className="h-16 w-16 rounded-2xl object-cover mb-4 shadow-card" />
+        <img src={logo} alt="urbanStay" className="h-16 w-16 rounded-2xl object-cover mb-4 shadow-card" />
         <h1 className="text-2xl font-extrabold text-foreground mb-1">
           {isLogin ? "Welcome Back" : "Create Account"}
         </h1>
         <p className="text-sm text-muted-foreground mb-8">
-          {isLogin ? "Sign in to continue" : "Join Sahi Jagah today"}
+          {isLogin ? "Sign in to continue" : "Join urbanStay today"}
         </p>
 
         {/* Google Sign In */}
