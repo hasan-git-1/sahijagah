@@ -77,13 +77,13 @@ const PostScreen = () => {
         amenities: form.amenities,
         images: images,
         owner_id: user.id,
-        status: "active",
-        is_featured: true,
+        status: "pending",
+        is_featured: false,
         lat: form.lat,
         lng: form.lng,
       });
       if (error) throw error;
-      toast.success("Property posted successfully! 🎉");
+      toast.success("Property submitted! Pending admin approval ✅");
       navigate("/app");
     } catch (err: any) {
       toast.error(err.message || "Failed to post property");

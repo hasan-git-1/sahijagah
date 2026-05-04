@@ -69,7 +69,7 @@ const AIRecommendations = () => {
       let query = supabase
         .from("properties")
         .select("*")
-        .eq("status", "active")
+        .eq("status", "approved")
         .limit(6);
 
       const excludeIds = [...viewedIds, ...wishIds];
