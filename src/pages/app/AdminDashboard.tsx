@@ -97,7 +97,7 @@ const AdminDashboard = () => {
   }
 
   const pendingCount = properties?.filter((p) => p.status === "pending").length || 0;
-  const activeCount = properties?.filter((p) => p.status === "active").length || 0;
+  const activeCount = properties?.filter((p) => p.status === "approved").length || 0;
   const totalUsers = profiles?.length || 0;
   const avgRating = feedback?.length ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(1) : "0";
 
