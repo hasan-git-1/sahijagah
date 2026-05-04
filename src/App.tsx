@@ -11,6 +11,12 @@ import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import NotFound from "./pages/NotFound";
 import InstallScreen from "./pages/app/InstallScreen";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import PendingApprovals from "./pages/admin/PendingApprovals";
+import PropertiesManagement from "./pages/admin/PropertiesManagement";
+import UsersManagement from "./pages/admin/UsersManagement";
 
 // Deep link: /property/:id → /app/property/:id
 const PropertyRedirect = () => {
