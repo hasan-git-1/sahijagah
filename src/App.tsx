@@ -41,6 +41,14 @@ const App = () => (
                 <Route path="/app/*" element={<AppShell />} />
                 <Route path="/install" element={<InstallScreen />} />
                 <Route path="/property/:id" element={<PropertyRedirect />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route path="dashboard" element={<AdminDashboardPage />} />
+                  <Route path="pending" element={<PendingApprovals />} />
+                  <Route path="properties" element={<PropertiesManagement />} />
+                  <Route path="users" element={<UsersManagement />} />
+                </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
