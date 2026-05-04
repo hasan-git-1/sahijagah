@@ -25,7 +25,7 @@ const SimilarProperties = ({ propertyId, city, type, price }: SimilarPropertiesP
       const { data, error } = await supabase
         .from("properties")
         .select("id, title, price, city, type, images, bedrooms, bathrooms, area")
-        .eq("status", "approved")
+        .eq("status", "active")
         .eq("city", city)
         .eq("type", type)
         .neq("id", propertyId)

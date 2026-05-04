@@ -25,7 +25,7 @@ const CompareScreen = () => {
       const { data } = await supabase
         .from("properties")
         .select("*")
-        .eq("status", "approved")
+        .eq("status", "active")
         .or(`title.ilike.%${searchQ}%,city.ilike.%${searchQ}%`)
         .limit(10);
       return (data || []) as Property[];

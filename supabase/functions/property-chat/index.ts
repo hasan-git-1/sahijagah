@@ -22,7 +22,7 @@ serve(async (req) => {
     const { data: properties } = await supabase
       .from("properties")
       .select("id, title, price, city, type, bedrooms, bathrooms, area, address, amenities, category, is_verified, is_featured")
-      .eq("status", "approved")
+      .eq("status", "active")
       .limit(50);
 
     const propertyContext = properties && properties.length > 0

@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
       let query = supabase
         .from("properties")
         .select("id, title, city, price, type")
-        .eq("status", "approved")
+        .eq("status", "active")
         .gte("created_at", since.toISOString());
 
       if (filters.type && filters.type !== "All") {
