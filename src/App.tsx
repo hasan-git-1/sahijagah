@@ -11,6 +11,12 @@ import AuthPage from "./pages/AuthPage";
 import AppShell from "./pages/AppShell";
 import NotFound from "./pages/NotFound";
 import InstallScreen from "./pages/app/InstallScreen";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import PendingApprovals from "./pages/admin/PendingApprovals";
+import PropertiesManagement from "./pages/admin/PropertiesManagement";
+import UsersManagement from "./pages/admin/UsersManagement";
 
 // Deep link: /property/:id → /app/property/:id
 const PropertyRedirect = () => {
@@ -35,6 +41,14 @@ const App = () => (
                 <Route path="/app/*" element={<AppShell />} />
                 <Route path="/install" element={<InstallScreen />} />
                 <Route path="/property/:id" element={<PropertyRedirect />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route path="dashboard" element={<AdminDashboardPage />} />
+                  <Route path="pending" element={<PendingApprovals />} />
+                  <Route path="properties" element={<PropertiesManagement />} />
+                  <Route path="users" element={<UsersManagement />} />
+                </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
