@@ -83,7 +83,7 @@ const PostScreen = () => {
         lng: form.lng,
       });
       if (error) throw error;
-      toast.success("Property posted successfully! 🎉");
+      toast.success("Property submitted! Pending admin approval ✅");
       navigate("/app");
     } catch (err: any) {
       toast.error(err.message || "Failed to post property");
