@@ -11,7 +11,7 @@ const translations: Record<Language, Record<string, string>> = {
     easy_home: "Easy Home Rentals & Sales!",
     verified_listings: "Verified Listings | No Brokerage | Direct Contact",
     rent: "Rent", buy: "Buy", pg: "PG", commercial: "Commercial",
-    properties_near: "Popular Areas Near You", view_all: "View All",
+    properties_near: "Properties Near You", view_all: "View All",
     popular_areas: "Popular Areas", featured: "Featured Properties",
     properties: "properties",
     // Profile menu
@@ -71,7 +71,7 @@ const translations: Record<Language, Record<string, string>> = {
     easy_home: "आसान किराया और बिक्री!",
     verified_listings: "सत्यापित लिस्टिंग | कोई ब्रोकरेज नहीं | सीधा संपर्क",
     rent: "किराया", buy: "खरीदें", pg: "PG", commercial: "कमर्शियल",
-    properties_near: "आसपास के लोकप्रिय इलाके", view_all: "सब देखें",
+    properties_near: "आसपास की प्रॉपर्टी", view_all: "सब देखें",
     popular_areas: "लोकप्रिय इलाके", featured: "विशेष प्रॉपर्टी",
     properties: "प्रॉपर्टी",
     // Profile menu
@@ -131,7 +131,7 @@ const translations: Record<Language, Record<string, string>> = {
     easy_home: "సులభ అద్దె & అమ్మకాలు!",
     verified_listings: "ధృవీకరించిన జాబితాలు | బ్రోకరేజ్ లేదు | ప్రత్యక్ష సంప్రదింపు",
     rent: "అద్దె", buy: "కొనుగోలు", pg: "PG", commercial: "వాణిజ్య",
-    properties_near: "సమీపంలోని ప్రసిద్ధ ప్రాంతాలు", view_all: "అన్నీ చూడండి",
+    properties_near: "సమీపంలోని ఆస్తులు", view_all: "అన్నీ చూడండి",
     popular_areas: "ప్రసిద్ధ ప్రాంతాలు", featured: "ప్రత్యేక ఆస్తులు",
     properties: "ఆస్తులు",
     // Profile menu
@@ -207,13 +207,13 @@ export const useI18n = () => useContext(I18nContext);
 
 export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState<Language>(() => {
-    const saved = localStorage.getItem("urbanstay-lang") as Language;
+    const saved = localStorage.getItem("sahi-jagah-lang") as Language;
     return saved && ["en", "hi", "te"].includes(saved) ? saved : "en";
   });
 
   const setLang = (l: Language) => {
     setLangState(l);
-    localStorage.setItem("urbanstay-lang", l);
+    localStorage.setItem("sahi-jagah-lang", l);
   };
 
   const t = (key: string) => translations[lang]?.[key] || translations.en[key] || key;
