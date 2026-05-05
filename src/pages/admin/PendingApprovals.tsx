@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, X, MapPin, Bed, Bath, IndianRupee, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const PendingApprovals = () => {
+const PendingApprovals = forwardRef<HTMLDivElement>((_, ref) => {
   const queryClient = useQueryClient();
   const [rejecting, setRejecting] = useState<string | null>(null);
   const [reason, setReason] = useState("");
@@ -73,7 +73,7 @@ const PendingApprovals = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div ref={ref} className="space-y-4">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Pending Approvals</h2>
         <p className="text-sm text-muted-foreground mt-1">{properties?.length || 0} properties waiting</p>
@@ -170,6 +170,8 @@ const PendingApprovals = () => {
       )}
     </div>
   );
-};
+});
+
+PendingApprovals.displayName = "PendingApprovals";
 
 export default PendingApprovals;
