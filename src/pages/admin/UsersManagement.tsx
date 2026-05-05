@@ -1,11 +1,11 @@
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Ban, CheckCircle, Shield, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const UsersManagement = forwardRef<HTMLDivElement>((_, ref) => {
+const UsersManagement = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
 
@@ -67,7 +67,7 @@ const UsersManagement = forwardRef<HTMLDivElement>((_, ref) => {
   );
 
   return (
-    <div ref={ref} className="space-y-4">
+    <div className="space-y-4">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Users</h2>
         <p className="text-sm text-muted-foreground mt-1">{filtered.length} of {users?.length || 0} users</p>
@@ -163,8 +163,6 @@ const UsersManagement = forwardRef<HTMLDivElement>((_, ref) => {
       )}
     </div>
   );
-});
-
-UsersManagement.displayName = "UsersManagement";
+};
 
 export default UsersManagement;

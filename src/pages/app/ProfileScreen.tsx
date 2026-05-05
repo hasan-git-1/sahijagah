@@ -110,7 +110,7 @@ const ProfileScreen = () => {
         ) : (
           <>
             {isAdmin && (
-              <Button onClick={() => navigate("/admin/dashboard")} variant="outline" className="w-full gap-2">
+              <Button onClick={() => navigate("/app/admin")} variant="outline" className="w-full gap-2">
                 <Shield className="h-4 w-4 text-primary" /> {t("admin_dashboard")}
               </Button>
             )}

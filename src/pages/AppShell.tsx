@@ -1,5 +1,5 @@
 import { Home, Search, PlusCircle, MessageCircle, User, Bell } from "lucide-react";
-import { Navigate, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import PropertyAssistant from "@/components/PropertyAssistant";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +14,7 @@ import ProfileScreen from "./app/ProfileScreen";
 import PropertyDetail from "./app/PropertyDetail";
 import WishlistScreen from "./app/WishlistScreen";
 import BookingsScreen from "./app/BookingsScreen";
+import AdminDashboard from "./app/AdminDashboard";
 import InstallScreen from "./app/InstallScreen";
 import EditProfileScreen from "./app/EditProfileScreen";
 import OwnerDashboard from "./app/OwnerDashboard";
@@ -24,6 +25,7 @@ import RecentlyViewedScreen from "./app/RecentlyViewedScreen";
 import SavedSearchesScreen from "./app/SavedSearchesScreen";
 import OwnerAnalyticsScreen from "./app/OwnerAnalyticsScreen";
 import TenantVerificationScreen from "./app/TenantVerificationScreen";
+import AdminUserManagement from "./app/AdminUserManagement";
 import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 import ToolsScreen from "./app/ToolsScreen";
 import FeedbackScreen from "./app/FeedbackScreen";
@@ -77,7 +79,7 @@ const AppShell = () => {
     refetchInterval: 10000,
   });
 
-  const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings",
+  const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
     "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
     "/app/notifications", "/app/compare", "/app/recently-viewed", "/app/saved-searches",
     "/app/owner-analytics", "/app/verify",
@@ -97,7 +99,7 @@ const AppShell = () => {
           <Route path="property/:id" element={<PropertyDetail />} />
           <Route path="wishlist" element={<WishlistScreen />} />
           <Route path="bookings" element={<BookingsScreen />} />
-          <Route path="admin" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="admin" element={<AdminDashboard />} />
           <Route path="install" element={<InstallScreen />} />
           <Route path="edit-profile" element={<EditProfileScreen />} />
           <Route path="owner" element={<OwnerDashboard />} />
@@ -108,7 +110,7 @@ const AppShell = () => {
           <Route path="saved-searches" element={<SavedSearchesScreen />} />
           <Route path="owner-analytics" element={<OwnerAnalyticsScreen />} />
           <Route path="verify" element={<TenantVerificationScreen />} />
-          <Route path="admin/users" element={<Navigate to="/admin/users" replace />} />
+          <Route path="admin/users" element={<AdminUserManagement />} />
           <Route path="city-analytics" element={<CityAnalyticsScreen />} />
           <Route path="tools" element={<ToolsScreen />} />
           <Route path="feedback" element={<FeedbackScreen />} />
