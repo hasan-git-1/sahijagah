@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import PropertyTags from "@/components/PropertyTags";
@@ -18,28 +18,21 @@ import cityPune from "@/assets/city-pune.jpg";
 import cityMum from "@/assets/city-mumbai.jpg";
 import cityChn from "@/assets/city-chennai.jpg";
 
-// Default popular areas (Hyderabad-focused) — replaced with nearby ones once geolocation is granted
-const defaultPopularAreas = [
-  { name: "Gachibowli", img: cityHyd, lat: 17.4401, lng: 78.3489 },
-  { name: "Kukatpally", img: cityHyd, lat: 17.4948, lng: 78.3996 },
-  { name: "HITEC City", img: cityHyd, lat: 17.4435, lng: 78.3772 },
-  { name: "Madhapur", img: cityHyd, lat: 17.4483, lng: 78.3915 },
-  { name: "Kondapur", img: cityHyd, lat: 17.4615, lng: 78.3673 },
-  { name: "Miyapur", img: cityHyd, lat: 17.4969, lng: 78.3724 },
-  { name: "Whitefield", img: cityBlr, lat: 12.9698, lng: 77.7500 },
-  { name: "Hinjewadi", img: cityPune, lat: 18.5912, lng: 73.7389 },
-  { name: "Andheri", img: cityMum, lat: 19.1136, lng: 72.8697 },
-  { name: "OMR", img: cityChn, lat: 12.8996, lng: 80.2279 },
+const cities = [
+  { name: "Hyderabad", count: "3", img: cityHyd },
+  { name: "Bengaluru", count: "3", img: cityBlr },
+  { name: "Pune", count: "2", img: cityPune },
+  { name: "Mumbai", count: "1", img: cityMum },
+  { name: "Chennai", count: "1", img: cityChn },
 ];
 
-// Haversine distance in km
-const distKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLng = ((lng2 - lng1) * Math.PI) / 180;
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-};
+const popularAreas = [
+  { name: "Gachibowli", img: cityHyd },
+  { name: "Whitefield", img: cityBlr },
+  { name: "Hinjewadi", img: cityPune },
+  { name: "Andheri", img: cityMum },
+  { name: "OMR", img: cityChn },
+];
 
 const formatPrice = (p: number, type: string) => {
   if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
@@ -64,20 +57,6 @@ const HomeScreen = () => {
 
   const typeLabel: Record<string, string> = { rent: t("rent"), sale: t("buy"), pg: t("pg"), commercial: t("commercial") };
 
-  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
-
-  const popularAreas = useMemo(() => {
-    if (!userLoc) return defaultPopularAreas.slice(0, 6);
-    const within = defaultPopularAreas
-      .map((a) => ({ ...a, d: distKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
-      .filter((a) => a.d <= 5)
-      .sort((a, b) => a.d - b.d);
-    return within.length ? within : defaultPopularAreas
-      .map((a) => ({ ...a, d: distKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
-      .sort((a, b) => a.d - b.d)
-      .slice(0, 6);
-  }, [userLoc]);
-
   const handleWishlist = (e: React.MouseEvent, propId: string) => {
     e.stopPropagation();
     if (!user) { toast.error(t("sign_in")); navigate("/auth"); return; }
@@ -100,7 +79,7 @@ const HomeScreen = () => {
       </div>
 
       <div className="px-4 mt-2 flex justify-end">
-        <GeolocationDetect onLocationDetected={(lat, lng) => setUserLoc({ lat, lng })} />
+        <GeolocationDetect onLocationDetected={(lat, lng, city) => navigate("/app/search")} />
       </div>
 
       {/* Hero Banner */}
@@ -123,6 +102,27 @@ const HomeScreen = () => {
             <span className="text-xs font-medium text-foreground">{cat.label}</span>
           </button>
         ))}
+      </div>
+
+      {/* Properties Near You */}
+      <div className="px-4 mb-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-bold text-foreground">{t("properties_near")}</h3>
+          <button onClick={() => navigate("/app/search")} className="text-xs text-primary font-medium flex items-center gap-0.5">
+            {t("view_all")} <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+          {cities.map((city) => (
+            <button key={city.name} onClick={() => navigate("/app/search")} className="flex-shrink-0 w-36 rounded-xl overflow-hidden shadow-card bg-card">
+              <img src={city.img} alt={city.name} className="w-full h-20 object-cover" />
+              <div className="p-2.5">
+                <p className="text-sm font-semibold text-foreground">{city.name}</p>
+                <p className="text-[10px] text-muted-foreground">{city.count} {t("properties")}</p>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Popular Areas */}

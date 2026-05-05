@@ -9,8 +9,8 @@ interface SEOHeadProps {
 
 const SEOHead = ({ title, description, image, url }: SEOHeadProps) => {
   useEffect(() => {
-    const suffix = " | urbanStay";
-    const fullTitle = title ? `${title}${suffix}` : "urbanStay - Find Your Perfect Home";
+    const suffix = " | Sahi Jagah";
+    const fullTitle = title ? `${title}${suffix}` : "Sahi Jagah - Find Your Perfect Home";
     const desc = description || "Find verified rental, sale, PG & commercial properties across India.";
     const img = image || "https://lovable.dev/opengraph-image-p98pqg.png";
     const pageUrl = url || window.location.href;

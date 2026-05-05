@@ -37,7 +37,7 @@ const ComparisonPDFExport = ({ properties }: ComparisonPDFExportProps) => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Property Comparison - urbanStay</title>
+        <title>Property Comparison - Sahi Jagah</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 24px; color: #333; }
           h1 { color: #2563eb; font-size: 22px; margin-bottom: 4px; }
@@ -51,7 +51,7 @@ const ComparisonPDFExport = ({ properties }: ComparisonPDFExportProps) => {
       </head>
       <body>
         <h1>🏠 Property Comparison</h1>
-        <p class="subtitle">Generated from urbanStay on ${new Date().toLocaleDateString()}</p>
+        <p class="subtitle">Generated from Sahi Jagah on ${new Date().toLocaleDateString()}</p>
         <table>
           <tr>
             <th>Feature</th>
@@ -64,7 +64,7 @@ const ComparisonPDFExport = ({ properties }: ComparisonPDFExportProps) => {
             </tr>
           `).join("")}
         </table>
-        <div class="footer">Powered by urbanStay — urbanstay.in</div>
+        <div class="footer">Powered by Sahi Jagah — sahijagah.in</div>
       </body>
       </html>
     `;
