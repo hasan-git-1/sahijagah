@@ -240,7 +240,6 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
-          is_banned: boolean
           is_verified: boolean | null
           name: string | null
           phone: string | null
@@ -252,7 +251,6 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
-          is_banned?: boolean
           is_verified?: boolean | null
           name?: string | null
           phone?: string | null
@@ -264,7 +262,6 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          is_banned?: boolean
           is_verified?: boolean | null
           name?: string | null
           phone?: string | null
@@ -289,12 +286,10 @@ export type Database = {
           images: string[] | null
           is_featured: boolean | null
           is_verified: boolean | null
-          is_visible: boolean
           lat: number | null
           lng: number | null
           owner_id: string | null
           price: number
-          rejection_reason: string | null
           status: string
           title: string
           type: string
@@ -315,12 +310,10 @@ export type Database = {
           images?: string[] | null
           is_featured?: boolean | null
           is_verified?: boolean | null
-          is_visible?: boolean
           lat?: number | null
           lng?: number | null
           owner_id?: string | null
           price: number
-          rejection_reason?: string | null
           status?: string
           title: string
           type: string
@@ -341,12 +334,10 @@ export type Database = {
           images?: string[] | null
           is_featured?: boolean | null
           is_verified?: boolean | null
-          is_visible?: boolean
           lat?: number | null
           lng?: number | null
           owner_id?: string | null
           price?: number
-          rejection_reason?: string | null
           status?: string
           title?: string
           type?: string
