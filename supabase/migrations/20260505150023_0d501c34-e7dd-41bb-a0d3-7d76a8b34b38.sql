@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS trg_notify_on_property_approval ON public.properties;
