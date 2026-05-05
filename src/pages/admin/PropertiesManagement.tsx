@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Eye, EyeOff, Trash2, Search, Star, StarOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const PropertiesManagement = () => {
+const PropertiesManagement = forwardRef<HTMLDivElement>((_, ref) => {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [search, setSearch] = useState("");
@@ -53,7 +53,7 @@ const PropertiesManagement = () => {
   });
 
   return (
-    <div className="space-y-4">
+    <div ref={ref} className="space-y-4">
       <div>
         <h2 className="text-2xl font-bold text-foreground">All Properties</h2>
         <p className="text-sm text-muted-foreground mt-1">{filtered.length} of {properties?.length || 0} listings</p>
@@ -165,6 +165,8 @@ const PropertiesManagement = () => {
       )}
     </div>
   );
-};
+});
+
+PropertiesManagement.displayName = "PropertiesManagement";
 
 export default PropertiesManagement;
