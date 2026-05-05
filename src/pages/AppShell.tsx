@@ -77,7 +77,7 @@ const AppShell = () => {
     refetchInterval: 10000,
   });
 
-  const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings", "/app/admin",
+  const hideNav = ["/app/property/", "/app/wishlist", "/app/bookings",
     "/app/install", "/app/edit-profile", "/app/owner", "/app/settings",
     "/app/notifications", "/app/compare", "/app/recently-viewed", "/app/saved-searches",
     "/app/owner-analytics", "/app/verify",
