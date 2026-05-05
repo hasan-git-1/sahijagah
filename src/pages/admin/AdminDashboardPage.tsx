@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Home, Users, Clock, CheckCircle, XCircle, Eye } from "lucide-react";
@@ -17,7 +18,7 @@ const StatCard = ({ icon: Icon, label, value, color }: any) => (
   </div>
 );
 
-const AdminDashboardPage = () => {
+const AdminDashboardPage = forwardRef<HTMLDivElement>((_, ref) => {
   const { data: stats } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
@@ -50,7 +51,7 @@ const AdminDashboardPage = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Overview</h2>
         <p className="text-sm text-muted-foreground mt-1">Platform metrics at a glance</p>
@@ -99,6 +100,8 @@ const AdminDashboardPage = () => {
       </div>
     </div>
   );
-};
+});
+
+AdminDashboardPage.displayName = "AdminDashboardPage";
 
 export default AdminDashboardPage;
