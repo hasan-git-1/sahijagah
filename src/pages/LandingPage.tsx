@@ -165,7 +165,7 @@ const LandingPage = () => {
                 <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-primary-foreground text-xs font-bold">3</div>
                 <div>
                   <p className="text-sm font-medium text-foreground">Tap "Add"</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">urbanStay will appear on your home screen</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Sahi Jagah will appear on your home screen</p>
                 </div>
               </div>
             </div>
@@ -189,8 +189,8 @@ const LandingPage = () => {
       <header className="sticky top-0 z-40 bg-card/90 backdrop-blur-lg border-b border-border">
         <div className="container flex items-center justify-between py-3">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="urbanStay" className="h-9 w-9 rounded-lg object-cover" />
-            <span className="text-lg font-bold text-foreground">urbanStay</span>
+            <img src={logo} alt="Sahi Jagah" className="h-9 w-9 rounded-lg object-cover" />
+            <span className="text-lg font-bold text-foreground">Sahi Jagah</span>
           </div>
           <Button size="sm" onClick={() => navigate("/app")} className="gradient-blue text-primary-foreground border-0">
             Open App
@@ -227,11 +227,11 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* What is urbanStay */}
+      {/* What is Sahi Jagah */}
       <section className="container py-14">
-        <h2 className="text-2xl font-bold text-center mb-3">What is urbanStay?</h2>
+        <h2 className="text-2xl font-bold text-center mb-3">What is Sahi Jagah?</h2>
         <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-8">
-          urbanStay connects property owners directly with tenants and buyers across India's tier-2 and tier-3 cities — eliminating middlemen, brokerage fees, and fraud.
+          Sahi Jagah connects property owners directly with tenants and buyers across India's tier-2 and tier-3 cities — eliminating middlemen, brokerage fees, and fraud.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
@@ -363,7 +363,7 @@ const LandingPage = () => {
       <section className="gradient-hero py-16">
         <div className="container text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold text-primary-foreground mb-3">
-            Download urbanStay App
+            Download Sahi Jagah App
           </h2>
           <p className="text-primary-foreground/80 mb-6">
             Install directly on your Android phone. No Play Store needed.
@@ -409,8 +409,8 @@ const LandingPage = () => {
       <footer className="bg-foreground py-10">
         <div className="container text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <img src={logo} alt="urbanStay" className="h-8 w-8 rounded-lg object-cover" />
-            <span className="text-lg font-bold text-background">urbanStay</span>
+            <img src={logo} alt="Sahi Jagah" className="h-8 w-8 rounded-lg object-cover" />
+            <span className="text-lg font-bold text-background">Sahi Jagah</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-muted mb-3">
             <Phone className="h-4 w-4" />
@@ -420,7 +420,7 @@ const LandingPage = () => {
             <button className="hover:text-background transition-colors">Privacy Policy</button>
             <button className="hover:text-background transition-colors">Terms of Service</button>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 urbanStay. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground">© 2026 Sahi Jagah. All rights reserved.</p>
         </div>
       </footer>
     </div>
