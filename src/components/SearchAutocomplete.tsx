@@ -39,7 +39,7 @@ const SearchAutocomplete = ({ value, onChange, onSelect, placeholder, autoFocus 
     supabase
       .from("properties")
       .select("city, address")
-      .eq("status", "approved")
+      .eq("status", "active")
       .limit(200)
       .then(({ data }) => {
         if (data) {
