@@ -35,7 +35,7 @@ const OwnerChatbot = () => {
         .from("properties")
         .select("title, price, type, city, bedrooms, bathrooms, amenities, status, area")
         .eq("owner_id", user!.id)
-        .eq("status", "approved")
+        .eq("status", "active")
         .limit(10);
       return data || [];
     },
