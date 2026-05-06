@@ -66,7 +66,7 @@ const AgentDashboard = () => {
   }
 
   const totalViews = properties?.reduce((s, p) => s + (p.view_count || 0), 0) || 0;
-  const activeListings = properties?.filter(p => p.status === "active").length || 0;
+  const activeListings = properties?.filter(p => p.status === "approved").length || 0;
   const pendingBookings = bookings?.filter(b => b.status === "pending").length || 0;
 
   return (
@@ -155,7 +155,7 @@ const AgentDashboard = () => {
                     <p className="text-sm font-semibold text-foreground truncate">{p.title}</p>
                     <p className="text-xs text-muted-foreground">{p.city} · ₹{Number(p.price).toLocaleString("en-IN")}</p>
                     <span className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
-                      p.status === "active" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
+                      p.status === "approved" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"
                     }`}>{p.status}</span>
                   </div>
                 </button>

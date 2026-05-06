@@ -97,7 +97,7 @@ const AdminDashboard = () => {
   }
 
   const pendingCount = properties?.filter((p) => p.status === "pending").length || 0;
-  const activeCount = properties?.filter((p) => p.status === "active").length || 0;
+  const activeCount = properties?.filter((p) => p.status === "approved").length || 0;
   const totalUsers = profiles?.length || 0;
   const avgRating = feedback?.length ? (feedback.reduce((s, f) => s + f.rating, 0) / feedback.length).toFixed(1) : "0";
 
@@ -221,7 +221,7 @@ const AdminDashboard = () => {
                     <p className="text-sm font-semibold text-foreground truncate">{p.title}</p>
                     <p className="text-xs text-muted-foreground">{p.city} · ₹{Number(p.price).toLocaleString("en-IN")}</p>
                     <span className={`inline-flex items-center mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
-                      p.status === "active" ? "bg-accent/20 text-accent" : p.status === "pending" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" : "bg-destructive/20 text-destructive"
+                      p.status === "approved" ? "bg-accent/20 text-accent" : p.status === "pending" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" : "bg-destructive/20 text-destructive"
                     }`}>{p.status}</span>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ const AdminDashboard = () => {
                     <Button
                       size="sm"
                       className="flex-1 gradient-cta text-accent-foreground border-0 gap-1"
-                      onClick={() => updateProperty.mutate({ id: p.id, updates: { status: "active", is_verified: true } })}
+                      onClick={() => updateProperty.mutate({ id: p.id, updates: { status: "approved", is_verified: true } })}
                     >
                       <Check className="h-3 w-3" /> Approve
                     </Button>

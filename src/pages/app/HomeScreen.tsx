@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import PropertyTags from "@/components/PropertyTags";
@@ -13,26 +13,28 @@ import { toast } from "sonner";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
 import cityHyd from "@/assets/city-hyderabad.jpg";
-import cityBlr from "@/assets/city-bengaluru.jpg";
-import cityPune from "@/assets/city-pune.jpg";
-import cityMum from "@/assets/city-mumbai.jpg";
-import cityChn from "@/assets/city-chennai.jpg";
 
-const cities = [
-  { name: "Hyderabad", count: "3", img: cityHyd },
-  { name: "Bengaluru", count: "3", img: cityBlr },
-  { name: "Pune", count: "2", img: cityPune },
-  { name: "Mumbai", count: "1", img: cityMum },
-  { name: "Chennai", count: "1", img: cityChn },
+// Curated popular areas (Hyderabad-focused; with coords for proximity filtering)
+const allPopularAreas = [
+  { name: "Gachibowli", lat: 17.4401, lng: 78.3489, img: cityHyd },
+  { name: "Kukatpally", lat: 17.4948, lng: 78.3996, img: cityHyd },
+  { name: "Hitech City", lat: 17.4435, lng: 78.3772, img: cityHyd },
+  { name: "Madhapur", lat: 17.4483, lng: 78.3915, img: cityHyd },
+  { name: "Kondapur", lat: 17.4647, lng: 78.3676, img: cityHyd },
+  { name: "Miyapur", lat: 17.4969, lng: 78.3585, img: cityHyd },
+  { name: "Banjara Hills", lat: 17.4156, lng: 78.4347, img: cityHyd },
+  { name: "Jubilee Hills", lat: 17.4239, lng: 78.4071, img: cityHyd },
+  { name: "Ameerpet", lat: 17.4374, lng: 78.4487, img: cityHyd },
+  { name: "Begumpet", lat: 17.4399, lng: 78.4738, img: cityHyd },
 ];
 
-const popularAreas = [
-  { name: "Gachibowli", img: cityHyd },
-  { name: "Whitefield", img: cityBlr },
-  { name: "Hinjewadi", img: cityPune },
-  { name: "Andheri", img: cityMum },
-  { name: "OMR", img: cityChn },
-];
+const distKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const x = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+};
 
 const formatPrice = (p: number, type: string) => {
   if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
@@ -47,6 +49,17 @@ const HomeScreen = () => {
   const { data: featuredProperties, isLoading } = useFeaturedProperties();
   const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
+
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+
+  const popularAreas = useMemo(() => {
+    if (!userLoc) return allPopularAreas.slice(0, 6);
+    const nearby = allPopularAreas
+      .map((a) => ({ ...a, _d: distKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
+      .filter((a) => a._d <= 5)
+      .sort((a, b) => a._d - b._d);
+    return nearby.length ? nearby : allPopularAreas.slice(0, 6);
+  }, [userLoc]);
 
   const categories = [
     { label: t("rent"), emoji: "🏠", type: "rent" },
@@ -79,7 +92,7 @@ const HomeScreen = () => {
       </div>
 
       <div className="px-4 mt-2 flex justify-end">
-        <GeolocationDetect onLocationDetected={(lat, lng, city) => navigate("/app/search")} />
+        <GeolocationDetect onLocationDetected={(lat, lng) => setUserLoc({ lat, lng })} />
       </div>
 
       {/* Hero Banner */}
@@ -104,42 +117,22 @@ const HomeScreen = () => {
         ))}
       </div>
 
-      {/* Properties Near You */}
-      <div className="px-4 mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-foreground">{t("properties_near")}</h3>
-          <button onClick={() => navigate("/app/search")} className="text-xs text-primary font-medium flex items-center gap-0.5">
-            {t("view_all")} <ChevronRight className="h-3 w-3" />
-          </button>
-        </div>
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
-          {cities.map((city) => (
-            <button key={city.name} onClick={() => navigate("/app/search")} className="flex-shrink-0 w-36 rounded-xl overflow-hidden shadow-card bg-card">
-              <img src={city.img} alt={city.name} className="w-full h-20 object-cover" />
-              <div className="p-2.5">
-                <p className="text-sm font-semibold text-foreground">{city.name}</p>
-                <p className="text-[10px] text-muted-foreground">{city.count} {t("properties")}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Popular Areas */}
       <div className="px-4 mb-5">
-        <h3 className="font-bold text-foreground mb-3">{t("popular_areas")}</h3>
+        <h3 className="font-bold text-foreground mb-3">
+          {userLoc ? "Popular Areas Near You" : t("popular_areas")}
+        </h3>
         <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-1">
           {popularAreas.map((area) => (
             <button key={area.name} onClick={() => navigate("/app/search")} className="flex flex-col items-center gap-1.5 flex-shrink-0">
               <div className="h-16 w-16 rounded-full overflow-hidden shadow-card border-2 border-primary/20">
                 <img src={area.img} alt={area.name} className="w-full h-full object-cover" />
               </div>
-              <span className="text-[10px] font-medium text-foreground">{area.name}</span>
+              <span className="text-[10px] font-medium text-foreground text-center max-w-[72px]">{area.name}</span>
             </button>
           ))}
         </div>
       </div>
-
       <AIRecommendations />
 
       {/* Featured Properties */}
