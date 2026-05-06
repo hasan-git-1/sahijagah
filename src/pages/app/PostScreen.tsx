@@ -77,7 +77,7 @@ const PostScreen = () => {
         amenities: form.amenities,
         images: images,
         owner_id: user.id,
-        status: "active",
+        status: "approved",
         is_featured: true,
         lat: form.lat,
         lng: form.lng,
