@@ -20,7 +20,7 @@ const quickPrompts = [
 const PropertyAssistant = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! 👋 I'm your urbanStay assistant. Tell me what kind of property you're looking for and I'll help you find it!" },
+    { role: "assistant", content: "Hi! 👋 I'm your Sahi Jagah assistant. Tell me what kind of property you're looking for and I'll help you find it!" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -137,7 +137,7 @@ const PropertyAssistant = () => {
 
   const handleClear = () => {
     setMessages([
-      { role: "assistant", content: "Hi! 👋 I'm your urbanStay assistant. Tell me what kind of property you're looking for and I'll help you find it!" },
+      { role: "assistant", content: "Hi! 👋 I'm your Sahi Jagah assistant. Tell me what kind of property you're looking for and I'll help you find it!" },
     ]);
   };
 
@@ -160,7 +160,7 @@ const PropertyAssistant = () => {
           <Bot className="h-5 w-5 text-primary-foreground" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-bold text-foreground">urbanStay Assistant</p>
+          <p className="text-sm font-bold text-foreground">Sahi Jagah Assistant</p>
           <p className="text-[10px] text-muted-foreground">AI-powered property search</p>
         </div>
         <button onClick={handleClear} className="mr-2" title="Clear chat">

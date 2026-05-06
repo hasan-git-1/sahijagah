@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const agents = [
-  { id: "1", name: "Rajesh Kumar", photo: null, city: "Hyderabad", areas: ["Gachibowli", "Kondapur", "Madhapur"], rating: 4.8, deals: 120, phone: "+91 98765 43210", email: "rajesh@urbanstay.in", speciality: "Residential" },
-  { id: "2", name: "Priya Sharma", photo: null, city: "Bengaluru", areas: ["Whitefield", "Marathahalli", "Sarjapur"], rating: 4.9, deals: 95, phone: "+91 98765 43211", email: "priya@urbanstay.in", speciality: "Luxury" },
-  { id: "3", name: "Amit Patel", photo: null, city: "Pune", areas: ["Hinjewadi", "Baner", "Wakad"], rating: 4.7, deals: 80, phone: "+91 98765 43212", email: "amit@urbanstay.in", speciality: "Commercial" },
-  { id: "4", name: "Sneha Reddy", photo: null, city: "Hyderabad", areas: ["Jubilee Hills", "Banjara Hills", "Film Nagar"], rating: 4.9, deals: 150, phone: "+91 98765 43213", email: "sneha@urbanstay.in", speciality: "Luxury" },
-  { id: "5", name: "Vikram Singh", photo: null, city: "Mumbai", areas: ["Andheri", "Bandra", "Powai"], rating: 4.6, deals: 200, phone: "+91 98765 43214", email: "vikram@urbanstay.in", speciality: "Residential" },
-  { id: "6", name: "Kavitha Nair", photo: null, city: "Chennai", areas: ["OMR", "Adyar", "Velachery"], rating: 4.8, deals: 70, phone: "+91 98765 43215", email: "kavitha@urbanstay.in", speciality: "PG/Co-Living" },
+  { id: "1", name: "Rajesh Kumar", photo: null, city: "Hyderabad", areas: ["Gachibowli", "Kondapur", "Madhapur"], rating: 4.8, deals: 120, phone: "+91 98765 43210", email: "rajesh@sahijagah.in", speciality: "Residential" },
+  { id: "2", name: "Priya Sharma", photo: null, city: "Bengaluru", areas: ["Whitefield", "Marathahalli", "Sarjapur"], rating: 4.9, deals: 95, phone: "+91 98765 43211", email: "priya@sahijagah.in", speciality: "Luxury" },
+  { id: "3", name: "Amit Patel", photo: null, city: "Pune", areas: ["Hinjewadi", "Baner", "Wakad"], rating: 4.7, deals: 80, phone: "+91 98765 43212", email: "amit@sahijagah.in", speciality: "Commercial" },
+  { id: "4", name: "Sneha Reddy", photo: null, city: "Hyderabad", areas: ["Jubilee Hills", "Banjara Hills", "Film Nagar"], rating: 4.9, deals: 150, phone: "+91 98765 43213", email: "sneha@sahijagah.in", speciality: "Luxury" },
+  { id: "5", name: "Vikram Singh", photo: null, city: "Mumbai", areas: ["Andheri", "Bandra", "Powai"], rating: 4.6, deals: 200, phone: "+91 98765 43214", email: "vikram@sahijagah.in", speciality: "Residential" },
+  { id: "6", name: "Kavitha Nair", photo: null, city: "Chennai", areas: ["OMR", "Adyar", "Velachery"], rating: 4.8, deals: 70, phone: "+91 98765 43215", email: "kavitha@sahijagah.in", speciality: "PG/Co-Living" },
 ];
 
 const cities = ["All", "Hyderabad", "Bengaluru", "Pune", "Mumbai", "Chennai"];

@@ -102,7 +102,7 @@ const OwnerDashboard = () => {
   }
 
   const totalViews = properties?.reduce((s, p) => s + (p.view_count || 0), 0) || 0;
-  const activeCount = properties?.filter((p) => p.status === "approved").length || 0;
+  const activeCount = properties?.filter((p) => p.status === "active").length || 0;
   const pendingBookings = bookings?.filter((b) => b.status === "pending").length || 0;
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
@@ -119,7 +119,7 @@ const OwnerDashboard = () => {
   })) || [];
 
   const statusData = [
-    { name: "Active", value: properties?.filter((p) => p.status === "approved").length || 0 },
+    { name: "Active", value: properties?.filter((p) => p.status === "active").length || 0 },
     { name: "Pending", value: properties?.filter((p) => p.status === "pending").length || 0 },
     { name: "Rejected", value: properties?.filter((p) => p.status === "rejected").length || 0 },
   ].filter((d) => d.value > 0);

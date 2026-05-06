@@ -9,7 +9,7 @@ interface WishlistCollection {
   propertyIds: string[];
 }
 
-const STORAGE_KEY = "urbanstay-collections";
+const STORAGE_KEY = "sahi-jagah-collections";
 
 const getCollections = (): WishlistCollection[] => {
   const saved = localStorage.getItem(STORAGE_KEY);

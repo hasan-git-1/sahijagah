@@ -38,7 +38,7 @@ const LandlordDashboard = () => {
 
   const totalViews = properties.reduce((sum, p) => sum + (p.view_count || 0), 0);
   const totalRevenue = properties.filter(p => p.type === "rent").reduce((sum, p) => sum + p.price, 0);
-  const activeCount = properties.filter(p => p.status === "approved").length;
+  const activeCount = properties.filter(p => p.status === "active").length;
   const pendingBookings = bookings.filter(b => b.status === "pending").length;
 
   const cityData = properties.reduce((acc: Record<string, number>, p) => {
@@ -161,7 +161,7 @@ const LandlordDashboard = () => {
                   <p className="text-xs text-muted-foreground">{p.city} · {p.type}</p>
                   <div className="flex items-center justify-between mt-1">
                     <p className="text-sm font-bold text-primary">{formatPrice(p.price)}</p>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.status === "approved" ? "bg-accent/10 text-accent" : "bg-muted text-muted-foreground"}`}>
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.status === "active" ? "bg-accent/10 text-accent" : "bg-muted text-muted-foreground"}`}>
                       {p.status}
                     </span>
                   </div>

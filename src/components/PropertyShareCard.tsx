@@ -82,13 +82,13 @@ const PropertyShareCard = ({ title, price, city, bedrooms, bathrooms, area, imag
       // Brand
       ctx.fillStyle = "#e94560";
       ctx.font = "bold 18px system-ui";
-      ctx.fillText("urbanStay", 24, 370);
+      ctx.fillText("Sahi Jagah", 24, 370);
       ctx.fillStyle = "#666";
       ctx.font = "12px system-ui";
-      ctx.fillText("urbanstay.com", 24, 390);
+      ctx.fillText("sahijagah.com", 24, 390);
 
       const link = document.createElement("a");
-      link.download = `${title.replace(/\s+/g, "-")}-urbanstay.png`;
+      link.download = `${title.replace(/\s+/g, "-")}-sahijagah.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
       toast.success("Property card downloaded!");
@@ -130,7 +130,7 @@ const PropertyShareCard = ({ title, price, city, bedrooms, bathrooms, area, imag
             {area ? <span>📐 {area}</span> : null}
           </div>
           <div className="mt-3 pt-2 border-t border-primary-foreground/20 flex items-center justify-between">
-            <span className="text-xs font-bold">urbanStay</span>
+            <span className="text-xs font-bold">Sahi Jagah</span>
             <span className="text-[10px] opacity-60">Find your perfect home</span>
           </div>
         </div>
