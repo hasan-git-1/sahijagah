@@ -50,6 +50,17 @@ const HomeScreen = () => {
   const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
 
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+
+  const popularAreas = useMemo(() => {
+    if (!userLoc) return allPopularAreas.slice(0, 6);
+    const nearby = allPopularAreas
+      .map((a) => ({ ...a, _d: distKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
+      .filter((a) => a._d <= 5)
+      .sort((a, b) => a._d - b._d);
+    return nearby.length ? nearby : allPopularAreas.slice(0, 6);
+  }, [userLoc]);
+
   const categories = [
     { label: t("rent"), emoji: "🏠", type: "rent" },
     { label: t("buy"), emoji: "🏗️", type: "sale" },
