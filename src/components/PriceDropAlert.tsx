@@ -9,7 +9,7 @@ interface PriceDropAlertProps {
   currentPrice: number;
 }
 
-const STORAGE_KEY = "sahi-jagah-price-alerts";
+const STORAGE_KEY = "urbanstay-price-alerts";
 
 const getAlerts = (): string[] => {
   const saved = localStorage.getItem(STORAGE_KEY);

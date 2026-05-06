@@ -10,7 +10,7 @@ const accentColors = [
   { name: "Teal", hsl: "173 80% 36%", dark: "173 80% 46%" },
 ];
 
-const STORAGE_KEY = "sahi-jagah-accent";
+const STORAGE_KEY = "urbanstay-accent";
 
 const ThemeCustomizer = () => {
   const [active, setActive] = useState(() => localStorage.getItem(STORAGE_KEY) || "Blue");

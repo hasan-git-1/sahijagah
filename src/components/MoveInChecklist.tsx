@@ -14,7 +14,7 @@ const defaultItems = [
   { id: "10", label: "Note emergency contacts", category: "Admin" },
 ];
 
-const STORAGE_KEY = "sahi-jagah-movein-checklist";
+const STORAGE_KEY = "urbanstay-movein-checklist";
 
 const MoveInChecklist = () => {
   const [checked, setChecked] = useState<string[]>(() => {

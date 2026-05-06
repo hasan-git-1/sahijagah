@@ -207,13 +207,13 @@ export const useI18n = () => useContext(I18nContext);
 
 export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState<Language>(() => {
-    const saved = localStorage.getItem("sahi-jagah-lang") as Language;
+    const saved = localStorage.getItem("urbanstay-lang") as Language;
     return saved && ["en", "hi", "te"].includes(saved) ? saved : "en";
   });
 
   const setLang = (l: Language) => {
     setLangState(l);
-    localStorage.setItem("sahi-jagah-lang", l);
+    localStorage.setItem("urbanstay-lang", l);
   };
 
   const t = (key: string) => translations[lang]?.[key] || translations.en[key] || key;
