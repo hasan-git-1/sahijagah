@@ -92,7 +92,7 @@ const HomeScreen = () => {
       </div>
 
       <div className="px-4 mt-2 flex justify-end">
-        <GeolocationDetect onLocationDetected={(lat, lng, city) => navigate("/app/search")} />
+        <GeolocationDetect onLocationDetected={(lat, lng) => setUserLoc({ lat, lng })} />
       </div>
 
       {/* Hero Banner */}
@@ -117,7 +117,22 @@ const HomeScreen = () => {
         ))}
       </div>
 
-      {/* Properties Near You */}
+      {/* Popular Areas */}
+      <div className="px-4 mb-5">
+        <h3 className="font-bold text-foreground mb-3">
+          {userLoc ? "Popular Areas Near You" : t("popular_areas")}
+        </h3>
+        <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-1">
+          {popularAreas.map((area) => (
+            <button key={area.name} onClick={() => navigate("/app/search")} className="flex flex-col items-center gap-1.5 flex-shrink-0">
+              <div className="h-16 w-16 rounded-full overflow-hidden shadow-card border-2 border-primary/20">
+                <img src={area.img} alt={area.name} className="w-full h-full object-cover" />
+              </div>
+              <span className="text-[10px] font-medium text-foreground text-center max-w-[72px]">{area.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="px-4 mb-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-foreground">{t("properties_near")}</h3>
