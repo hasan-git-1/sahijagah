@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import PropertyTags from "@/components/PropertyTags";
@@ -13,26 +13,28 @@ import { toast } from "sonner";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
 import cityHyd from "@/assets/city-hyderabad.jpg";
-import cityBlr from "@/assets/city-bengaluru.jpg";
-import cityPune from "@/assets/city-pune.jpg";
-import cityMum from "@/assets/city-mumbai.jpg";
-import cityChn from "@/assets/city-chennai.jpg";
 
-const cities = [
-  { name: "Hyderabad", count: "3", img: cityHyd },
-  { name: "Bengaluru", count: "3", img: cityBlr },
-  { name: "Pune", count: "2", img: cityPune },
-  { name: "Mumbai", count: "1", img: cityMum },
-  { name: "Chennai", count: "1", img: cityChn },
+// Curated popular areas (Hyderabad-focused; with coords for proximity filtering)
+const allPopularAreas = [
+  { name: "Gachibowli", lat: 17.4401, lng: 78.3489, img: cityHyd },
+  { name: "Kukatpally", lat: 17.4948, lng: 78.3996, img: cityHyd },
+  { name: "Hitech City", lat: 17.4435, lng: 78.3772, img: cityHyd },
+  { name: "Madhapur", lat: 17.4483, lng: 78.3915, img: cityHyd },
+  { name: "Kondapur", lat: 17.4647, lng: 78.3676, img: cityHyd },
+  { name: "Miyapur", lat: 17.4969, lng: 78.3585, img: cityHyd },
+  { name: "Banjara Hills", lat: 17.4156, lng: 78.4347, img: cityHyd },
+  { name: "Jubilee Hills", lat: 17.4239, lng: 78.4071, img: cityHyd },
+  { name: "Ameerpet", lat: 17.4374, lng: 78.4487, img: cityHyd },
+  { name: "Begumpet", lat: 17.4399, lng: 78.4738, img: cityHyd },
 ];
 
-const popularAreas = [
-  { name: "Gachibowli", img: cityHyd },
-  { name: "Whitefield", img: cityBlr },
-  { name: "Hinjewadi", img: cityPune },
-  { name: "Andheri", img: cityMum },
-  { name: "OMR", img: cityChn },
-];
+const distKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const x = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+};
 
 const formatPrice = (p: number, type: string) => {
   if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
