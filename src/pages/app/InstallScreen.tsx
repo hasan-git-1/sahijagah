@@ -40,7 +40,7 @@ const InstallScreen = () => {
       <div className="bg-background min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <CheckCircle className="h-16 w-16 text-accent mb-4" />
         <h2 className="text-xl font-bold text-foreground mb-2">App Installed!</h2>
-        <p className="text-sm text-muted-foreground mb-6">Sahi Jagah is installed on your device.</p>
+        <p className="text-sm text-muted-foreground mb-6">urbanStay is installed on your device.</p>
         <Button onClick={() => navigate("/app")} className="gradient-blue text-primary-foreground border-0">Open App</Button>
       </div>
     );
@@ -51,7 +51,7 @@ const InstallScreen = () => {
       <div className="h-20 w-20 rounded-2xl gradient-blue flex items-center justify-center mb-6 shadow-elevated">
         <Smartphone className="h-10 w-10 text-primary-foreground" />
       </div>
-      <h2 className="text-xl font-bold text-foreground mb-2">Install Sahi Jagah</h2>
+      <h2 className="text-xl font-bold text-foreground mb-2">Install urbanStay</h2>
       <p className="text-sm text-muted-foreground mb-8">
         Install our app for a faster, offline-capable experience. Works just like a native app!
       </p>

@@ -34,7 +34,7 @@ serve(async (req) => {
         }).join("\n")
       : "No properties currently available.";
 
-    const systemPrompt = `You are the Sahi Jagah AI Property Assistant — a friendly, knowledgeable real estate advisor for Indian property seekers. You help users find properties, answer questions about real estate, localities, pricing, legal aspects, and more.
+    const systemPrompt = `You are the urbanStay AI Property Assistant — a friendly, knowledgeable real estate advisor for Indian property seekers. You help users find properties, answer questions about real estate, localities, pricing, legal aspects, and more.
 
 ## Your Capabilities:
 - Search and recommend properties from our database
