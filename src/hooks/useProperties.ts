@@ -34,7 +34,7 @@ export const useFeaturedProperties = () => {
       const { data, error } = await supabase
         .from("properties")
         .select("*")
-        .eq("status", "active")
+        .eq("status", "approved")
         .eq("is_featured", true)
         .order("created_at", { ascending: false })
         .limit(6);
@@ -48,7 +48,7 @@ export const useSearchProperties = (query: string, type?: string) => {
   return useQuery({
     queryKey: ["properties", "search", query, type],
     queryFn: async () => {
-      let q = supabase.from("properties").select("*").eq("status", "active");
+      let q = supabase.from("properties").select("*").eq("status", "approved");
       if (query) {
         q = q.or(`city.ilike.%${query}%,title.ilike.%${query}%,address.ilike.%${query}%`);
       }
@@ -68,7 +68,7 @@ export const useFilteredProperties = (query: string, type: string, filters: Sear
   return useQuery({
     queryKey: ["properties", "filtered", query, type, filters],
     queryFn: async () => {
-      let q = supabase.from("properties").select("*").eq("status", "active");
+      let q = supabase.from("properties").select("*").eq("status", "approved");
 
       if (query) {
         q = q.or(`city.ilike.%${query}%,title.ilike.%${query}%,address.ilike.%${query}%`);
