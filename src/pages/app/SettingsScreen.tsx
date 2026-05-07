@@ -114,7 +114,7 @@ const SettingsScreen = () => {
 
         {/* App Info */}
         <div className="text-center text-xs text-muted-foreground">
-          <p>Sahi Jagah v1.0.0</p>
+          <p>urbanStay v1.0.0</p>
           <p className="mt-0.5">{t("made_with_love")}</p>
         </div>
       </div>
