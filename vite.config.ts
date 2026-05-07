@@ -23,8 +23,8 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp}"],
       },
       manifest: {
-        name: "Sahi Jagah - Property Finder",
-        short_name: "Sahi Jagah",
+        name: "urbanStay - Property Finder",
+        short_name: "urbanStay",
         description: "Find your perfect home — rent, buy, PG & commercial properties across India.",
         theme_color: "#1d6ce0",
         background_color: "#f5f7fa",
