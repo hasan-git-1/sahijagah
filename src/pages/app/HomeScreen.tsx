@@ -70,6 +70,15 @@ const HomeScreen = () => {
   const { data: featuredProperties, isLoading } = useFeaturedProperties();
   const { data: wishlistIds } = useWishlist();
   const toggleWishlist = useToggleWishlist();
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+
+  const popularAreas = userLoc
+    ? allAreas
+        .map((a) => ({ ...a, dist: distanceKm(userLoc.lat, userLoc.lng, a.lat, a.lng) }))
+        .filter((a) => a.dist <= 10)
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 8)
+    : defaultPopularAreas;
 
   const categories = [
     { label: t("rent"), emoji: "🏠", type: "rent" },
