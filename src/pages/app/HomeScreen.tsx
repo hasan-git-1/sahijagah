@@ -18,21 +18,44 @@ import cityPune from "@/assets/city-pune.jpg";
 import cityMum from "@/assets/city-mumbai.jpg";
 import cityChn from "@/assets/city-chennai.jpg";
 
-const cities = [
-  { name: "Hyderabad", count: "3", img: cityHyd },
-  { name: "Bengaluru", count: "3", img: cityBlr },
-  { name: "Pune", count: "2", img: cityPune },
-  { name: "Mumbai", count: "1", img: cityMum },
-  { name: "Chennai", count: "1", img: cityChn },
+// Default popular areas (shown before geolocation)
+const defaultPopularAreas = [
+  { name: "Gachibowli", lat: 17.4401, lng: 78.3489, img: cityHyd },
+  { name: "Kukatpally", lat: 17.4849, lng: 78.4138, img: cityHyd },
+  { name: "HiTech City", lat: 17.4474, lng: 78.3762, img: cityHyd },
+  { name: "Madhapur", lat: 17.4483, lng: 78.3915, img: cityHyd },
+  { name: "Kondapur", lat: 17.4647, lng: 78.3635, img: cityHyd },
+  { name: "Miyapur", lat: 17.4969, lng: 78.3719, img: cityHyd },
 ];
 
-const popularAreas = [
-  { name: "Gachibowli", img: cityHyd },
-  { name: "Whitefield", img: cityBlr },
-  { name: "Hinjewadi", img: cityPune },
-  { name: "Andheri", img: cityMum },
-  { name: "OMR", img: cityChn },
+// All known areas for nearby detection
+const allAreas = [
+  ...defaultPopularAreas,
+  { name: "Whitefield", lat: 12.9698, lng: 77.7500, img: cityBlr },
+  { name: "Koramangala", lat: 12.9352, lng: 77.6245, img: cityBlr },
+  { name: "Electronic City", lat: 12.8452, lng: 77.6602, img: cityBlr },
+  { name: "Indiranagar", lat: 12.9784, lng: 77.6408, img: cityBlr },
+  { name: "Hinjewadi", lat: 18.5912, lng: 73.7389, img: cityPune },
+  { name: "Kharadi", lat: 18.5515, lng: 73.9350, img: cityPune },
+  { name: "Viman Nagar", lat: 18.5679, lng: 73.9143, img: cityPune },
+  { name: "Andheri", lat: 19.1197, lng: 72.8468, img: cityMum },
+  { name: "Bandra", lat: 19.0596, lng: 72.8295, img: cityMum },
+  { name: "Powai", lat: 19.1176, lng: 72.9060, img: cityMum },
+  { name: "OMR", lat: 12.8956, lng: 80.2267, img: cityChn },
+  { name: "Velachery", lat: 12.9750, lng: 80.2200, img: cityChn },
+  { name: "T Nagar", lat: 13.0418, lng: 80.2341, img: cityChn },
 ];
+
+// Haversine distance in km
+const distanceKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
 
 const formatPrice = (p: number, type: string) => {
   if (p >= 10000000) return `₹${(p / 10000000).toFixed(1)} Cr`;
