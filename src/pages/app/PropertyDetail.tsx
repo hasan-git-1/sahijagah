@@ -133,9 +133,26 @@ const PropertyDetail = () => {
   const seoTitle = `${property.title} - ${formatPrice(property.price, property.type)} in ${property.city}`;
   const seoDesc = property.description?.slice(0, 155) || `${property.bedrooms} BHK property for ${property.type} in ${property.city}`;
 
+  const propertyJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: property.title,
+    description: seoDesc,
+    image: property.images?.[0],
+    brand: { "@type": "Brand", name: "urbanStay" },
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: "INR",
+      availability: "https://schema.org/InStock",
+      url: `${typeof window !== "undefined" ? window.location.origin : ""}/app/property/${id}`,
+    },
+  };
+
   return (
-    <div className="bg-background min-h-screen pb-24">
+    <main className="bg-background min-h-screen pb-24">
       <SEOHead title={seoTitle} description={seoDesc} image={property.images?.[0]} url={`${window.location.origin}/app/property/${id}`} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(propertyJsonLd) }} />
       
       {/* Hero Image */}
       <div className="relative">
