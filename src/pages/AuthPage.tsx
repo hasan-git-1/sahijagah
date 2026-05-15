@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Mail, Lock, User, ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
+import SEOHead from "@/components/SEOHead";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -56,7 +57,15 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <main className="min-h-screen bg-background flex flex-col">
+      <SEOHead
+        title={isLogin ? "Sign In" : "Create Account"}
+        description={
+          isLogin
+            ? "Sign in to urbanStay to find verified properties, message owners, and manage your listings."
+            : "Create your free urbanStay account to list properties, save searches, and contact owners directly with no brokerage."
+        }
+      />
       <div className="p-4">
         <button onClick={() => navigate("/")} className="flex items-center gap-1 text-sm text-muted-foreground">
           <ArrowLeft className="h-4 w-4" /> Back
