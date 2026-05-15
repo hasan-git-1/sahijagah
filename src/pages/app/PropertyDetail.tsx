@@ -274,7 +274,7 @@ const PropertyDetail = () => {
       {property.owner_id && user && (
         <BookingModal open={showBooking} onOpenChange={setShowBooking} propertyId={property.id} ownerId={property.owner_id} userId={user.id} propertyTitle={property.title} />
       )}
-    </div>
+    </main>
   );
 };
 
