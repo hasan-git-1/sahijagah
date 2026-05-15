@@ -157,7 +157,7 @@ const AuthPage = () => {
           {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
         </button>
       </div>
-    </div>
+    </main>
   );
 };
 
