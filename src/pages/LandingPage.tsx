@@ -422,7 +422,7 @@ const LandingPage = () => {
           <div className="flex items-center justify-center gap-2 text-muted mb-3">
             <Phone className="h-4 w-4" />
             <a href="tel:7093187420" className="text-sm hover:text-background transition-colors">7093187420</a>
-    </main>
+    </div>
           <div className="flex justify-center gap-4 text-sm text-muted mb-4">
             <button className="hover:text-background transition-colors">Privacy Policy</button>
             <button className="hover:text-background transition-colors">Terms of Service</button>
@@ -430,7 +430,7 @@ const LandingPage = () => {
           <p className="text-xs text-muted-foreground">© 2026 urbanStay. All rights reserved.</p>
         </div>
       </footer>
-    </div>
+    </main>
   );
 };
 
