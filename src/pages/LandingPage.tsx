@@ -5,6 +5,7 @@ import { Star, Download, Globe, Phone, MapPin, Shield, Users, Building, Search, 
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
+import SEOHead from "@/components/SEOHead";
 
 const testimonials = [
   { name: "Rajesh Kumar", city: "Hyderabad", rating: 5, message: "Found my dream 2BHK in Gachibowli within a week. No brokerage saved me ₹30,000!" },
@@ -132,7 +133,13 @@ const LandingPage = () => {
     : "Download / Install App";
 
   return (
-    <div className="min-h-screen bg-background font-display">
+    <main className="min-h-screen bg-background font-display">
+      <SEOHead
+        title="urbanStay - Rent, Buy, PG & Commercial Properties in India"
+        description="India's leading no-brokerage property platform. Rent or buy verified homes, PGs, and commercial spaces directly from owners across 50+ cities."
+        rawTitle
+        url="https://sahijagah.lovable.app/"
+      />
       {/* iOS Instructions Modal */}
       {showIOSModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/60 backdrop-blur-sm px-4 pb-4">
@@ -415,7 +422,7 @@ const LandingPage = () => {
           <div className="flex items-center justify-center gap-2 text-muted mb-3">
             <Phone className="h-4 w-4" />
             <a href="tel:7093187420" className="text-sm hover:text-background transition-colors">7093187420</a>
-          </div>
+    </div>
           <div className="flex justify-center gap-4 text-sm text-muted mb-4">
             <button className="hover:text-background transition-colors">Privacy Policy</button>
             <button className="hover:text-background transition-colors">Terms of Service</button>
@@ -423,7 +430,7 @@ const LandingPage = () => {
           <p className="text-xs text-muted-foreground">© 2026 urbanStay. All rights reserved.</p>
         </div>
       </footer>
-    </div>
+    </main>
   );
 };
 

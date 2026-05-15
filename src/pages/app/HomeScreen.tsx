@@ -3,6 +3,7 @@ import { Search, User, Heart, MapPin, BedDouble, Bath, ChevronRight } from "luci
 import VerifiedBadge from "@/components/VerifiedBadge";
 import PropertyTags from "@/components/PropertyTags";
 import GeolocationDetect from "@/components/GeolocationDetect";
+import SEOHead from "@/components/SEOHead";
 import AIRecommendations from "@/components/AIRecommendations";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -97,6 +98,10 @@ const HomeScreen = () => {
 
   return (
     <div className="bg-background">
+      <SEOHead
+        title="Home"
+        description="Browse popular areas and featured properties on urbanStay — verified rentals, sales, PG, and commercial listings near you."
+      />
       {/* Top Bar */}
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 pt-3 pb-2 shadow-card">
         <div className="flex items-center gap-3">

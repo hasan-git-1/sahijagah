@@ -89,7 +89,7 @@ const AppShell = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
       <OfflineIndicator />
-      <div className="flex-1 pb-20 overflow-y-auto">
+      <main className="flex-1 pb-20 overflow-y-auto">
         <Routes>
           <Route index element={<HomeScreen />} />
           <Route path="search" element={<SearchScreen />} />
@@ -116,7 +116,7 @@ const AppShell = () => {
           <Route path="feedback" element={<FeedbackScreen />} />
           <Route path="landlord-dashboard" element={<LandlordDashboard />} />
         </Routes>
-      </div>
+      </main>
 
       {!hideNav && (
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card shadow-nav border-t border-border z-50">
