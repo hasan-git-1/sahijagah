@@ -1,0 +1,19 @@
+# urbanStay
+
+> urbanStay is a mobile-first real estate platform for India — find verified rental, sale, PG, and commercial properties with no brokerage and direct owner contact, with a focus on tier-2 and tier-3 cities.
+
+## Pages
+
+- [Home](/): Landing page introducing urbanStay, features, and use cases.
+- [Sign in or sign up](/auth): Email and Google authentication for tenants, owners, and agents.
+- [Install the app](/install): Install urbanStay as a mobile app (PWA) on Android and iOS.
+- [App home](/app): Personalized home with popular areas and featured properties.
+- [Search properties](/app/search): Filter listings by city, price, type, and more.
+- [List a property](/app/post): Owners post new property listings (free, direct contact).
+- [Property tools](/app/tools): Calculators and helpers for renters and owners.
+
+## Optional
+
+- [Wishlist](/app/wishlist): Saved properties for the signed-in user.
+- [Bookings](/app/bookings): Scheduled property visits.
+- [Compare](/app/compare): Side-by-side property comparison.
