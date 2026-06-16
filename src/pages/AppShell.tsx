@@ -119,29 +119,52 @@ const AppShell = () => {
       </main>
 
       {!hideNav && (
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card shadow-nav border-t border-border z-50">
-          <div className="flex items-center justify-around py-2">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background/90 backdrop-blur-xl shadow-nav border-t border-border z-50 pb-[env(safe-area-inset-bottom)]">
+          <div className="flex items-end justify-around px-2 pt-2 pb-1.5">
             {navItems.map((item) => {
               const isActive = item.path === "/app"
                 ? location.pathname === "/app"
                 : location.pathname.startsWith(item.path);
               const Icon = item.icon;
-              const showBadge = item.label === "Chat" && unreadCount && unreadCount > 0;
+              const isPost = item.label === t("post");
+              const showChatBadge = item.path === "/app/chat" && unreadCount && unreadCount > 0;
+
+              if (isPost) {
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className="-mt-5 flex flex-col items-center gap-1 active:scale-95 transition"
+                    aria-label={item.label}
+                  >
+                    <span className="h-12 w-12 rounded-2xl bg-foreground text-background flex items-center justify-center shadow-elevated">
+                      <PlusCircle className="h-5 w-5" strokeWidth={2} />
+                    </span>
+                    <span className="text-[9px] font-semibold text-foreground">{item.label}</span>
+                  </button>
+                );
+              }
+
               return (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors relative ${
-                    isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="flex flex-col items-center gap-1 px-3 py-1 transition relative"
+                  aria-label={item.label}
                 >
-                  <Icon className={`h-5 w-5 ${item.label === "Post" ? "h-6 w-6" : ""}`} />
-                  {showBadge && (
-                    <span className="absolute -top-0.5 right-1 h-4 min-w-[16px] rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-1">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                  <span className="text-[10px] font-medium">{item.label}</span>
+                  <span className={`relative h-9 w-9 rounded-xl flex items-center justify-center transition-all ${
+                    isActive ? "bg-foreground text-background" : "text-muted-foreground"
+                  }`}>
+                    <Icon className="h-4.5 w-4.5" strokeWidth={isActive ? 2.2 : 1.8} />
+                    {showChatBadge && (
+                      <span className="absolute -top-1 -right-1 h-4 min-w-[16px] rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-1">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </span>
+                  <span className={`text-[9.5px] font-semibold tracking-tight ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                    {item.label}
+                  </span>
                 </button>
               );
             })}
