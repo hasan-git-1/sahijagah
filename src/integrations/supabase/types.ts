@@ -536,6 +536,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_profile: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string | null
+          id: string
+          is_banned: boolean
+          is_verified: boolean | null
+          name: string | null
+          phone: string | null
+          profile_photo: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
