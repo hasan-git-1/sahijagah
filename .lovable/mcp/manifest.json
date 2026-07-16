@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.2",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "urbanstay-mcp",
+      "version": "0.1.0",
+      "title": "urbanStay"
+    },
+    "tools": [
+      {
+        "name": "search_properties",
+        "title": "Search properties",
+        "description": "Search approved (public) property listings on urbanStay. Filter by city, price range, BHK, listing type (rent/sale), or property type. Returns up to 20 matching listings.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name, e.g. 'Hyderabad'."
+            },
+            "query": {
+              "type": "string",
+              "description": "Free-text search across title, description, and locality."
+            },
+            "min_price": {
+              "type": "number",
+              "description": "Minimum price (INR)."
+            },
+            "max_price": {
+              "type": "number",
+              "description": "Maximum price (INR)."
+            },
+            "bhk": {
+              "type": "integer",
+              "description": "Number of bedrooms (BHK)."
+            },
+            "listing_type": {
+              "type": "string",
+              "enum": [
+                "rent",
+                "sale"
+              ],
+              "description": "Rent or sale."
+            },
+            "property_type": {
+              "type": "string",
+              "description": "Property type, e.g. apartment, villa, pg, commercial."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max results (default 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_property",
+        "title": "Get property details",
+        "description": "Fetch full details of a single approved (public) urbanStay property listing by its ID.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Property UUID."
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_cities",
+        "title": "List cities with listings",
+        "description": "List all cities that currently have approved (public) urbanStay property listings, with a count per city.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
