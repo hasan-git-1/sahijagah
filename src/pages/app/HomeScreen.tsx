@@ -229,26 +229,6 @@ const HomeScreen = () => {
       </section>
 
 
-      {/* Categories — editorial chips */}
-      <section className="px-4 pb-6">
-        <div className="grid grid-cols-4 gap-2.5">
-          {categories.map((cat) => {
-            const Icon = cat.Icon;
-            return (
-              <button
-                key={cat.type}
-                onClick={() => navigate(`/app/search?type=${cat.type}`)}
-                className="group flex flex-col items-center gap-2 py-3.5 rounded-2xl bg-card border border-border shadow-card active:scale-[0.97] transition"
-              >
-                <span className="h-9 w-9 rounded-xl bg-secondary flex items-center justify-center group-hover:bg-foreground transition-colors">
-                  <Icon className="h-4.5 w-4.5 text-foreground group-hover:text-background transition-colors" strokeWidth={1.8} />
-                </span>
-                <span className="text-[11px] font-semibold text-foreground">{cat.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
 
       {/* Popular Areas */}
       <section className="pl-4 pr-0 mb-6">
