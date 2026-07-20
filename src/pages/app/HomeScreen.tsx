@@ -16,15 +16,22 @@ import cityBlr from "@/assets/city-bengaluru.jpg";
 import cityPune from "@/assets/city-pune.jpg";
 import cityMum from "@/assets/city-mumbai.jpg";
 import cityChn from "@/assets/city-chennai.jpg";
+import areaGachibowli from "@/assets/area-gachibowli.jpg";
+import areaKukatpally from "@/assets/area-kukatpally.jpg";
+import areaHitechcity from "@/assets/area-hitechcity.jpg";
+import areaMadhapur from "@/assets/area-madhapur.jpg";
+import areaKondapur from "@/assets/area-kondapur.jpg";
+import areaMiyapur from "@/assets/area-miyapur.jpg";
 
 const defaultPopularAreas = [
-  { name: "Gachibowli", lat: 17.4401, lng: 78.3489, img: cityHyd },
-  { name: "Kukatpally", lat: 17.4849, lng: 78.4138, img: cityHyd },
-  { name: "HiTech City", lat: 17.4474, lng: 78.3762, img: cityHyd },
-  { name: "Madhapur", lat: 17.4483, lng: 78.3915, img: cityHyd },
-  { name: "Kondapur", lat: 17.4647, lng: 78.3635, img: cityHyd },
-  { name: "Miyapur", lat: 17.4969, lng: 78.3719, img: cityHyd },
+  { name: "Gachibowli", lat: 17.4401, lng: 78.3489, img: areaGachibowli },
+  { name: "Kukatpally", lat: 17.4849, lng: 78.4138, img: areaKukatpally },
+  { name: "HiTech City", lat: 17.4474, lng: 78.3762, img: areaHitechcity },
+  { name: "Madhapur", lat: 17.4483, lng: 78.3915, img: areaMadhapur },
+  { name: "Kondapur", lat: 17.4647, lng: 78.3635, img: areaKondapur },
+  { name: "Miyapur", lat: 17.4969, lng: 78.3719, img: areaMiyapur },
 ];
+
 
 const allAreas = [
   ...defaultPopularAreas,
