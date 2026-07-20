@@ -1,4 +1,4 @@
-import { Home, Search, PlusCircle, MessageCircle, User, Bell } from "lucide-react";
+import { Home, Search, Plus, MessageCircle, User, Bell, PlusCircle } from "lucide-react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import PropertyAssistant from "@/components/PropertyAssistant";
 import OfflineIndicator from "@/components/OfflineIndicator";
