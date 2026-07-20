@@ -145,9 +145,12 @@ const PropertyAssistant = () => {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-36 right-4 z-50 h-14 w-14 rounded-full gradient-blue shadow-elevated flex items-center justify-center animate-scale-in"
+        aria-label="Open urbanStay AI Assistant"
+        className="fixed bottom-36 right-4 z-50 h-14 w-14 rounded-full bg-foreground text-background shadow-elevated flex items-center justify-center animate-scale-in ring-4 ring-accent/30 hover:ring-accent/50 transition-all"
       >
-        <Bot className="h-6 w-6 text-primary-foreground" />
+        <span className="absolute inset-0 rounded-full bg-accent/25 animate-ping" aria-hidden />
+        <Bot className="relative h-6 w-6" strokeWidth={2} />
+        <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-1 rounded-full bg-accent text-accent-foreground text-[8px] font-bold uppercase tracking-wider flex items-center justify-center">AI</span>
       </button>
     );
   }

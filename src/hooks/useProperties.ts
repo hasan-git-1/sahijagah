@@ -37,7 +37,7 @@ export const useFeaturedProperties = () => {
         .eq("status", "approved")
         .eq("is_featured", true)
         .order("created_at", { ascending: false })
-        .limit(6);
+        .limit(8);
       if (error) throw error;
       return data as Property[];
     },

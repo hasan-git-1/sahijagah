@@ -128,6 +128,8 @@
   .gradient-cta { background: var(--gradient-cta); }
   .gradient-gold { background: var(--gradient-gold); }
   .gradient-paper { background: var(--gradient-paper); }
+  /* Legacy alias — maps historical .gradient-blue to current CTA gradient so old buttons remain visible. */
+  .gradient-blue { background: var(--gradient-cta); color: hsl(var(--primary-foreground)); }
 
   .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-elevated { box-shadow: var(--shadow-elevated); }
