@@ -130,17 +130,23 @@ const AppShell = () => {
               const showChatBadge = item.path === "/app/chat" && unreadCount && unreadCount > 0;
 
               if (isPost) {
+                const postActive = location.pathname.startsWith("/app/post");
                 return (
                   <button
                     key={item.path}
                     onClick={() => navigate(item.path)}
-                    className="-mt-5 flex flex-col items-center gap-1 active:scale-95 transition"
+                    className="-mt-6 flex flex-col items-center gap-1 active:scale-95 transition"
                     aria-label={item.label}
+                    aria-current={postActive ? "page" : undefined}
                   >
-                    <span className="h-12 w-12 rounded-2xl bg-foreground text-background flex items-center justify-center shadow-elevated">
-                      <PlusCircle className="h-5 w-5" strokeWidth={2} />
+                    <span className={`relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-200 ${
+                      postActive
+                        ? "bg-foreground text-background shadow-elevated ring-4 ring-foreground/10"
+                        : "bg-background text-foreground border-2 border-foreground shadow-card hover:bg-foreground hover:text-background"
+                    }`}>
+                      <Plus className="h-6 w-6" strokeWidth={2.5} />
                     </span>
-                    <span className="text-[9px] font-semibold text-foreground">{item.label}</span>
+                    <span className={`text-[9px] font-semibold tracking-tight ${postActive ? "text-foreground" : "text-muted-foreground"}`}>{item.label}</span>
                   </button>
                 );
               }
