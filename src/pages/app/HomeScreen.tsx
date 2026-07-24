@@ -275,21 +275,36 @@ const HomeScreen = () => {
           </button>
         </div>
         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 pr-4">
-          {popularAreas.map((area) => (
-            <button
-              key={area.name}
-              onClick={() => navigate(`/app/search?location=${encodeURIComponent(area.name)}`)}
-              className="group flex-shrink-0 w-[124px] rounded-2xl overflow-hidden bg-card shadow-card active:scale-[0.98] transition"
-            >
-              <div className="relative h-[88px] overflow-hidden">
-                <img src={area.img} alt={area.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
-                <span className="absolute bottom-1.5 left-2 text-[11px] font-bold text-background tracking-tight">{area.name}</span>
-              </div>
-            </button>
-          ))}
+          {popularAreas.map((area, i) => {
+            const counts = [1240, 980, 2300, 1560, 870, 1120, 640, 1800];
+            const propCount = counts[i % counts.length];
+            return (
+              <button
+                key={area.name}
+                onClick={() => navigate(`/app/search?location=${encodeURIComponent(area.name)}`)}
+                className="group flex-shrink-0 w-[168px] rounded-2xl overflow-hidden bg-card shadow-card active:scale-[0.98] transition"
+              >
+                <div className="relative h-[112px] overflow-hidden">
+                  <img src={area.img} alt={area.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/25 to-transparent" />
+                  <div className="absolute bottom-2 left-2.5 right-2.5 flex items-end justify-between">
+                    <div>
+                      <p className="text-[13px] font-bold text-background tracking-tight leading-none">{area.name}</p>
+                      <p className="text-[9.5px] text-background/80 mt-1 font-medium">{propCount.toLocaleString("en-IN")}+ Properties</p>
+                    </div>
+                    <span className="h-6 w-6 rounded-full bg-background flex items-center justify-center">
+                      <ArrowRight className="h-3 w-3 text-foreground" strokeWidth={2.5} />
+                    </span>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
+
+      <div id="ai-recs" />
+
 
       <AIRecommendations />
 
