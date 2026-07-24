@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Heart, MapPin, BedDouble, Bath, Maximize2, ShieldCheck, Bell, Sparkles, TrendingUp, ArrowRight, Home as HomeIcon, Building2, BedSingle, Store } from "lucide-react";
+import { Search, Heart, MapPin, BedDouble, Bath, Maximize2, ShieldCheck, Bell, Sparkles, Zap, Home as HomeIcon, Building2, BedSingle, Store, ArrowRight, Mic, Navigation, Star } from "lucide-react";
 import GeolocationDetect from "@/components/GeolocationDetect";
 import SEOHead from "@/components/SEOHead";
 import AIRecommendations from "@/components/AIRecommendations";
@@ -97,10 +97,10 @@ const HomeScreen = () => {
     : defaultPopularAreas;
 
   const categories = [
-    { label: t("rent"), Icon: HomeIcon, type: "rent" },
-    { label: t("buy"), Icon: Building2, type: "sale" },
-    { label: t("pg"), Icon: BedSingle, type: "pg" },
-    { label: t("commercial"), Icon: Store, type: "commercial" },
+    { label: t("rent"), sub: "Find your perfect home", Icon: HomeIcon, type: "rent", tint: "hsl(28 80% 88%)", iconTint: "hsl(28 70% 55%)" },
+    { label: t("buy"), sub: "Own your dream home", Icon: Building2, type: "sale", tint: "hsl(260 55% 92%)", iconTint: "hsl(260 45% 55%)" },
+    { label: t("pg"), sub: "Comfortable PGs near you", Icon: BedSingle, type: "pg", tint: "hsl(150 45% 88%)", iconTint: "hsl(150 45% 35%)" },
+    { label: t("commercial"), sub: "Grow your business", Icon: Store, type: "commercial", tint: "hsl(210 55% 90%)", iconTint: "hsl(210 55% 45%)" },
   ];
 
   const typeLabel: Record<string, string> = { rent: t("rent"), sale: t("buy"), pg: t("pg"), commercial: t("commercial") };
@@ -131,102 +131,133 @@ const HomeScreen = () => {
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 pt-3 pb-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-foreground flex items-center justify-center shadow-pill">
-              <HomeIcon className="h-4 w-4 text-background" strokeWidth={2.2} />
+            <div className="h-10 w-10 rounded-2xl bg-foreground flex items-center justify-center shadow-pill">
+              <HomeIcon className="h-4 w-4 text-background" strokeWidth={2.4} />
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground font-semibold">{greeting}</span>
-              <span className="text-[14px] font-bold text-foreground font-display capitalize -mt-0.5">
-                {firstName} <span className="text-accent">·</span> <span className="text-muted-foreground font-medium">urbanStay</span>
+              <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+                <span className="animate-[wave_1.6s_ease-in-out_infinite] origin-[70%_70%] inline-block">👋</span>
+                Hi, <span className="text-foreground font-semibold capitalize">{firstName}</span>
+              </span>
+              <span className="text-[15px] font-bold text-foreground font-display -mt-0.5 tracking-tight">
+                Where do you want to live?
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => user ? navigate("/app/notifications") : navigate("/auth")}
-              className="relative h-10 w-10 rounded-full bg-card border border-border flex items-center justify-center active:scale-95 transition hover:shadow-pill"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4 text-foreground" strokeWidth={1.8} />
-              {!!notifCount && notifCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-background" />
-              )}
-            </button>
-          </div>
+          <button
+            onClick={() => user ? navigate("/app/notifications") : navigate("/auth")}
+            className="relative h-10 w-10 rounded-full bg-card border border-border flex items-center justify-center active:scale-95 transition hover:shadow-pill flex-shrink-0"
+            aria-label="Notifications"
+          >
+            <Bell className="h-4 w-4 text-foreground" strokeWidth={1.8} />
+            {!!notifCount && notifCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent ring-2 ring-background" />
+            )}
+          </button>
         </div>
       </header>
 
-      {/* Hero — editorial magazine style */}
-      <section className="relative px-4 pt-6 pb-5 overflow-hidden">
-        <div aria-hidden className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
-        <div aria-hidden className="absolute top-20 -left-8 h-24 w-24 rounded-full bg-foreground/[0.04] blur-2xl pointer-events-none" />
+      {/* Hero */}
+      <section className="relative px-4 pt-5 pb-4 overflow-hidden">
+        <div aria-hidden className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
 
-        <div className="relative">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-foreground/5 border border-border mb-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground">Live in 40+ cities</span>
-          </div>
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card border border-border mb-3 shadow-pill">
+          <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-foreground">Live in 40+ cities</span>
+        </div>
 
-          <h1 className="text-[30px] leading-[1.05] font-bold text-foreground font-display tracking-tight">
-            Find a home<br />
-            you'll <span className="italic text-accent font-display relative">
-              truly
-              <svg className="absolute -bottom-1 left-0 w-full" height="6" viewBox="0 0 80 6" fill="none" preserveAspectRatio="none">
-                <path d="M1 4 Q 40 0, 79 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-              </svg>
-            </span> love.
-          </h1>
-          <p className="text-[13px] text-muted-foreground mt-2.5 max-w-[28ch] leading-relaxed">
-            Verified listings from real owners. Zero brokerage, zero games.
-          </p>
+        <h1 className="text-[34px] leading-[1.02] font-bold text-foreground font-display tracking-tight">
+          Find your next<br />
+          <span className="text-accent italic">perfect</span> place.
+        </h1>
+        <p className="text-[13px] text-muted-foreground mt-2 leading-relaxed max-w-[30ch]">
+          Verified listings from real owners.<br />Zero brokerage. Zero games.
+        </p>
 
+        {/* Search bar with mic + arrow */}
+        <div className="mt-4 flex items-center gap-2 bg-card border border-border rounded-2xl pl-3 pr-1.5 py-1.5 shadow-card">
+          <span className="h-9 w-9 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+            <Search className="h-4 w-4 text-foreground" strokeWidth={2.4} />
+          </span>
           <button
             onClick={() => navigate("/app/search")}
-            className="mt-4 w-full flex items-center gap-3 bg-card border border-border rounded-2xl px-4 py-3.5 shadow-card hover:shadow-elevated active:scale-[0.99] transition text-left group"
+            className="flex-1 text-left py-1"
           >
-            <span className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center">
-              <Search className="h-4 w-4 text-foreground" strokeWidth={2.2} />
-            </span>
-            <span className="flex-1 text-[13px] text-muted-foreground">Search city, area or landmark</span>
-            <span className="h-8 w-8 rounded-xl bg-foreground flex items-center justify-center group-hover:scale-105 transition-transform">
-              <ArrowRight className="h-3.5 w-3.5 text-background" strokeWidth={2.5} />
-            </span>
+            <span className="block text-[13px] font-semibold text-foreground leading-tight">Search city, area or landmark</span>
+            <span className="block text-[10.5px] text-muted-foreground leading-tight mt-0.5 truncate">Hyderabad, PG, Flat, Hitech City…</span>
           </button>
+          <button
+            onClick={() => navigate("/app/search?voice=1")}
+            aria-label="Voice search"
+            className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center active:scale-90 transition flex-shrink-0"
+          >
+            <Mic className="h-4 w-4 text-foreground" strokeWidth={2} />
+          </button>
+          <button
+            onClick={() => navigate("/app/search")}
+            aria-label="Search"
+            className="h-9 w-9 rounded-full bg-foreground flex items-center justify-center active:scale-90 transition flex-shrink-0"
+          >
+            <ArrowRight className="h-4 w-4 text-background" strokeWidth={2.5} />
+          </button>
+        </div>
 
-          <div className="mt-3.5 flex items-center gap-3 text-[11px] text-muted-foreground flex-wrap">
-            <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-success" /> Verified owners</span>
-            <span className="h-3 w-px bg-border" />
-            <span className="flex items-center gap-1"><Sparkles className="h-3 w-3 text-accent" /> AI matched</span>
-            <span className="h-3 w-px bg-border" />
-            <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-foreground" /> Live prices</span>
-          </div>
-
-          <div className="mt-3 flex justify-end">
+        {/* Chip row */}
+        <div className="mt-3 flex items-center gap-2 overflow-x-auto hide-scrollbar">
+          <button className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card border border-border shadow-pill">
+            <ShieldCheck className="h-3.5 w-3.5 text-success" />
+            <span className="text-[11px] font-semibold text-foreground">Verified</span>
+          </button>
+          <button
+            onClick={() => document.getElementById("ai-recs")?.scrollIntoView({ behavior: "smooth" })}
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card border border-border shadow-pill"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-accent" />
+            <span className="text-[11px] font-semibold text-foreground">AI Picks</span>
+          </button>
+          <button
+            onClick={() => navigate("/app/search")}
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card border border-border shadow-pill"
+          >
+            <Zap className="h-3.5 w-3.5" style={{ color: "hsl(260 60% 55%)" }} />
+            <span className="text-[11px] font-semibold text-foreground">Live Deals</span>
+          </button>
+          <div className="flex-shrink-0 ml-auto">
             <GeolocationDetect onLocationDetected={(lat, lng) => setUserLoc({ lat, lng })} />
           </div>
         </div>
       </section>
 
-      {/* Categories — compact pill row */}
-      <section className="px-4 pb-6">
-        <div className="grid grid-cols-4 gap-2">
+      {/* Categories — colored tiles with subtitles */}
+      <section className="px-4 pt-2 pb-6">
+        <div className="grid grid-cols-4 gap-2.5">
           {categories.map((cat) => {
             const Icon = cat.Icon;
             return (
               <button
                 key={cat.type}
                 onClick={() => navigate(`/app/search?type=${cat.type}`)}
-                className="group flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl bg-card border border-border shadow-card hover:border-foreground/40 hover:-translate-y-0.5 active:scale-[0.97] transition-all"
+                className="group relative flex flex-col items-start gap-2 p-2.5 rounded-2xl border border-border/60 active:scale-[0.97] hover:-translate-y-0.5 transition-all overflow-hidden text-left"
+                style={{ backgroundColor: cat.tint }}
               >
-                <span className="h-7 w-7 rounded-lg bg-secondary flex items-center justify-center group-hover:bg-foreground transition-colors">
-                  <Icon className="h-3.5 w-3.5 text-foreground group-hover:text-background transition-colors" strokeWidth={2} />
+                <span
+                  className="h-9 w-9 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center shadow-pill"
+                >
+                  <Icon className="h-4 w-4" style={{ color: cat.iconTint }} strokeWidth={2.2} />
                 </span>
-                <span className="text-[10.5px] font-semibold text-foreground tracking-tight">{cat.label}</span>
+                <div className="w-full">
+                  <p className="text-[12px] font-bold text-foreground leading-none">{cat.label}</p>
+                  <p className="text-[9px] text-foreground/60 leading-tight mt-1 line-clamp-2">{cat.sub}</p>
+                </div>
+                <span className="absolute bottom-1.5 right-1.5 h-5 w-5 rounded-full bg-card flex items-center justify-center shadow-pill">
+                  <ArrowRight className="h-2.5 w-2.5 text-foreground" strokeWidth={2.5} />
+                </span>
               </button>
             );
           })}
         </div>
       </section>
+
 
 
 
@@ -244,21 +275,36 @@ const HomeScreen = () => {
           </button>
         </div>
         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1 pr-4">
-          {popularAreas.map((area) => (
-            <button
-              key={area.name}
-              onClick={() => navigate(`/app/search?location=${encodeURIComponent(area.name)}`)}
-              className="group flex-shrink-0 w-[124px] rounded-2xl overflow-hidden bg-card shadow-card active:scale-[0.98] transition"
-            >
-              <div className="relative h-[88px] overflow-hidden">
-                <img src={area.img} alt={area.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
-                <span className="absolute bottom-1.5 left-2 text-[11px] font-bold text-background tracking-tight">{area.name}</span>
-              </div>
-            </button>
-          ))}
+          {popularAreas.map((area, i) => {
+            const counts = [1240, 980, 2300, 1560, 870, 1120, 640, 1800];
+            const propCount = counts[i % counts.length];
+            return (
+              <button
+                key={area.name}
+                onClick={() => navigate(`/app/search?location=${encodeURIComponent(area.name)}`)}
+                className="group flex-shrink-0 w-[168px] rounded-2xl overflow-hidden bg-card shadow-card active:scale-[0.98] transition"
+              >
+                <div className="relative h-[112px] overflow-hidden">
+                  <img src={area.img} alt={area.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/25 to-transparent" />
+                  <div className="absolute bottom-2 left-2.5 right-2.5 flex items-end justify-between">
+                    <div>
+                      <p className="text-[13px] font-bold text-background tracking-tight leading-none">{area.name}</p>
+                      <p className="text-[9.5px] text-background/80 mt-1 font-medium">{propCount.toLocaleString("en-IN")}+ Properties</p>
+                    </div>
+                    <span className="h-6 w-6 rounded-full bg-background flex items-center justify-center">
+                      <ArrowRight className="h-3 w-3 text-foreground" strokeWidth={2.5} />
+                    </span>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
+
+      <div id="ai-recs" />
+
 
       <AIRecommendations />
 

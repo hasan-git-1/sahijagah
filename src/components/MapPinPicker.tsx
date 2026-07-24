@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Navigation, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -111,7 +112,11 @@ const MapPinPicker = ({ lat, lng, city, onChange }: MapPinPickerProps) => {
   }, [city]);
 
   const handleMyLocation = () => {
-    if (!navigator.geolocation || !mapInstance.current) return;
+    if (!mapInstance.current) return;
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -137,9 +142,21 @@ const MapPinPicker = ({ lat, lng, city, onChange }: MapPinPickerProps) => {
         setPinned({ lat: newLat, lng: newLng });
         onChange(newLat, newLng);
         setLocating(false);
+        toast.success("Location pinned!");
       },
-      () => setLocating(false),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => {
+        setLocating(false);
+        const msg =
+          err.code === 1
+            ? "Location permission denied. Please enable location access in your browser settings."
+            : err.code === 2
+            ? "Location unavailable. Please try again or pick manually on the map."
+            : err.code === 3
+            ? "Location request timed out. Please try again."
+            : "Could not get your location. Please pick manually on the map.";
+        toast.error(msg);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   };
 
