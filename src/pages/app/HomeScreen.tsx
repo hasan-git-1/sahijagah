@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Heart, MapPin, BedDouble, Bath, Maximize2, ShieldCheck, Bell, Sparkles, TrendingUp, ArrowRight, Home as HomeIcon, Building2, BedSingle, Store } from "lucide-react";
+import { Search, Heart, MapPin, BedDouble, Bath, Maximize2, ShieldCheck, Bell, Sparkles, Zap, Home as HomeIcon, Building2, BedSingle, Store, ArrowRight, Mic, Navigation, Star } from "lucide-react";
 import GeolocationDetect from "@/components/GeolocationDetect";
 import SEOHead from "@/components/SEOHead";
 import AIRecommendations from "@/components/AIRecommendations";
