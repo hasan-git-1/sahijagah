@@ -22,6 +22,11 @@ import areaHitechcity from "@/assets/area-hitechcity.jpg";
 import areaMadhapur from "@/assets/area-madhapur.jpg";
 import areaKondapur from "@/assets/area-kondapur.jpg";
 import areaMiyapur from "@/assets/area-miyapur.jpg";
+import heroArchRoom from "@/assets/hero-arch-room.png";
+import catRentImg from "@/assets/cat-rent.png";
+import catBuyImg from "@/assets/cat-buy.png";
+import catPgImg from "@/assets/cat-pg.png";
+import catCommercialImg from "@/assets/cat-commercial.png";
 
 const defaultPopularAreas = [
   { name: "Gachibowli", lat: 17.4401, lng: 78.3489, img: areaGachibowli },
@@ -97,10 +102,10 @@ const HomeScreen = () => {
     : defaultPopularAreas;
 
   const categories = [
-    { label: t("rent"), sub: "Find your perfect home", Icon: HomeIcon, type: "rent", tint: "hsl(28 80% 88%)", iconTint: "hsl(28 70% 55%)" },
-    { label: t("buy"), sub: "Own your dream home", Icon: Building2, type: "sale", tint: "hsl(260 55% 92%)", iconTint: "hsl(260 45% 55%)" },
-    { label: t("pg"), sub: "Comfortable PGs near you", Icon: BedSingle, type: "pg", tint: "hsl(150 45% 88%)", iconTint: "hsl(150 45% 35%)" },
-    { label: t("commercial"), sub: "Grow your business", Icon: Store, type: "commercial", tint: "hsl(210 55% 90%)", iconTint: "hsl(210 55% 45%)" },
+    { label: t("rent"), sub: "Find your perfect home", img: catRentImg, type: "rent", tint: "hsl(28 80% 90%)", ring: "hsl(28 70% 78%)" },
+    { label: t("buy"), sub: "Own your dream home", img: catBuyImg, type: "sale", tint: "hsl(260 55% 94%)", ring: "hsl(260 45% 82%)" },
+    { label: t("pg"), sub: "Comfortable PGs near you", img: catPgImg, type: "pg", tint: "hsl(150 45% 90%)", ring: "hsl(150 45% 78%)" },
+    { label: t("commercial"), sub: "Grow your business", img: catCommercialImg, type: "commercial", tint: "hsl(210 55% 92%)", ring: "hsl(210 55% 82%)" },
   ];
 
   const typeLabel: Record<string, string> = { rent: t("rent"), sale: t("buy"), pg: t("pg"), commercial: t("commercial") };
@@ -158,21 +163,54 @@ const HomeScreen = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative px-4 pt-5 pb-4 overflow-hidden">
-        <div aria-hidden className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+      <section className="relative px-4 pt-4 pb-4 overflow-hidden">
+        <div aria-hidden className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
 
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card border border-border mb-3 shadow-pill">
-          <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-foreground">Live in 40+ cities</span>
+        {/* Two-column hero: copy + arched illustration */}
+        <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card border border-border mb-3 shadow-pill">
+              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-foreground">Live in 40+ cities</span>
+            </div>
+            <h1 className="text-[30px] leading-[1.02] font-bold text-foreground font-display tracking-tight">
+              Find your next<br />
+              <span className="text-accent italic">perfect</span> place.
+            </h1>
+            <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed">
+              Verified listings from real owners.<br />Zero brokerage. Zero games.
+            </p>
+          </div>
+
+          {/* Arched illustration frame */}
+          <div className="relative w-[140px] h-[168px] flex-shrink-0">
+            <div
+              className="absolute inset-0 overflow-hidden shadow-card border border-border/60"
+              style={{
+                borderTopLeftRadius: "9999px",
+                borderTopRightRadius: "9999px",
+                borderBottomLeftRadius: "24px",
+                borderBottomRightRadius: "24px",
+                background: "linear-gradient(180deg, hsl(28 45% 92%) 0%, hsl(28 55% 88%) 100%)",
+              }}
+            >
+              {/* pendant lamp accent */}
+              <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-6 bg-foreground/30" />
+              <div aria-hidden className="absolute top-5 left-1/2 -translate-x-1/2 w-5 h-3 rounded-b-full bg-foreground/80" />
+              {/* plant hint */}
+              <div aria-hidden className="absolute bottom-6 left-2 w-6 h-8 rounded-t-full bg-[hsl(140_30%_45%)]/70" />
+              <img
+                src={heroArchRoom}
+                alt="Cozy modern living room"
+                width={140}
+                height={168}
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[130%] max-w-none object-contain object-bottom"
+              />
+            </div>
+            {/* base plate shadow */}
+            <div aria-hidden className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-[110%] h-2 rounded-full bg-foreground/10 blur-md" />
+          </div>
         </div>
-
-        <h1 className="text-[34px] leading-[1.02] font-bold text-foreground font-display tracking-tight">
-          Find your next<br />
-          <span className="text-accent italic">perfect</span> place.
-        </h1>
-        <p className="text-[13px] text-muted-foreground mt-2 leading-relaxed max-w-[30ch]">
-          Verified listings from real owners.<br />Zero brokerage. Zero games.
-        </p>
 
         {/* Search bar with mic + arrow */}
         <div className="mt-4 flex items-center gap-2 bg-card border border-border rounded-2xl pl-3 pr-1.5 py-1.5 shadow-card">
@@ -181,7 +219,7 @@ const HomeScreen = () => {
           </span>
           <button
             onClick={() => navigate("/app/search")}
-            className="flex-1 text-left py-1"
+            className="flex-1 text-left py-1 min-w-0"
           >
             <span className="block text-[13px] font-semibold text-foreground leading-tight">Search city, area or landmark</span>
             <span className="block text-[10.5px] text-muted-foreground leading-tight mt-0.5 truncate">Hyderabad, PG, Flat, Hitech City…</span>
@@ -231,30 +269,36 @@ const HomeScreen = () => {
       {/* Categories — colored tiles with subtitles */}
       <section className="px-4 pt-2 pb-6">
         <div className="grid grid-cols-4 gap-2.5">
-          {categories.map((cat) => {
-            const Icon = cat.Icon;
-            return (
-              <button
-                key={cat.type}
-                onClick={() => navigate(`/app/search?type=${cat.type}`)}
-                className="group relative flex flex-col items-start gap-2 p-2.5 rounded-2xl border border-border/60 active:scale-[0.97] hover:-translate-y-0.5 transition-all overflow-hidden text-left"
-                style={{ backgroundColor: cat.tint }}
-              >
+          {categories.map((cat) => (
+            <button
+              key={cat.type}
+              onClick={() => navigate(`/app/search?type=${cat.type}`)}
+              className="group relative flex flex-col items-stretch p-2.5 pb-2 rounded-2xl border border-border/60 active:scale-[0.97] hover:-translate-y-0.5 hover:shadow-card transition-all overflow-hidden text-left min-h-[142px]"
+              style={{ backgroundColor: cat.tint }}
+            >
+              {/* Illustration medallion */}
+              <div className="relative h-[58px] mb-2 flex items-center justify-center">
                 <span
-                  className="h-9 w-9 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center shadow-pill"
-                >
-                  <Icon className="h-4 w-4" style={{ color: cat.iconTint }} strokeWidth={2.2} />
-                </span>
-                <div className="w-full">
-                  <p className="text-[12px] font-bold text-foreground leading-none">{cat.label}</p>
-                  <p className="text-[9px] text-foreground/60 leading-tight mt-1 line-clamp-2">{cat.sub}</p>
-                </div>
-                <span className="absolute bottom-1.5 right-1.5 h-5 w-5 rounded-full bg-card flex items-center justify-center shadow-pill">
-                  <ArrowRight className="h-2.5 w-2.5 text-foreground" strokeWidth={2.5} />
-                </span>
-              </button>
-            );
-          })}
+                  aria-hidden
+                  className="absolute inset-x-2 top-1 bottom-0 rounded-full"
+                  style={{ backgroundColor: cat.ring, opacity: 0.55 }}
+                />
+                <img
+                  src={cat.img}
+                  alt=""
+                  width={64}
+                  height={64}
+                  loading="lazy"
+                  className="relative h-[58px] w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <p className="text-[12px] font-bold text-foreground leading-none tracking-tight">{cat.label}</p>
+              <p className="text-[9px] text-foreground/60 leading-tight mt-1 line-clamp-2">{cat.sub}</p>
+              <span className="absolute bottom-1.5 right-1.5 h-5 w-5 rounded-full bg-card flex items-center justify-center shadow-pill">
+                <ArrowRight className="h-2.5 w-2.5 text-foreground" strokeWidth={2.5} />
+              </span>
+            </button>
+          ))}
         </div>
       </section>
 
