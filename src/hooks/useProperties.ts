@@ -104,7 +104,6 @@ export const useFilteredProperties = (query: string, type: string, filters: Sear
       if (error) throw error;
       return data as Property[];
     },
-    enabled: query.length > 0 || (!!type && type !== "All") || !!filters.minPrice || !!filters.maxPrice || !!filters.bedrooms || !!filters.bathrooms || filters.amenities.length > 0,
   });
 };
 
