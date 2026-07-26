@@ -102,10 +102,14 @@ const HomeScreen = () => {
     : defaultPopularAreas;
 
   const categories = [
-    { label: t("rent"), sub: "Find your perfect home", img: catRentImg, type: "rent", tint: "hsl(28 80% 90%)", ring: "hsl(28 70% 78%)" },
-    { label: t("buy"), sub: "Own your dream home", img: catBuyImg, type: "sale", tint: "hsl(260 55% 94%)", ring: "hsl(260 45% 82%)" },
-    { label: t("pg"), sub: "Comfortable PGs near you", img: catPgImg, type: "pg", tint: "hsl(150 45% 90%)", ring: "hsl(150 45% 78%)" },
-    { label: t("commercial"), sub: "Grow your business", img: catCommercialImg, type: "commercial", tint: "hsl(210 55% 92%)", ring: "hsl(210 55% 82%)" },
+    { label: t("rent"), sub: "Move-in ready", tag: "12k+", img: catRentImg, type: "rent",
+      from: "hsl(24 92% 62%)", to: "hsl(14 88% 52%)", glow: "hsl(24 95% 60% / 0.45)" },
+    { label: t("buy"), sub: "Own it forever", tag: "8k+", img: catBuyImg, type: "sale",
+      from: "hsl(262 78% 66%)", to: "hsl(248 70% 48%)", glow: "hsl(262 82% 62% / 0.45)" },
+    { label: t("pg"), sub: "Furnished stays", tag: "5k+", img: catPgImg, type: "pg",
+      from: "hsl(158 62% 48%)", to: "hsl(172 78% 34%)", glow: "hsl(162 70% 44% / 0.45)" },
+    { label: t("commercial"), sub: "Grow your biz", tag: "2k+", img: catCommercialImg, type: "commercial",
+      from: "hsl(212 78% 58%)", to: "hsl(224 72% 40%)", glow: "hsl(216 78% 52% / 0.45)" },
   ];
 
   const typeLabel: Record<string, string> = { rent: t("rent"), sale: t("buy"), pg: t("pg"), commercial: t("commercial") };
@@ -266,37 +270,74 @@ const HomeScreen = () => {
         </div>
       </section>
 
-      {/* Categories — colored tiles with subtitles */}
+      {/* Categories — premium gradient tiles */}
       <section className="px-4 pt-2 pb-6">
+        <div className="flex items-end justify-between mb-3">
+          <div>
+            <p className="section-eyebrow">Browse by</p>
+            <h2 className="section-title mt-0.5">What are you looking for?</h2>
+          </div>
+        </div>
         <div className="grid grid-cols-4 gap-2.5">
           {categories.map((cat) => (
             <button
               key={cat.type}
               onClick={() => navigate(`/app/search?type=${cat.type}`)}
-              className="group relative flex flex-col items-stretch p-2.5 pb-2 rounded-2xl border border-border/60 active:scale-[0.97] hover:-translate-y-0.5 hover:shadow-card transition-all overflow-hidden text-left min-h-[142px]"
-              style={{ backgroundColor: cat.tint }}
+              className="group relative flex flex-col items-stretch rounded-[22px] active:scale-[0.96] hover:-translate-y-1 transition-all duration-300 overflow-hidden text-left min-h-[158px] p-[1.5px]"
+              style={{
+                background: `linear-gradient(155deg, ${cat.from}, ${cat.to})`,
+                boxShadow: `0 12px 28px -12px ${cat.glow}, 0 2px 6px -2px hsl(0 0% 0% / 0.08)`,
+              }}
             >
-              {/* Illustration medallion */}
-              <div className="relative h-[58px] mb-2 flex items-center justify-center">
+              {/* Inner surface */}
+              <div
+                className="relative flex-1 rounded-[20px] p-2.5 pb-2 overflow-hidden flex flex-col"
+                style={{
+                  background: `linear-gradient(165deg, ${cat.from}, ${cat.to})`,
+                }}
+              >
+                {/* Glossy sheen */}
                 <span
                   aria-hidden
-                  className="absolute inset-x-2 top-1 bottom-0 rounded-full"
-                  style={{ backgroundColor: cat.ring, opacity: 0.55 }}
+                  className="absolute inset-x-0 top-0 h-1/2 opacity-60"
+                  style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }}
                 />
-                <img
-                  src={cat.img}
-                  alt=""
-                  width={64}
-                  height={64}
-                  loading="lazy"
-                  className="relative h-[58px] w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                {/* Grain dot */}
+                <span
+                  aria-hidden
+                  className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full blur-2xl opacity-40"
+                  style={{ background: "hsl(0 0% 100% / 0.5)" }}
                 />
+
+                {/* Count pill */}
+                <span className="relative z-10 self-start inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/25 backdrop-blur-sm border border-white/30">
+                  <span className="h-1 w-1 rounded-full bg-white" />
+                  <span className="text-[8.5px] font-bold text-white tracking-wide">{cat.tag}</span>
+                </span>
+
+                {/* Illustration */}
+                <div className="relative z-10 flex-1 flex items-center justify-center my-1">
+                  <img
+                    src={cat.img}
+                    alt=""
+                    width={64}
+                    height={64}
+                    loading="lazy"
+                    className="h-[62px] w-auto object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.25)] group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500"
+                  />
+                </div>
+
+                {/* Label block */}
+                <div className="relative z-10 flex items-end justify-between gap-1">
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-bold text-white leading-none tracking-tight font-display">{cat.label}</p>
+                    <p className="text-[9px] text-white/80 leading-tight mt-1 truncate font-medium">{cat.sub}</p>
+                  </div>
+                  <span className="h-6 w-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-md group-hover:rotate-[-45deg] transition-transform duration-300">
+                    <ArrowRight className="h-3 w-3" style={{ color: cat.to }} strokeWidth={2.8} />
+                  </span>
+                </div>
               </div>
-              <p className="text-[12px] font-bold text-foreground leading-none tracking-tight">{cat.label}</p>
-              <p className="text-[9px] text-foreground/60 leading-tight mt-1 line-clamp-2">{cat.sub}</p>
-              <span className="absolute bottom-1.5 right-1.5 h-5 w-5 rounded-full bg-card flex items-center justify-center shadow-pill">
-                <ArrowRight className="h-2.5 w-2.5 text-foreground" strokeWidth={2.5} />
-              </span>
             </button>
           ))}
         </div>
