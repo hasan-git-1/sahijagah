@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_review_logs: {
+        Row: {
+          admin_override: string | null
+          created_at: string
+          flagged_issues: Json | null
+          id: string
+          photo_notes: string | null
+          pre_check_flags: Json | null
+          property_id: string | null
+          realness_score: number | null
+          reasons: Json | null
+          resulting_status: string | null
+          verdict: string | null
+        }
+        Insert: {
+          admin_override?: string | null
+          created_at?: string
+          flagged_issues?: Json | null
+          id?: string
+          photo_notes?: string | null
+          pre_check_flags?: Json | null
+          property_id?: string | null
+          realness_score?: number | null
+          reasons?: Json | null
+          resulting_status?: string | null
+          verdict?: string | null
+        }
+        Update: {
+          admin_override?: string | null
+          created_at?: string
+          flagged_issues?: Json | null
+          id?: string
+          photo_notes?: string | null
+          pre_check_flags?: Json | null
+          property_id?: string | null
+          realness_score?: number | null
+          reasons?: Json | null
+          resulting_status?: string | null
+          verdict?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_review_logs_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           client_id: string
