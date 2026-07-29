@@ -63,7 +63,7 @@ const PostScreen = () => {
       // Save phone to profile
       await supabase.from("profiles").update({ phone: form.phone }).eq("id", user.id);
 
-      const { error } = await supabase.from("properties").insert({
+      const { data: inserted, error } = await supabase.from("properties").insert({
         title: form.title,
         description: form.description || null,
         type: form.type,
@@ -81,9 +81,15 @@ const PostScreen = () => {
         is_featured: true,
         lat: form.lat,
         lng: form.lng,
-      });
+      }).select("id").single();
       if (error) throw error;
-      toast.success("Property posted successfully! 🎉");
+
+      // Fire-and-forget AI image authenticity check → auto-approves if photos look real
+      if (inserted?.id) {
+        supabase.functions.invoke("ai-property-review", { body: { property_id: inserted.id } }).catch(() => {});
+      }
+
+      toast.success("Property posted! Going live after image check 🎉");
       navigate("/app");
     } catch (err: any) {
       toast.error(err.message || "Failed to post property");
