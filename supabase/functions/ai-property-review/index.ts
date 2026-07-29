@@ -1,5 +1,7 @@
-// AI Property Verification & Auto-Approval
-// Uses Lovable AI Gateway (Gemini) with vision to review PG/hostel/room/house listings.
+// AI Property Image Verification & Auto-Approval
+// Uses Lovable AI Gateway (Gemini) with vision to detect fake/AI-generated/stock images.
+// If images look like real, authentic phone/camera photos of an actual property → auto-approve.
+// If images look AI-generated, stock, watermarked, or lifted from marketing sites → reject.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
@@ -7,70 +9,33 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-const SYSTEM_PROMPT = `You are a property listing verification specialist for an Indian PG/hostel/room/house rental platform (urbanStay). You review new listings the way a careful, experienced human moderator would before they go live to renters.
+const SYSTEM_PROMPT = `You are an image authenticity checker for an Indian PG/hostel/room/house rental platform (urbanStay).
 
-You will receive listing text fields, listing photos, and pre-check flags (duplicate_image_match, price_outlier, incomplete_fields).
+Your ONLY job: look at the listing photos (and video thumbnails if any) and decide whether they are REAL, authentic phone/camera photos of an actual property — or FAKE (AI-generated, stock photography, watermarked, or lifted from real-estate marketing sites like 99acres/NoBroker/MagicBricks).
 
-Evaluate on these dimensions:
-1. PHOTO AUTHENTICITY — Are photos real phone/camera shots of an actual PG/hostel/house room (visible bed frames, wardrobes, bathroom, kitchen, common area, minor imperfections like switchboards/cables, varied angles of the SAME room) — or stock photography, interior-design portfolio shots, watermarked images, or lifted from real-estate marketing sites (99acres, NoBroker, MagicBricks)?
-2. CONSISTENCY — Do photos match the claimed room type, AC/non-AC, attached bathroom, occupancy, furnishing?
-3. DESCRIPTION QUALITY — Genuine and specific (locality, landmarks, floor, rules, food, deposit) or generic copy-paste spam?
-4. PRICING SANITY — Plausible for the stated room type + locality in India. Rent PG single ~4-12k, shared ~3-8k; 1BHK rent ~8-25k tier-2/3, ~15-45k metros; buy prices in lakhs/crores. Respect price_outlier flag but reason yourself too.
-5. FRAUD PATTERNS — Pressure for advance payment, no exact address, off-platform contact push, wildly-below-market pricing, duplicate images.
+Signs of REAL photos:
+- Visible imperfections: switchboards, cables, minor clutter, uneven lighting
+- Phone/camera angles, slightly tilted framing
+- Real bed frames, wardrobes, bathrooms, kitchens with actual usage marks
+- Consistent room shown from multiple angles
 
-Weigh all 5 dimensions together — don't reject on one weak signal alone if others are strong (a slightly generic description with excellent authentic-looking photos and sane price is likely a lazy-writer real listing).
+Signs of FAKE / AI / stock photos:
+- Perfect studio lighting, magazine-quality staging
+- Impossibly clean, portfolio-style interior design shots
+- AI artifacts: warped furniture, extra fingers on people, melted textures, nonsensical geometry
+- Watermarks or logos from other sites
+- All photos look like different rooms / different buildings stitched together
 
-Respond with ONLY valid JSON, no markdown fences, no preamble:
+Do NOT judge price, description quality, amenities, or completeness. ONLY image authenticity.
+
+Respond with ONLY valid JSON, no markdown fences:
 {
   "realness_score": <integer 0-100>,
-  "verdict": "approve" | "review" | "reject",
-  "reasons": ["short factual reason 1", "short factual reason 2"],
-  "flagged_issues": ["specific issue if any, else empty array"],
-  "photo_notes": "1-2 sentence summary of what the photos actually show"
+  "verdict": "approve" | "reject",
+  "photo_notes": "1-2 sentence summary of what the photos actually show and why they look real or fake"
 }
 
-Scoring: 85-100 approve, 50-84 review, 0-49 reject. Cite specifics, never fabricate.`;
-
-async function runPreChecks(supabase: any, listing: any) {
-  const flags: Record<string, boolean> = {
-    duplicate_image_match: false,
-    price_outlier: false,
-    incomplete_fields: false,
-  };
-
-  const req = ["title", "description", "price", "address", "type"];
-  if (req.some((f) => !listing[f]) || (listing.images?.length ?? 0) < 3) {
-    flags.incomplete_fields = true;
-  }
-
-  const { data: comps } = await supabase
-    .from("properties")
-    .select("price")
-    .eq("city", listing.city)
-    .eq("type", listing.type)
-    .eq("status", "approved")
-    .neq("id", listing.id)
-    .limit(50);
-
-  if (comps && comps.length >= 3) {
-    const avg = comps.reduce((s: number, c: any) => s + Number(c.price), 0) / comps.length;
-    const p = Number(listing.price);
-    if (p < avg * 0.35 || p > avg * 2.5) flags.price_outlier = true;
-  }
-
-  const { data: dupes } = await supabase
-    .from("properties")
-    .select("id, images")
-    .neq("id", listing.id)
-    .limit(300);
-
-  const set = new Set(listing.images || []);
-  if ((dupes || []).some((d: any) => (d.images || []).some((u: string) => set.has(u)))) {
-    flags.duplicate_image_match = true;
-  }
-
-  return flags;
-}
+Scoring: >=60 approve (looks like real photos), <60 reject (looks fake/AI/stock). Be lenient — only reject when you're confident images are fake.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -99,28 +64,28 @@ Deno.serve(async (req) => {
       });
     }
 
-    const flags = await runPreChecks(supabase, listing);
-
     const imageUrls: string[] = (listing.images || []).slice(0, 6);
+
+    // No images → can't verify, auto-approve (owner will add later) rather than block
+    if (imageUrls.length === 0) {
+      await supabase.from("properties").update({ status: "approved", is_verified: false }).eq("id", property_id);
+      await supabase.from("ai_review_logs").insert({
+        property_id,
+        realness_score: 70,
+        verdict: "approve",
+        reasons: ["No images to verify"],
+        flagged_issues: [],
+        photo_notes: "No images provided",
+        pre_check_flags: {},
+        resulting_status: "approved",
+      });
+      return new Response(JSON.stringify({ status: "approved", reason: "no images" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const content: any[] = [
-      {
-        type: "text",
-        text: `Listing details:
-Title: ${listing.title}
-Description: ${listing.description || "(none)"}
-Price: ₹${listing.price} (${listing.type})
-Address: ${listing.address || "(none)"}
-City: ${listing.city}
-Type: ${listing.type}
-Category: ${listing.category || "(none)"}
-Bedrooms: ${listing.bedrooms} | Bathrooms: ${listing.bathrooms} | Area: ${listing.area || "(none)"}
-Amenities: ${(listing.amenities || []).join(", ") || "(none)"}
-Images provided: ${imageUrls.length}
-
-Pre-check flags: ${JSON.stringify(flags)}
-
-Review this listing per your instructions and respond with the JSON only.`,
-      },
+      { type: "text", text: `Check whether these ${imageUrls.length} listing photos are real or fake. Respond with the JSON only.` },
       ...imageUrls.map((url) => ({ type: "image_url", image_url: { url } })),
     ];
 
@@ -141,9 +106,11 @@ Review this listing per your instructions and respond with the JSON only.`,
 
     if (!aiRes.ok) {
       const errTxt = await aiRes.text();
+      // On AI failure, auto-approve so owner listings go live instead of getting stuck
+      await supabase.from("properties").update({ status: "approved" }).eq("id", property_id);
       return new Response(
-        JSON.stringify({ error: "AI gateway error", status: aiRes.status, detail: errTxt }),
-        { status: aiRes.status === 429 || aiRes.status === 402 ? aiRes.status : 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ status: "approved", note: "AI unavailable, auto-approved", detail: errTxt }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -156,33 +123,31 @@ Review this listing per your instructions and respond with the JSON only.`,
       verdict = JSON.parse(cleaned);
     } catch {
       const m = cleaned.match(/\{[\s\S]*\}/);
-      verdict = m ? JSON.parse(m[0]) : { realness_score: 60, verdict: "review", reasons: ["AI returned malformed JSON"], flagged_issues: [], photo_notes: "" };
+      verdict = m ? JSON.parse(m[0]) : { realness_score: 70, verdict: "approve", photo_notes: "AI returned malformed JSON — defaulted to approve" };
     }
 
     const score = Number(verdict.realness_score) || 0;
-    let newStatus = "pending";
-    if (score >= 85) newStatus = "approved";
-    else if (score < 50) newStatus = "rejected";
+    const newStatus = score >= 60 ? "approved" : "rejected";
 
     const updates: any = { status: newStatus };
     if (newStatus === "approved") updates.is_verified = true;
-    if (newStatus === "rejected") updates.rejection_reason = `AI review: ${(verdict.reasons || []).slice(0, 2).join("; ")}`;
+    if (newStatus === "rejected") updates.rejection_reason = `Images appear fake/AI-generated/stock. ${verdict.photo_notes || ""}`.trim();
 
     await supabase.from("properties").update(updates).eq("id", property_id);
 
     await supabase.from("ai_review_logs").insert({
       property_id,
       realness_score: score,
-      verdict: verdict.verdict || (score >= 85 ? "approve" : score < 50 ? "reject" : "review"),
-      reasons: verdict.reasons || [],
-      flagged_issues: verdict.flagged_issues || [],
+      verdict: verdict.verdict || (score >= 60 ? "approve" : "reject"),
+      reasons: [verdict.photo_notes || ""],
+      flagged_issues: newStatus === "rejected" ? ["fake_or_ai_images"] : [],
       photo_notes: verdict.photo_notes || "",
-      pre_check_flags: flags,
+      pre_check_flags: {},
       resulting_status: newStatus,
     });
 
     return new Response(
-      JSON.stringify({ status: newStatus, ai_result: verdict, pre_check_flags: flags }),
+      JSON.stringify({ status: newStatus, ai_result: verdict }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
