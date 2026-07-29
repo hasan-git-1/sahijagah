@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3, Flag, TrendingUp } from "lucide-react";
+import { ArrowLeft, Shield, Home, Users, Star, Check, X, BarChart3, Flag, TrendingUp, Sparkles, Bot, Loader2, AlertTriangle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-type Tab = "properties" | "users" | "feedback" | "stats" | "reports";
+type Tab = "properties" | "ai" | "users" | "feedback" | "stats" | "reports";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
