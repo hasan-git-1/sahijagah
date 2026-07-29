@@ -105,6 +105,7 @@ const AdminDashboard = () => {
 
   const tabs: { key: Tab; icon: React.ElementType; label: string }[] = [
     { key: "properties", icon: Home, label: "Properties" },
+    { key: "ai", icon: Sparkles, label: "AI" },
     { key: "users", icon: Users, label: "Users" },
     { key: "reports", icon: Flag, label: "Reports" },
     { key: "feedback", icon: Star, label: "Feedback" },
