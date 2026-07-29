@@ -2,3 +2,6 @@ project_id = "fcvgoofbmwmvbrhjkybq"
 
 [functions.property-chat]
 verify_jwt = false
+
+[functions.ai-property-review]
+verify_jwt = false
