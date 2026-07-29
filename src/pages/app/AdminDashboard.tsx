@@ -335,4 +335,180 @@ const AdminDashboard = () => {
   );
 };
 
+// ---------- AI Automation Panel ----------
+function AIAutomationPanel({ properties }: { properties: any[] }) {
+  const queryClient = useQueryClient();
+  const [runningId, setRunningId] = useState<string | null>(null);
+  const [bulkRunning, setBulkRunning] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number }>({ done: 0, total: 0 });
+
+  const pending = properties.filter((p) => p.status === "pending");
+
+  const { data: logs, refetch: refetchLogs } = useQuery({
+    queryKey: ["ai-review-logs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ai_review_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const reviewOne = async (propertyId: string) => {
+    const { data, error } = await supabase.functions.invoke("ai-property-review", {
+      body: { property_id: propertyId },
+    });
+    if (error) throw error;
+    return data;
+  };
+
+  const handleReview = async (id: string) => {
+    setRunningId(id);
+    try {
+      const res: any = await reviewOne(id);
+      toast.success(`AI verdict: ${res.status} (score ${res.ai_result?.realness_score ?? "?"})`);
+      queryClient.invalidateQueries({ queryKey: ["admin-properties"] });
+      refetchLogs();
+    } catch (e: any) {
+      toast.error(e.message || "AI review failed");
+    } finally {
+      setRunningId(null);
+    }
+  };
+
+  const handleBulk = async () => {
+    if (!pending.length) return toast.info("No pending listings to review");
+    setBulkRunning(true);
+    setProgress({ done: 0, total: pending.length });
+    let approved = 0, rejected = 0, review = 0, failed = 0;
+    for (let i = 0; i < pending.length; i++) {
+      try {
+        const res: any = await reviewOne(pending[i].id);
+        if (res.status === "approved") approved++;
+        else if (res.status === "rejected") rejected++;
+        else review++;
+      } catch {
+        failed++;
+      }
+      setProgress({ done: i + 1, total: pending.length });
+    }
+    setBulkRunning(false);
+    toast.success(`AI done — ${approved} approved · ${rejected} rejected · ${review} needs review${failed ? ` · ${failed} failed` : ""}`);
+    queryClient.invalidateQueries({ queryKey: ["admin-properties"] });
+    refetchLogs();
+  };
+
+  const logByPropId = new Map((logs || []).map((l: any) => [l.property_id, l]));
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-card rounded-xl p-4 shadow-card">
+        <div className="flex items-start gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <Bot className="h-5 w-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-foreground">AI Moderator</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Analyses photos + text like a human reviewer. Auto-approves score ≥85, auto-rejects &lt;50, flags 50–84 for you.
+            </p>
+          </div>
+        </div>
+        <Button
+          onClick={handleBulk}
+          disabled={bulkRunning || !pending.length}
+          className="w-full mt-3 gradient-cta text-accent-foreground border-0 gap-2"
+        >
+          {bulkRunning ? (
+            <><Loader2 className="h-4 w-4 animate-spin" /> Reviewing {progress.done}/{progress.total}…</>
+          ) : (
+            <><Sparkles className="h-4 w-4" /> Review all {pending.length} pending</>
+          )}
+        </Button>
+      </div>
+
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Pending listings</p>
+        {!pending.length ? (
+          <div className="bg-card rounded-xl p-6 text-center shadow-card">
+            <Check className="h-8 w-8 mx-auto text-accent mb-2" />
+            <p className="text-sm text-muted-foreground">All caught up. No pending listings.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {pending.map((p) => {
+              const log: any = logByPropId.get(p.id);
+              return (
+                <div key={p.id} className="bg-card rounded-xl p-3 shadow-card">
+                  <div className="flex gap-3">
+                    <img
+                      src={p.images?.[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"}
+                      alt="" className="h-14 w-14 rounded-lg object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{p.title}</p>
+                      <p className="text-xs text-muted-foreground">{p.city} · ₹{Number(p.price).toLocaleString("en-IN")} · {p.type}</p>
+                    </div>
+                    <Button size="sm" variant="outline" className="gap-1" disabled={runningId === p.id} onClick={() => handleReview(p.id)}>
+                      {runningId === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                      AI
+                    </Button>
+                  </div>
+                  {log && (
+                    <div className="mt-2 pt-2 border-t border-border/50 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          log.realness_score >= 85 ? "bg-accent/20 text-accent" : log.realness_score < 50 ? "bg-destructive/20 text-destructive" : "bg-yellow-100 text-yellow-800"
+                        }`}>Score {log.realness_score}</span>
+                        <span className="text-[10px] text-muted-foreground capitalize">→ {log.resulting_status}</span>
+                      </div>
+                      {log.photo_notes && <p className="text-[11px] text-muted-foreground italic">"{log.photo_notes}"</p>}
+                      {log.reasons?.length > 0 && (
+                        <ul className="text-[11px] text-foreground/80 list-disc list-inside">
+                          {log.reasons.slice(0, 3).map((r: string, i: number) => <li key={i}>{r}</li>)}
+                        </ul>
+                      )}
+                      {log.flagged_issues?.length > 0 && (
+                        <div className="flex items-start gap-1 text-[11px] text-destructive">
+                          <AlertTriangle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                          <span>{log.flagged_issues.join(", ")}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {logs && logs.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Recent AI reviews</p>
+          <div className="space-y-2">
+            {logs.slice(0, 10).map((l: any) => {
+              const prop = properties.find((p) => p.id === l.property_id);
+              return (
+                <div key={l.id} className="bg-card rounded-xl p-3 shadow-card">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-semibold text-foreground truncate">{prop?.title || "Deleted listing"}</p>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${
+                      l.realness_score >= 85 ? "bg-accent/20 text-accent" : l.realness_score < 50 ? "bg-destructive/20 text-destructive" : "bg-yellow-100 text-yellow-800"
+                    }`}>{l.realness_score} · {l.resulting_status}</span>
+                  </div>
+                  {l.photo_notes && <p className="text-[11px] text-muted-foreground mt-1 italic">"{l.photo_notes}"</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default AdminDashboard;
