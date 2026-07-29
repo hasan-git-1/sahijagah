@@ -250,6 +250,9 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {/* AI Automation */}
+        {tab === "ai" && <AIAutomationPanel properties={properties || []} />}
+
         {/* Users */}
         {tab === "users" && (
           <div className="space-y-2">
