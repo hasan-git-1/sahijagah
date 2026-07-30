@@ -69,7 +69,8 @@ const ProfileScreen = () => {
   const handleSignOut = async () => {
     await signOut();
     toast.success(t("sign_out"));
-    navigate("/");
+    // Installed app: stay inside the app shell instead of dropping to the website.
+    navigate(isAppMode() ? "/auth" : "/", { replace: true });
   };
 
   return (
