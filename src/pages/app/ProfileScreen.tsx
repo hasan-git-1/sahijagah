@@ -6,6 +6,7 @@ import { useI18n } from "@/contexts/I18nContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { isAppMode } from "@/lib/appMode";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
