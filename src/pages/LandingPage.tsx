@@ -50,6 +50,11 @@ const LandingPage = () => {
   const [showIOSModal, setShowIOSModal] = useState(false);
   const [installSuccess, setInstallSuccess] = useState(false);
 
+  // Installed app should never show the marketing website — go straight into the app.
+  useEffect(() => {
+    if (isAppMode()) navigate("/app", { replace: true });
+  }, [navigate]);
+
   useEffect(() => {
     // Detect iOS
     const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
