@@ -415,8 +415,9 @@ function AIAutomationPanel({ properties }: { properties: any[] }) {
           <div className="flex-1">
             <h3 className="font-bold text-foreground">AI Moderator</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Analyses photos + text like a human reviewer. Auto-approves score ≥85, auto-rejects &lt;50, flags 50–84 for you.
+              Checks listing photos for AI-generated / stock / watermarked fakes. Real photos (realness ≥60) go live automatically; fakes are rejected with a reason. Runs on every new listing — use the queue to sweep anything left pending.
             </p>
+
           </div>
         </div>
         <Button
