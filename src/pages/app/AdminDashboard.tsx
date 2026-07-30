@@ -383,23 +383,25 @@ function AIAutomationPanel({ properties }: { properties: any[] }) {
     if (!pending.length) return toast.info("No pending listings to review");
     setBulkRunning(true);
     setProgress({ done: 0, total: pending.length });
-    let approved = 0, rejected = 0, review = 0, failed = 0;
-    for (let i = 0; i < pending.length; i++) {
-      try {
-        const res: any = await reviewOne(pending[i].id);
-        if (res.status === "approved") approved++;
-        else if (res.status === "rejected") rejected++;
-        else review++;
-      } catch {
-        failed++;
-      }
-      setProgress({ done: i + 1, total: pending.length });
+    try {
+      // Server-side queue: verifies each pending listing one by one
+      const { data, error } = await supabase.functions.invoke("ai-property-review", {
+        body: { mode: "queue", limit: 50 },
+      });
+      if (error) throw error;
+      const res: any = data || {};
+      setProgress({ done: res.total ?? pending.length, total: res.total ?? pending.length });
+      toast.success(
+        `AI verified ${res.total ?? 0} listings — ${res.approved ?? 0} approved · ${res.rejected ?? 0} rejected${res.skipped ? ` · ${res.skipped} retry later` : ""}${res.failed ? ` · ${res.failed} failed` : ""}`
+      );
+    } catch (e: any) {
+      toast.error(e.message || "AI queue failed");
     }
     setBulkRunning(false);
-    toast.success(`AI done — ${approved} approved · ${rejected} rejected · ${review} needs review${failed ? ` · ${failed} failed` : ""}`);
     queryClient.invalidateQueries({ queryKey: ["admin-properties"] });
     refetchLogs();
   };
+
 
   const logByPropId = new Map((logs || []).map((l: any) => [l.property_id, l]));
 
@@ -413,8 +415,9 @@ function AIAutomationPanel({ properties }: { properties: any[] }) {
           <div className="flex-1">
             <h3 className="font-bold text-foreground">AI Moderator</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Analyses photos + text like a human reviewer. Auto-approves score ≥85, auto-rejects &lt;50, flags 50–84 for you.
+              Checks listing photos for AI-generated / stock / watermarked fakes. Real photos (realness ≥60) go live automatically; fakes are rejected with a reason. Runs on every new listing — use the queue to sweep anything left pending.
             </p>
+
           </div>
         </div>
         <Button
