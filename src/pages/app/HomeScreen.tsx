@@ -283,63 +283,47 @@ const HomeScreen = () => {
             <button
               key={cat.type}
               onClick={() => navigate(`/app/search?type=${cat.type}`)}
-              className="group relative flex flex-col items-stretch rounded-[22px] active:scale-[0.96] hover:-translate-y-1 transition-all duration-300 overflow-hidden text-left min-h-[158px] p-[1.5px]"
-              style={{
-                background: `linear-gradient(155deg, ${cat.from}, ${cat.to})`,
-                boxShadow: `0 12px 28px -12px ${cat.glow}, 0 2px 6px -2px hsl(0 0% 0% / 0.08)`,
-              }}
+              className="group relative rounded-2xl bg-card border border-border/70 p-2 pb-2.5 flex flex-col items-center gap-1.5 active:scale-[0.96] hover:-translate-y-0.5 hover:shadow-card transition-all duration-300 overflow-hidden"
             >
-              {/* Inner surface */}
-              <div
-                className="relative flex-1 rounded-[20px] p-2.5 pb-2 overflow-hidden flex flex-col"
+              {/* Soft tinted halo */}
+              <span
+                aria-hidden
+                className="absolute -top-6 left-1/2 -translate-x-1/2 h-16 w-16 rounded-full blur-2xl opacity-45 group-hover:opacity-70 transition-opacity"
+                style={{ background: cat.from }}
+              />
+
+              {/* Medallion */}
+              <span
+                className="relative z-10 h-12 w-12 rounded-[15px] flex items-center justify-center overflow-hidden"
                 style={{
-                  background: `linear-gradient(165deg, ${cat.from}, ${cat.to})`,
+                  background: `linear-gradient(150deg, ${cat.from}, ${cat.to})`,
+                  boxShadow: `0 6px 14px -6px ${cat.glow}`,
                 }}
               >
-                {/* Glossy sheen */}
                 <span
                   aria-hidden
-                  className="absolute inset-x-0 top-0 h-1/2 opacity-60"
-                  style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }}
+                  className="absolute inset-x-0 top-0 h-1/2 opacity-50"
+                  style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.5), transparent)" }}
                 />
-                {/* Grain dot */}
-                <span
-                  aria-hidden
-                  className="absolute -bottom-8 -right-8 h-24 w-24 rounded-full blur-2xl opacity-40"
-                  style={{ background: "hsl(0 0% 100% / 0.5)" }}
+                <img
+                  src={cat.img}
+                  alt=""
+                  width={40}
+                  height={40}
+                  loading="lazy"
+                  className="relative h-8 w-auto object-contain drop-shadow-[0_3px_5px_rgba(0,0,0,0.22)] group-hover:scale-110 transition-transform duration-400"
                 />
+              </span>
 
-                {/* Count pill */}
-                <span className="relative z-10 self-start inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/25 backdrop-blur-sm border border-white/30">
-                  <span className="h-1 w-1 rounded-full bg-white" />
-                  <span className="text-[8.5px] font-bold text-white tracking-wide">{cat.tag}</span>
-                </span>
-
-                {/* Illustration */}
-                <div className="relative z-10 flex-1 flex items-center justify-center my-1">
-                  <img
-                    src={cat.img}
-                    alt=""
-                    width={64}
-                    height={64}
-                    loading="lazy"
-                    className="h-[62px] w-auto object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.25)] group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500"
-                  />
-                </div>
-
-                {/* Label block */}
-                <div className="relative z-10 flex items-end justify-between gap-1">
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-bold text-white leading-none tracking-tight font-display">{cat.label}</p>
-                    <p className="text-[9px] text-white/80 leading-tight mt-1 truncate font-medium">{cat.sub}</p>
-                  </div>
-                  <span className="h-6 w-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-md group-hover:rotate-[-45deg] transition-transform duration-300">
-                    <ArrowRight className="h-3 w-3" style={{ color: cat.to }} strokeWidth={2.8} />
-                  </span>
-                </div>
-              </div>
+              <span className="relative z-10 text-[11.5px] font-bold text-foreground leading-none font-display tracking-tight">
+                {cat.label}
+              </span>
+              <span className="relative z-10 text-[8.5px] font-semibold tracking-wide text-muted-foreground leading-none">
+                {cat.tag}
+              </span>
             </button>
           ))}
+
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.jpeg";
 import heroBanner from "@/assets/hero-banner.jpg";
 import SEOHead from "@/components/SEOHead";
+import { isAppMode } from "@/lib/appMode";
 
 const testimonials = [
   { name: "Rajesh Kumar", city: "Hyderabad", rating: 5, message: "Found my dream 2BHK in Gachibowli within a week. No brokerage saved me ₹30,000!" },
@@ -49,6 +50,11 @@ const LandingPage = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   const [showIOSModal, setShowIOSModal] = useState(false);
   const [installSuccess, setInstallSuccess] = useState(false);
+
+  // Installed app should never show the marketing website — go straight into the app.
+  useEffect(() => {
+    if (isAppMode()) navigate("/app", { replace: true });
+  }, [navigate]);
 
   useEffect(() => {
     // Detect iOS

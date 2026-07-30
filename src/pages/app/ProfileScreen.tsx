@@ -6,6 +6,7 @@ import { useI18n } from "@/contexts/I18nContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { isAppMode } from "@/lib/appMode";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
@@ -69,7 +70,8 @@ const ProfileScreen = () => {
   const handleSignOut = async () => {
     await signOut();
     toast.success(t("sign_out"));
-    navigate("/");
+    // Installed app: stay inside the app shell instead of dropping to the website.
+    navigate(isAppMode() ? "/auth" : "/", { replace: true });
   };
 
   return (
