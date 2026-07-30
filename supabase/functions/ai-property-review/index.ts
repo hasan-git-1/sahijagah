@@ -37,54 +37,42 @@ Respond with ONLY valid JSON, no markdown fences:
 
 Scoring: >=60 approve (looks like real photos), <60 reject (looks fake/AI/stock). Be lenient — only reject when you're confident images are fake.`;
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  try {
-    const { property_id } = await req.json();
-    if (!property_id) {
-      return new Response(JSON.stringify({ error: "property_id required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+async function reviewProperty(property_id: string) {
+  const { data: listing, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("id", property_id)
+    .single();
 
-    const { data: listing, error } = await supabase
-      .from("properties")
-      .select("*")
-      .eq("id", property_id)
-      .single();
+  if (error || !listing) return { property_id, status: "error", error: "Listing not found" };
 
-    if (error || !listing) {
-      return new Response(JSON.stringify({ error: "Listing not found" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+  const imageUrls: string[] = (listing.images || []).slice(0, 6);
 
-    const imageUrls: string[] = (listing.images || []).slice(0, 6);
+  // No images → can't verify, auto-approve (owner will add later) rather than block
+  if (imageUrls.length === 0) {
+    await supabase.from("properties").update({ status: "approved", is_verified: false }).eq("id", property_id);
+    await supabase.from("ai_review_logs").insert({
+      property_id,
+      realness_score: 70,
+      verdict: "approve",
+      reasons: ["No images to verify"],
+      flagged_issues: [],
+      photo_notes: "No images provided",
+      pre_check_flags: {},
+      resulting_status: "approved",
+    });
+    return { property_id, status: "approved", reason: "no images" };
+  }
 
-    // No images → can't verify, auto-approve (owner will add later) rather than block
-    if (imageUrls.length === 0) {
-      await supabase.from("properties").update({ status: "approved", is_verified: false }).eq("id", property_id);
-      await supabase.from("ai_review_logs").insert({
-        property_id,
-        realness_score: 70,
-        verdict: "approve",
-        reasons: ["No images to verify"],
-        flagged_issues: [],
-        photo_notes: "No images provided",
-        pre_check_flags: {},
-        resulting_status: "approved",
-      });
-      return new Response(JSON.stringify({ status: "approved", reason: "no images" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const content: any[] = [
+  const content: any[] = [
       { type: "text", text: `Check whether these ${imageUrls.length} listing photos are real or fake. Respond with the JSON only.` },
       ...imageUrls.map((url) => ({ type: "image_url", image_url: { url } })),
     ];
