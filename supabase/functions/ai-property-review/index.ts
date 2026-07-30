@@ -73,75 +73,118 @@ async function reviewProperty(property_id: string) {
   }
 
   const content: any[] = [
-      { type: "text", text: `Check whether these ${imageUrls.length} listing photos are real or fake. Respond with the JSON only.` },
-      ...imageUrls.map((url) => ({ type: "image_url", image_url: { url } })),
-    ];
+    { type: "text", text: `Check whether these ${imageUrls.length} listing photos are real or fake. Respond with the JSON only.` },
+    ...imageUrls.map((url) => ({ type: "image_url", image_url: { url } })),
+  ];
 
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content },
-        ],
-      }),
-    });
+  const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content },
+      ],
+    }),
+  });
 
-    if (!aiRes.ok) {
-      const errTxt = await aiRes.text();
-      // On AI failure, auto-approve so owner listings go live instead of getting stuck
-      await supabase.from("properties").update({ status: "approved" }).eq("id", property_id);
-      return new Response(
-        JSON.stringify({ status: "approved", note: "AI unavailable, auto-approved", detail: errTxt }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+  if (!aiRes.ok) {
+    const errTxt = await aiRes.text();
+    // Rate limited / out of credits → leave pending so the queue can retry later
+    if (aiRes.status === 429 || aiRes.status === 402) {
+      return { property_id, status: "pending", error: aiRes.status === 429 ? "rate_limited" : "no_credits" };
+    }
+    // Other AI failure → auto-approve so owner listings go live instead of getting stuck
+    await supabase.from("properties").update({ status: "approved" }).eq("id", property_id);
+    return { property_id, status: "approved", note: "AI unavailable, auto-approved", detail: errTxt };
+  }
+
+  const aiData = await aiRes.json();
+  const rawText: string = aiData.choices?.[0]?.message?.content || "{}";
+  const cleaned = rawText.replace(/```json|```/g, "").trim();
+
+  let verdict: any;
+  try {
+    verdict = JSON.parse(cleaned);
+  } catch {
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    verdict = m ? JSON.parse(m[0]) : { realness_score: 70, verdict: "approve", photo_notes: "AI returned malformed JSON — defaulted to approve" };
+  }
+
+  const score = Number(verdict.realness_score) || 0;
+  const newStatus = score >= 60 ? "approved" : "rejected";
+
+  const updates: any = { status: newStatus };
+  if (newStatus === "approved") updates.is_verified = true;
+  if (newStatus === "rejected") updates.rejection_reason = `Images appear fake/AI-generated/stock. ${verdict.photo_notes || ""}`.trim();
+
+  await supabase.from("properties").update(updates).eq("id", property_id);
+
+  await supabase.from("ai_review_logs").insert({
+    property_id,
+    realness_score: score,
+    verdict: verdict.verdict || (score >= 60 ? "approve" : "reject"),
+    reasons: [verdict.photo_notes || ""],
+    flagged_issues: newStatus === "rejected" ? ["fake_or_ai_images"] : [],
+    photo_notes: verdict.photo_notes || "",
+    pre_check_flags: {},
+    resulting_status: newStatus,
+  });
+
+  return { property_id, status: newStatus, ai_result: verdict };
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  try {
+    const body = await req.json().catch(() => ({}));
+    const { property_id, mode, limit } = body as { property_id?: string; mode?: string; limit?: number };
+
+    // Queue mode: verify every pending listing, one by one
+    if (mode === "queue" || (!property_id && mode !== "single")) {
+      const { data: pendingList, error: qErr } = await supabase
+        .from("properties")
+        .select("id")
+        .eq("status", "pending")
+        .order("created_at", { ascending: true })
+        .limit(Math.min(limit ?? 25, 50));
+
+      if (qErr) return json({ error: qErr.message }, 500);
+
+      const results: any[] = [];
+      let approved = 0, rejected = 0, skipped = 0, failed = 0;
+
+      for (const row of pendingList || []) {
+        try {
+          const r = await reviewProperty(row.id);
+          results.push(r);
+          if (r.status === "approved") approved++;
+          else if (r.status === "rejected") rejected++;
+          else if (r.status === "pending") skipped++;
+          else failed++;
+        } catch (e) {
+          failed++;
+          results.push({ property_id: row.id, status: "error", error: String(e) });
+        }
+        // small gap so we don't trip gateway rate limits
+        await new Promise((r) => setTimeout(r, 400));
+      }
+
+      return json({ mode: "queue", total: pendingList?.length ?? 0, approved, rejected, skipped, failed, results });
     }
 
-    const aiData = await aiRes.json();
-    const rawText: string = aiData.choices?.[0]?.message?.content || "{}";
-    const cleaned = rawText.replace(/```json|```/g, "").trim();
+    if (!property_id) return json({ error: "property_id required" }, 400);
 
-    let verdict: any;
-    try {
-      verdict = JSON.parse(cleaned);
-    } catch {
-      const m = cleaned.match(/\{[\s\S]*\}/);
-      verdict = m ? JSON.parse(m[0]) : { realness_score: 70, verdict: "approve", photo_notes: "AI returned malformed JSON — defaulted to approve" };
-    }
-
-    const score = Number(verdict.realness_score) || 0;
-    const newStatus = score >= 60 ? "approved" : "rejected";
-
-    const updates: any = { status: newStatus };
-    if (newStatus === "approved") updates.is_verified = true;
-    if (newStatus === "rejected") updates.rejection_reason = `Images appear fake/AI-generated/stock. ${verdict.photo_notes || ""}`.trim();
-
-    await supabase.from("properties").update(updates).eq("id", property_id);
-
-    await supabase.from("ai_review_logs").insert({
-      property_id,
-      realness_score: score,
-      verdict: verdict.verdict || (score >= 60 ? "approve" : "reject"),
-      reasons: [verdict.photo_notes || ""],
-      flagged_issues: newStatus === "rejected" ? ["fake_or_ai_images"] : [],
-      photo_notes: verdict.photo_notes || "",
-      pre_check_flags: {},
-      resulting_status: newStatus,
-    });
-
-    return new Response(
-      JSON.stringify({ status: newStatus, ai_result: verdict }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    const result = await reviewProperty(property_id);
+    if (result.status === "error") return json(result, 404);
+    return json(result);
   } catch (err) {
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ error: String(err) }, 500);
   }
 });
+
