@@ -3,7 +3,14 @@
   "sdk_version": "0.22.2",
   "path": "/functions/v1/mcp",
   "auth": {
-    "type": "none"
+    "type": "oauth",
+    "issuer": "https://fcvgoofbmwmvbrhjkybq.supabase.co/auth/v1",
+    "resource": "https://fcvgoofbmwmvbrhjkybq.supabase.co/functions/v1/mcp",
+    "resource_name": "urbanStay",
+    "accepted_audiences": [
+      "authenticated"
+    ],
+    "jwks_uri": "https://fcvgoofbmwmvbrhjkybq.supabase.co/auth/v1/.well-known/jwks.json"
   },
   "mcp": {
     "server": {
