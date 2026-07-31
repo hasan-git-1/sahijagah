@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MapPin, ChevronLeft, ChevronRight, Check, Phone } from "lucide-react";
+import { Camera, MapPin, ChevronLeft, ChevronRight, Check, Phone, Sparkles, PencilLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import ImageUploader from "@/components/ImageUploader";
 import BulkUploadModal from "@/components/BulkUploadModal";
 import MapPinPicker from "@/components/MapPinPicker";
+import AIPostFlow from "@/components/AIPostFlow";
 
 const steps = ["Photos", "Basic Info", "Location", "Details", "Amenities", "Review"];
 const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Security", "Garden", "Elevator", "Power Backup"];
@@ -15,10 +16,12 @@ const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Sec
 const PostScreen = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [mode, setMode] = useState<"choose" | "manual" | "ai">("choose");
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [showBulk, setShowBulk] = useState(false);
+
 
   const [form, setForm] = useState({
     title: "", description: "", type: "", category: "",
