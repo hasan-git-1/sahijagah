@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MapPin, ChevronLeft, ChevronRight, Check, Phone } from "lucide-react";
+import { Camera, MapPin, ChevronLeft, ChevronRight, Check, Phone, Sparkles, PencilLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import ImageUploader from "@/components/ImageUploader";
 import BulkUploadModal from "@/components/BulkUploadModal";
 import MapPinPicker from "@/components/MapPinPicker";
+import AIPostFlow from "@/components/AIPostFlow";
 
 const steps = ["Photos", "Basic Info", "Location", "Details", "Amenities", "Review"];
 const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Security", "Garden", "Elevator", "Power Backup"];
@@ -15,10 +16,12 @@ const amenitiesList = ["WiFi", "Parking", "Gym", "Pool", "AC", "Furnished", "Sec
 const PostScreen = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [mode, setMode] = useState<"choose" | "manual" | "ai">("choose");
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [showBulk, setShowBulk] = useState(false);
+
 
   const [form, setForm] = useState({
     title: "", description: "", type: "", category: "",
@@ -101,11 +104,88 @@ const PostScreen = () => {
   const inputClass = "w-full rounded-lg border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground";
   const selectClass = inputClass + " text-muted-foreground";
 
+  if (mode === "choose") {
+    return (
+      <div className="bg-background min-h-screen">
+        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-foreground">Post Property</h2>
+            <button onClick={() => setShowBulk(true)} className="text-xs font-semibold text-primary">
+              📋 Bulk Upload
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Choose how you want to list</p>
+        </div>
+
+        <div className="px-4 py-6 space-y-4">
+          <button
+            onClick={() => setMode("manual")}
+            className="w-full text-left bg-card rounded-2xl p-5 shadow-card flex gap-4 items-start"
+          >
+            <div className="h-11 w-11 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+              <PencilLine className="h-5 w-5 text-foreground" />
+            </div>
+            <div>
+              <p className="font-bold text-foreground">Enter manually</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Fill each step yourself — photos, details, location, amenities. Full control.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setMode("ai")}
+            className="w-full text-left bg-card rounded-2xl p-5 shadow-card flex gap-4 items-start border border-primary/30"
+          >
+            <div className="h-11 w-11 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div>
+              <p className="font-bold text-foreground flex items-center gap-2">
+                Let AI post it <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">FASTEST</span>
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Just give photos, type, location, rate and amenities — AI writes the title, description and details, then submits the listing for you.
+              </p>
+            </div>
+          </button>
+        </div>
+        <BulkUploadModal open={showBulk} onOpenChange={setShowBulk} userId={user.id} />
+      </div>
+    );
+  }
+
+  if (mode === "ai") {
+    return (
+      <div className="bg-background min-h-screen">
+        <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card flex items-center gap-2">
+          <button onClick={() => setMode("choose")} className="p-1 -ml-1">
+            <ChevronLeft className="h-5 w-5 text-foreground" />
+          </button>
+          <div>
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" /> AI Listing
+            </h2>
+            <p className="text-xs text-muted-foreground">Give the basics, AI does the rest</p>
+          </div>
+        </div>
+        <div className="px-4 py-6">
+          <AIPostFlow userId={user.id} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-background min-h-screen">
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-foreground">Post Property</h2>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setMode("choose")} className="p-1 -ml-1">
+              <ChevronLeft className="h-5 w-5 text-foreground" />
+            </button>
+            <h2 className="text-lg font-bold text-foreground">Post Property</h2>
+          </div>
           <button onClick={() => setShowBulk(true)} className="text-xs font-semibold text-primary">
             📋 Bulk Upload
           </button>
@@ -119,6 +199,7 @@ const PostScreen = () => {
       </div>
 
       <div className="px-4 py-6">
+
         <div className="bg-card rounded-2xl p-6 shadow-card">
           {step === 0 && (
             <div>
