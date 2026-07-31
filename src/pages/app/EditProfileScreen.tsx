@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRef } from "react";
+import { resolveProfilePhoto } from "@/lib/profilePhoto";
 
 const EditProfileScreen = () => {
   const navigate = useNavigate();
@@ -26,15 +27,17 @@ const EditProfileScreen = () => {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoPath, setPhotoPath] = useState("");
+  const [photoPreview, setPhotoPreview] = useState("");
   const [uploading, setUploading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
   if (profile && !initialized) {
     setName(profile.name || "");
     setPhone(profile.phone || "");
-    setPhotoUrl(profile.profile_photo || "");
+    setPhotoPath(profile.profile_photo || "");
     setInitialized(true);
+    resolveProfilePhoto(profile.profile_photo).then((url) => setPhotoPreview(url || ""));
   }
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,8 +51,8 @@ const EditProfileScreen = () => {
       const path = `${user.id}/avatar.${ext}`;
       const { error } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
       if (error) throw error;
-      const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
-      setPhotoUrl(data.publicUrl + "?t=" + Date.now());
+      setPhotoPath(path);
+      setPhotoPreview((await resolveProfilePhoto(path)) || "");
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
     } finally {
