@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.22.2";
+import { defineMcp, auth } from "npm:@lovable.dev/mcp-js@0.22.2";
 
 // src/lib/mcp/tools/search-properties.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.98.0";
@@ -133,11 +133,19 @@ var list_cities_default = defineTool3({
 });
 
 // src/lib/mcp/index.ts
+var supabaseUrl = process.env.SUPABASE_URL ?? "";
 var mcp_default = defineMcp({
   name: "urbanstay-mcp",
   title: "urbanStay",
   version: "0.1.0",
-  instructions: "Public MCP server for urbanStay, an Indian property rental and sales platform. Use `list_cities` to discover cities with active listings, `search_properties` to find approved listings by city, price, BHK, or listing type, and `get_property` to fetch a single listing's full details by ID. Only approved public listings are exposed; per-user data (bookings, messages, wishlists) is not available.",
+  instructions: "MCP server for urbanStay, an Indian property rental and sales platform. Sign-in is required. Use `list_cities` to discover cities with active listings, `search_properties` to find approved listings by city, price, BHK, or listing type, and `get_property` to fetch a single listing's full details by ID. Only approved public listings are exposed; per-user data (bookings, messages, wishlists) is not available.",
+  auth: auth.oauth.issuer({
+    issuer: `${supabaseUrl}/auth/v1`,
+    jwksUri: `${supabaseUrl}/auth/v1/.well-known/jwks.json`,
+    resource: `${supabaseUrl}/functions/v1/mcp`,
+    acceptedAudiences: ["authenticated"],
+    resourceName: "urbanStay"
+  }),
   tools: [search_properties_default, get_property_default, list_cities_default]
 });
 

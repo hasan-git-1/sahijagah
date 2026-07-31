@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { isAppMode } from "@/lib/appMode";
+import { resolveProfilePhoto } from "@/lib/profilePhoto";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
@@ -30,6 +31,12 @@ const ProfileScreen = () => {
       return !!data;
     },
     enabled: !!user,
+  });
+
+  const { data: photoSrc } = useQuery({
+    queryKey: ["profile-photo", profile?.profile_photo],
+    queryFn: () => resolveProfilePhoto(profile?.profile_photo),
+    enabled: !!profile?.profile_photo,
   });
 
   const { data: hasListings } = useQuery({
@@ -83,8 +90,8 @@ const ProfileScreen = () => {
       <div className="px-4 pt-6">
         <div className="bg-card rounded-2xl p-5 shadow-card flex items-center gap-4">
           <div className="h-16 w-16 rounded-full overflow-hidden border-4 border-primary/20">
-            {profile?.profile_photo ? (
-              <img src={profile.profile_photo} alt="" className="w-full h-full object-cover" />
+            {photoSrc ? (
+              <img src={photoSrc} alt="" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full gradient-blue flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-xl">

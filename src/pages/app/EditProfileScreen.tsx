@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRef } from "react";
+import { resolveProfilePhoto } from "@/lib/profilePhoto";
 
 const EditProfileScreen = () => {
   const navigate = useNavigate();
@@ -26,15 +27,17 @@ const EditProfileScreen = () => {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoPath, setPhotoPath] = useState("");
+  const [photoPreview, setPhotoPreview] = useState("");
   const [uploading, setUploading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
   if (profile && !initialized) {
     setName(profile.name || "");
     setPhone(profile.phone || "");
-    setPhotoUrl(profile.profile_photo || "");
+    setPhotoPath(profile.profile_photo || "");
     setInitialized(true);
+    resolveProfilePhoto(profile.profile_photo).then((url) => setPhotoPreview(url || ""));
   }
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,8 +51,8 @@ const EditProfileScreen = () => {
       const path = `${user.id}/avatar.${ext}`;
       const { error } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
       if (error) throw error;
-      const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
-      setPhotoUrl(data.publicUrl + "?t=" + Date.now());
+      setPhotoPath(path);
+      setPhotoPreview((await resolveProfilePhoto(path)) || "");
     } catch (err: any) {
       toast.error(err.message || "Upload failed");
     } finally {
@@ -62,7 +65,7 @@ const EditProfileScreen = () => {
       const { error } = await supabase.from("profiles").update({
         name: name.trim() || null,
         phone: phone.trim() || null,
-        profile_photo: photoUrl || null,
+        profile_photo: photoPath || null,
       }).eq("id", user!.id);
       if (error) throw error;
     },
@@ -98,8 +101,8 @@ const EditProfileScreen = () => {
           <div className="flex flex-col items-center mb-6">
             <div className="relative">
               <div className="h-24 w-24 rounded-full overflow-hidden bg-secondary border-4 border-primary/20">
-                {photoUrl ? (
-                  <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+                {photoPreview ? (
+                  <img src={photoPreview} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full gradient-blue flex items-center justify-center">
                     <span className="text-primary-foreground text-2xl font-bold">{name?.charAt(0)?.toUpperCase() || "U"}</span>

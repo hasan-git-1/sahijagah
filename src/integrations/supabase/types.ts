@@ -618,6 +618,7 @@ export type Database = {
         Args: { property_id: string }
         Returns: undefined
       }
+      is_user_banned: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "owner" | "client" | "agent" | "admin"
