@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { isAppMode } from "@/lib/appMode";
+import { resolveProfilePhoto } from "@/lib/profilePhoto";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
@@ -30,6 +31,12 @@ const ProfileScreen = () => {
       return !!data;
     },
     enabled: !!user,
+  });
+
+  const { data: photoSrc } = useQuery({
+    queryKey: ["profile-photo", profile?.profile_photo],
+    queryFn: () => resolveProfilePhoto(profile?.profile_photo),
+    enabled: !!profile?.profile_photo,
   });
 
   const { data: hasListings } = useQuery({
