@@ -65,7 +65,7 @@ const EditProfileScreen = () => {
       const { error } = await supabase.from("profiles").update({
         name: name.trim() || null,
         phone: phone.trim() || null,
-        profile_photo: photoUrl || null,
+        profile_photo: photoPath || null,
       }).eq("id", user!.id);
       if (error) throw error;
     },
@@ -101,8 +101,8 @@ const EditProfileScreen = () => {
           <div className="flex flex-col items-center mb-6">
             <div className="relative">
               <div className="h-24 w-24 rounded-full overflow-hidden bg-secondary border-4 border-primary/20">
-                {photoUrl ? (
-                  <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+                {photoPreview ? (
+                  <img src={photoPreview} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full gradient-blue flex items-center justify-center">
                     <span className="text-primary-foreground text-2xl font-bold">{name?.charAt(0)?.toUpperCase() || "U"}</span>
