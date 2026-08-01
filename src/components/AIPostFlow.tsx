@@ -48,6 +48,10 @@ const AIPostFlow = ({ userId }: { userId: string }) => {
     "w-full rounded-lg border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring text-foreground";
 
   const generate = async () => {
+    if (images.length === 0) {
+      toast.error("Add at least one photo so AI can describe the place");
+      return;
+    }
     if (!form.type || !form.city || !form.price) {
       toast.error("Add type, location and rate first");
       return;
@@ -68,7 +72,14 @@ const AIPostFlow = ({ userId }: { userId: string }) => {
           amenities: form.amenities,
         },
       });
-      if (error) throw error;
+      if (error) {
+        const details = (error as any)?.context?.text ? await (error as any).context.text() : error.message;
+        let msg = details;
+        try {
+          msg = JSON.parse(details)?.error ?? details;
+        } catch { /* plain text */ }
+        throw new Error(msg);
+      }
       if ((data as any)?.error) throw new Error((data as any).error);
       setDraft(data as Draft);
       toast.success("AI wrote your listing ✨");
@@ -78,6 +89,7 @@ const AIPostFlow = ({ userId }: { userId: string }) => {
       setGenerating(false);
     }
   };
+
 
   const publish = async () => {
     if (!draft) return;
