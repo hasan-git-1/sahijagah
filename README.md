@@ -1,63 +1,92 @@
-# urbanStay
+urbanStay
 
-**Renting and buying a home in India's tier-2 and tier-3 cities, without middlemen.**
+**AI-powered rental platform for finding and listing homes without middlemen.**
 
-urbanStay is a mobile-first proptech application that connects property owners directly with tenants and buyers. No brokers, no listing commissions, no gatekeepers — just verified listings, direct messaging, and an AI agent that does the heavy lifting on both sides of the transaction.
-
----
-
-## The problem
-
-In cities like Warangal, Vijayawada, Nashik or Kochi, finding a place to live still runs through brokers who charge one to two months of rent, gate the owner's phone number, and inflate prices. Owners, in turn, struggle to write a listing, take good photos, or reach anyone beyond a WhatsApp group.
-
-## What urbanStay does
-
-- **For seekers** — search, filter, compare and shortlist real listings, talk to the owner directly in-app, and get an AI agent that understands "2BHK under ₹20k near Gachibowli with parking" and returns actual listings, not chatter.
-- **For owners** — post a property in under two minutes. Either fill the manual form, or hand photos and a few basics to the AI, which writes the entire listing and submits it. An AI moderator then reviews the photos for authenticity and publishes the listing automatically.
-- **For the platform** — moderation, verification and quality control are algorithmic, so listing volume scales without a human review team.
+urbanStay is a mobile-first proptech platform that connects property owners directly with tenants and home seekers. By removing brokers and simplifying the rental process with AI, urbanStay makes property discovery faster, listing creation easier, and rental decisions more transparent.
 
 ---
 
-## Feature overview
+The Problem
+
+In major cities like **Hyderabad, Bengaluru, Delhi, Mumbai, and Noida**, finding a rental home often depends on brokers who charge high commissions, limit direct communication with owners, and make the search process slow and inefficient. At the same time, many property owners struggle to create quality listings, attract genuine tenants, and manage inquiries beyond local advertising or WhatsApp groups.
+
+---
+
+What urbanStay Does
+
+**For Property Seekers**
+
+* Search, filter, compare, and shortlist verified properties.
+* Chat directly with property owners inside the app.
+* Use AI-powered natural language search, such as *"2BHK under ₹20,000 near Gachibowli with parking,"* to instantly discover relevant listings.
+
+**For Property Owners**
+
+* Publish a property in under two minutes.
+* Create listings manually or let AI generate professional titles, descriptions, property details, and amenities from uploaded images and basic information.
+* AI automatically reviews uploaded photos before publishing to maintain listing quality.
+
+**For the Platform**
+
+* AI-driven moderation, verification, and quality control help maintain trustworthy listings while enabling the platform to scale efficiently.
+
+---
+
+Feature Overview
 
 ### Discovery
-- Full-text and faceted search across rent, buy, PG and commercial listings
-- Advanced filter chips: price, bedrooms, area, amenities, furnishing, property type
-- Map search with clustered pins, heatmap view and radius search
-- Popular localities, personalised to the user's location within a 5–10 km radius once location access is granted
-- Featured homes grid, recently viewed, saved searches with new-match notifications
-- Wishlist collections and side-by-side property comparison with PDF export
-- Voice search and geolocation-based auto-detection of the current city
 
-### Listing and ownership
-- Six-step guided manual posting flow with image upload, map pin picker and amenity selection
-- **AI Post** — the owner supplies photos, type, location, rate, phone and amenities; a vision model writes the title, description, category, bedroom/bathroom count and area, and detects additional amenities from the photographs
-- Bulk upload for owners with multiple units
-- Owner dashboard with per-property views, enquiries, conversion charts and lease/renewal reminders
-- Property editing, visibility toggles and availability calendars
+* Full-text search across rental, PG, hostel, and property listings
+* Smart filters for price, bedrooms, area, amenities, furnishing, and property type
+* Interactive map search with clustered markers and radius search
+* Personalized nearby localities based on the user's location
+* Featured properties, recently viewed listings, saved searches, and new-match notifications
+* Wishlist collections and side-by-side property comparison with PDF export
+* Voice search and automatic city detection using location services
 
-### Trust and safety
-- **AI image moderation** — every submitted listing is scored 0–100 for photographic authenticity; stock imagery, AI-generated renders and duplicated marketing photos are rejected with a reason, genuine photos are approved and published instantly
-- Verified-owner badges, tenant verification and property reporting flows
-- Role-based admin panel for manual overrides, user management and bans
-- Row-level security on every table; profile email and phone are never readable by anonymous visitors
+### Listing & Ownership
+
+* Guided multi-step property posting with image upload, map location, and amenity selection
+* **AI Listing Generator** that creates property titles, descriptions, categories, room details, area information, and detects amenities from uploaded images
+* Bulk property upload for owners managing multiple listings
+* Owner dashboard with property views, inquiries, performance insights, and renewal reminders
+* Property editing, availability management, and visibility controls
+
+### Trust & Safety
+
+* **AI Image Verification** that detects AI-generated images, stock photos, watermarked content, duplicate images, and suspicious uploads before publishing
+* Verified owner badges, tenant verification, and property reporting
+* Role-based admin dashboard for moderation and user management
+* Secure access control to protect owner contact information and user data
 
 ### Communication
-- Real-time one-to-one messaging between seekers and owners, backed by Supabase Realtime broadcast
-- Typing indicators, read state, message and conversation deletion, and persistent history
-- Push notifications for new messages, booking requests and listing approvals
-- Click-to-call and WhatsApp deep links where the owner has opted in
+
+* Real-time in-app messaging between owners and seekers
+* Typing indicators, read receipts, conversation history, and message management
+* Push notifications for messages, listing approvals, and booking requests
+* Optional click-to-call and WhatsApp integration
 
 ### Tools
-Rent receipts, rent agreement generation with regional templates, EMI and stamp duty calculators, rent-vs-buy analysis, rental yield, area unit conversion, move-in and handover checklists, locality and safety scorecards, commute estimation, Vastu tips and a document vault.
+
+* Rent receipt generation
+* Rental agreement templates
+* EMI and stamp duty calculators
+* Rent vs. Buy analysis
+* Rental yield calculator
+* Area unit conversion
+* Move-in and handover checklists
+* Locality insights and safety scores
+* Commute estimation
+* Vastu suggestions
+* Secure document vault
 
 ### Platform
-- Progressive Web App with offline indicator and a custom platform-aware install flow
-- Native Android build via Capacitor, with splash screen, camera and push notification plugins
-- Trilingual interface: English, Hindi and Telugu
-- Public MCP server, so external AI agents can search urbanStay listings over an authenticated OAuth 2.1 endpoint
 
----
+* Progressive Web App (PWA) with offline support and install prompts
+* Native Android application built with Capacitor
+* Multilingual interface supporting English, Hindi, and Telugu
+* Public MCP server with authenticated OAuth 2.1 APIs for AI agent integration
+
 
 ## Architecture
 
