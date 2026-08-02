@@ -88,6 +88,8 @@ const AppShell = () => {
     "/app/city-analytics", "/app/tools", "/app/feedback",
     "/app/privacy", "/app/terms",
     "/app/landlord-dashboard"].some((p) => location.pathname.includes(p));
+
+  return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row max-w-md lg:max-w-none mx-auto relative">
       <OfflineIndicator />
 
