@@ -84,6 +84,7 @@ const PrivacyPolicyScreen = () => {
     <div className="bg-background min-h-screen">
       <SEOHead
         title="Privacy Policy | urbanStay"
+        rawTitle
         description="How urbanStay collects, uses, stores and protects your personal information."
       />
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card flex items-center gap-3">

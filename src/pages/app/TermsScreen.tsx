@@ -97,6 +97,7 @@ const TermsScreen = () => {
     <div className="bg-background min-h-screen">
       <SEOHead
         title="Terms of Service | urbanStay"
+        rawTitle
         description="The rules for using urbanStay, the direct owner-to-tenant property platform for India."
       />
       <div className="sticky top-0 z-40 bg-card/95 backdrop-blur-lg px-4 py-3 shadow-card flex items-center gap-3">
