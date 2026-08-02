@@ -25,9 +25,9 @@ const SettingsScreen = () => {
 
   const menuItems = [
     { icon: Bell, label: t("notifications"), path: "/app/notifications" },
-    { icon: Shield, label: t("privacy_policy"), path: "#" },
-    { icon: FileText, label: t("terms_of_service"), path: "#" },
-    { icon: HelpCircle, label: t("help_support"), path: "#" },
+    { icon: Shield, label: t("privacy_policy"), path: "/app/privacy" },
+    { icon: FileText, label: t("terms_of_service"), path: "/app/terms" },
+    { icon: HelpCircle, label: t("help_support"), path: "/app/feedback" },
   ];
 
   return (

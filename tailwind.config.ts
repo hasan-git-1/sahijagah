@@ -5,6 +5,16 @@ export default {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
+    /* Exactly two layouts: mobile (default) and desktop (>= 1024px).
+       All breakpoints collapse to the same desktop threshold so no
+       intermediate tablet layout can appear. */
+    screens: {
+      sm: "1024px",
+      md: "1024px",
+      lg: "1024px",
+      xl: "1024px",
+      "2xl": "1024px",
+    },
     container: {
       center: true,
       padding: "1rem",
