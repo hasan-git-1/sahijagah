@@ -30,6 +30,8 @@ import CityAnalyticsScreen from "./app/CityAnalyticsScreen";
 import ToolsScreen from "./app/ToolsScreen";
 import FeedbackScreen from "./app/FeedbackScreen";
 import LandlordDashboard from "./app/LandlordDashboard";
+import PrivacyPolicyScreen from "./app/PrivacyPolicyScreen";
+import TermsScreen from "./app/TermsScreen";
 const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
