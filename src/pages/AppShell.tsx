@@ -87,9 +87,64 @@ const AppShell = () => {
     "/app/landlord-dashboard"].some((p) => location.pathname.includes(p));
 
   return (
-    <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto relative">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row max-w-md lg:max-w-none mx-auto relative">
       <OfflineIndicator />
-      <main className="flex-1 pb-20 overflow-y-auto">
+
+      {/* Desktop sidebar navigation */}
+      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-60 flex-col border-r border-border bg-card/60 backdrop-blur-xl z-40 px-3 py-6">
+        <button
+          onClick={() => navigate("/app")}
+          className="px-3 mb-8 text-left text-xl font-bold tracking-tight text-foreground font-display"
+        >
+          urban<span className="text-accent">Stay</span>
+        </button>
+        <div className="flex flex-col gap-1">
+          {navItems.map((item) => {
+            const isActive = item.path === "/app"
+              ? location.pathname === "/app"
+              : location.pathname.startsWith(item.path);
+            const Icon = item.icon;
+            const showChatBadge = item.path === "/app/chat" && unreadCount && unreadCount > 0;
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                aria-current={isActive ? "page" : undefined}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
+                  isActive
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+              >
+                <Icon className="h-4.5 w-4.5" strokeWidth={2} />
+                <span className="flex-1 text-left">{item.label}</span>
+                {showChatBadge && (
+                  <span className="h-4 min-w-[16px] rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-1">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-auto flex flex-col gap-1">
+          <button
+            onClick={() => navigate("/app/notifications")}
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+          >
+            <Bell className="h-4.5 w-4.5" strokeWidth={2} />
+            <span className="flex-1 text-left">{t("notifications")}</span>
+            {!!notifCount && notifCount > 0 && (
+              <span className="h-4 min-w-[16px] rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-1">
+                {notifCount > 9 ? "9+" : notifCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </aside>
+
+      <main className="flex-1 pb-20 lg:pb-10 lg:pl-60 overflow-y-auto">
+        <div className="lg:max-w-6xl lg:mx-auto lg:px-8 lg:py-4">
         <Routes>
           <Route index element={<HomeScreen />} />
           <Route path="search" element={<SearchScreen />} />
@@ -104,6 +159,8 @@ const AppShell = () => {
           <Route path="edit-profile" element={<EditProfileScreen />} />
           <Route path="owner" element={<OwnerDashboard />} />
           <Route path="settings" element={<SettingsScreen />} />
+          <Route path="privacy" element={<PrivacyPolicyScreen />} />
+          <Route path="terms" element={<TermsScreen />} />
           <Route path="notifications" element={<NotificationsScreen />} />
           <Route path="compare" element={<CompareScreen />} />
           <Route path="recently-viewed" element={<RecentlyViewedScreen />} />
@@ -116,10 +173,11 @@ const AppShell = () => {
           <Route path="feedback" element={<FeedbackScreen />} />
           <Route path="landlord-dashboard" element={<LandlordDashboard />} />
         </Routes>
+        </div>
       </main>
 
       {!hideNav && (
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background/90 backdrop-blur-xl shadow-nav border-t border-border z-50 pb-[env(safe-area-inset-bottom)]">
+        <nav className="lg:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background/90 backdrop-blur-xl shadow-nav border-t border-border z-50 pb-[env(safe-area-inset-bottom)]">
           <div className="flex items-end justify-around px-2 pt-2 pb-1.5">
             {navItems.map((item) => {
               const isActive = item.path === "/app"
