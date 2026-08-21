@@ -219,30 +219,31 @@ const HomeScreen = () => {
         {/* Search bar with mic + arrow */}
         <div className="mt-4 lg:mt-8 flex items-center gap-2 lg:gap-3 bg-card border border-border rounded-2xl lg:rounded-3xl pl-3 lg:pl-5 pr-1.5 lg:pr-2.5 py-1.5 lg:py-2.5 shadow-card">
 
-          <span className="h-9 w-9 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
-            <Search className="h-4 w-4 text-foreground" strokeWidth={2.4} />
+          <span className="h-9 w-9 lg:h-11 lg:w-11 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
+            <Search className="h-4 w-4 lg:h-5 lg:w-5 text-foreground" strokeWidth={2.4} />
           </span>
           <button
             onClick={() => navigate("/app/search")}
             className="flex-1 text-left py-1 min-w-0"
           >
-            <span className="block text-[13px] font-semibold text-foreground leading-tight">Search city, area or landmark</span>
-            <span className="block text-[10.5px] text-muted-foreground leading-tight mt-0.5 truncate">Hyderabad, PG, Flat, Hitech City…</span>
+            <span className="block text-[13px] lg:text-[16px] font-semibold text-foreground leading-tight">Search city, area or landmark</span>
+            <span className="block text-[10.5px] lg:text-[12.5px] text-muted-foreground leading-tight mt-0.5 truncate">Hyderabad, PG, Flat, Hitech City…</span>
           </button>
           <button
             onClick={() => navigate("/app/search?voice=1")}
             aria-label="Voice search"
-            className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center active:scale-90 transition flex-shrink-0"
+            className="h-9 w-9 lg:h-11 lg:w-11 rounded-full bg-secondary flex items-center justify-center active:scale-90 transition flex-shrink-0"
           >
-            <Mic className="h-4 w-4 text-foreground" strokeWidth={2} />
+            <Mic className="h-4 w-4 lg:h-5 lg:w-5 text-foreground" strokeWidth={2} />
           </button>
           <button
             onClick={() => navigate("/app/search")}
             aria-label="Search"
-            className="h-9 w-9 rounded-full bg-foreground flex items-center justify-center active:scale-90 transition flex-shrink-0"
+            className="h-9 w-9 lg:h-11 lg:w-11 rounded-full bg-foreground flex items-center justify-center active:scale-90 transition flex-shrink-0"
           >
-            <ArrowRight className="h-4 w-4 text-background" strokeWidth={2.5} />
+            <ArrowRight className="h-4 w-4 lg:h-5 lg:w-5 text-background" strokeWidth={2.5} />
           </button>
+
         </div>
 
         {/* Chip row */}
