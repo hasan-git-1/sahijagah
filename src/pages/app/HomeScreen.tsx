@@ -273,14 +273,15 @@ const HomeScreen = () => {
       </section>
 
       {/* Categories — premium gradient tiles */}
-      <section className="px-4 pt-2 pb-6">
-        <div className="flex items-end justify-between mb-3">
+      <section className="px-4 pt-2 pb-6 lg:px-0 lg:pt-6 lg:pb-10">
+        <div className="flex items-end justify-between mb-3 lg:mb-5">
           <div>
             <p className="section-eyebrow">Browse by</p>
-            <h2 className="section-title mt-0.5">What are you looking for?</h2>
+            <h2 className="section-title lg:text-3xl mt-0.5">What are you looking for?</h2>
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-4 gap-2.5 lg:gap-5">
+
           {categories.map((cat) => (
             <button
               key={cat.type}
