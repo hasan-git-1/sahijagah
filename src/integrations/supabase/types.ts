@@ -583,27 +583,7 @@ export type Database = {
       }
     }
     Views: {
-      public_profiles: {
-        Row: {
-          id: string | null
-          is_verified: boolean | null
-          name: string | null
-          profile_photo: string | null
-        }
-        Insert: {
-          id?: string | null
-          is_verified?: boolean | null
-          name?: string | null
-          profile_photo?: string | null
-        }
-        Update: {
-          id?: string | null
-          is_verified?: boolean | null
-          name?: string | null
-          profile_photo?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_my_profile: {
