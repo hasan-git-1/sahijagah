@@ -62,24 +62,22 @@ const PropertyDetail = () => {
   const [ownerProfile, setOwnerProfile] = useState<{ phone?: string | null } | null>(null);
 
   useEffect(() => {
-    if (!id || viewTracked) return;
+    if (!id || viewTracked || !user) return;
     setViewTracked(true);
     supabase.rpc("increment_view_count", { property_id: id }).then();
-    if (user) {
-      supabase.from("recently_viewed").upsert(
-        { user_id: user.id, property_id: id, viewed_at: new Date().toISOString() },
-        { onConflict: "user_id,property_id" }
-      ).then();
-    }
+    supabase.from("recently_viewed").upsert(
+      { user_id: user.id, property_id: id, viewed_at: new Date().toISOString() },
+      { onConflict: "user_id,property_id" }
+    ).then();
   }, [id, user, viewTracked]);
 
-  // Fetch owner phone for WhatsApp/Call
+  // Fetch owner phone for WhatsApp/Call (signed-in users only — contact details are private)
   useEffect(() => {
-    if (!property?.owner_id) return;
+    if (!property?.owner_id || !user) return;
     supabase.from("profiles").select("phone").eq("id", property.owner_id).maybeSingle().then(({ data }) => {
       if (data) setOwnerProfile(data);
     });
-  }, [property?.owner_id]);
+  }, [property?.owner_id, user]);
 
   const isWishlisted = wishlistIds?.includes(id || "") ?? false;
 
