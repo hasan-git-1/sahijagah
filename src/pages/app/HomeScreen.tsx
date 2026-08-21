@@ -167,27 +167,27 @@ const HomeScreen = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative px-4 pt-4 pb-4 overflow-hidden">
-        <div aria-hidden className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
+      <section className="relative px-4 pt-4 pb-4 lg:px-0 lg:pt-8 lg:pb-8 overflow-hidden">
+        <div aria-hidden className="absolute -top-10 -right-10 h-48 w-48 lg:h-80 lg:w-80 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
 
         {/* Two-column hero: copy + arched illustration */}
-        <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
+        <div className="grid grid-cols-[1fr_auto] gap-3 lg:gap-10 items-start lg:items-center">
           <div className="min-w-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card border border-border mb-3 shadow-pill">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card border border-border mb-3 lg:mb-5 shadow-pill">
               <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-foreground">Live in 40+ cities</span>
+              <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.16em] text-foreground">Live in 40+ cities</span>
             </div>
-            <h1 className="text-[30px] leading-[1.02] font-bold text-foreground font-display tracking-tight">
+            <h1 className="text-[30px] lg:text-[64px] leading-[1.02] font-bold text-foreground font-display tracking-tight">
               Find your next<br />
               <span className="text-accent italic">perfect</span> place.
             </h1>
-            <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed">
+            <p className="text-[12px] lg:text-[17px] text-muted-foreground mt-2 lg:mt-5 leading-relaxed lg:max-w-md">
               Verified listings from real owners.<br />Zero brokerage. Zero games.
             </p>
           </div>
 
           {/* Arched illustration frame */}
-          <div className="relative w-[140px] h-[168px] flex-shrink-0">
+          <div className="relative w-[140px] h-[168px] lg:w-[340px] lg:h-[400px] flex-shrink-0">
             <div
               className="absolute inset-0 overflow-hidden shadow-card border border-border/60"
               style={{
@@ -199,10 +199,10 @@ const HomeScreen = () => {
               }}
             >
               {/* pendant lamp accent */}
-              <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-6 bg-foreground/30" />
-              <div aria-hidden className="absolute top-5 left-1/2 -translate-x-1/2 w-5 h-3 rounded-b-full bg-foreground/80" />
+              <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-6 lg:h-14 bg-foreground/30" />
+              <div aria-hidden className="absolute top-5 lg:top-12 left-1/2 -translate-x-1/2 w-5 h-3 lg:w-10 lg:h-6 rounded-b-full bg-foreground/80" />
               {/* plant hint */}
-              <div aria-hidden className="absolute bottom-6 left-2 w-6 h-8 rounded-t-full bg-[hsl(140_30%_45%)]/70" />
+              <div aria-hidden className="absolute bottom-6 left-2 lg:left-6 w-6 h-8 lg:w-12 lg:h-16 rounded-t-full bg-[hsl(140_30%_45%)]/70" />
               <img
                 src={heroArchRoom}
                 alt="Cozy modern living room"
@@ -212,12 +212,13 @@ const HomeScreen = () => {
               />
             </div>
             {/* base plate shadow */}
-            <div aria-hidden className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-[110%] h-2 rounded-full bg-foreground/10 blur-md" />
+            <div aria-hidden className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-[110%] h-2 lg:h-4 rounded-full bg-foreground/10 blur-md" />
           </div>
         </div>
 
         {/* Search bar with mic + arrow */}
-        <div className="mt-4 flex items-center gap-2 bg-card border border-border rounded-2xl pl-3 pr-1.5 py-1.5 shadow-card">
+        <div className="mt-4 lg:mt-8 flex items-center gap-2 lg:gap-3 bg-card border border-border rounded-2xl lg:rounded-3xl pl-3 lg:pl-5 pr-1.5 lg:pr-2.5 py-1.5 lg:py-2.5 shadow-card">
+
           <span className="h-9 w-9 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
             <Search className="h-4 w-4 text-foreground" strokeWidth={2.4} />
           </span>
